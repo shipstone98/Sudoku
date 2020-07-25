@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Sudoku.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Sudoku.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sudoku\Sudoku.csproj" />
   </ItemGroup>
 
