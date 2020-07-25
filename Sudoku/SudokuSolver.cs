@@ -6,9 +6,31 @@ namespace Sudoku
 {
 	public class SudokuSolver
 	{
+		private List<Tuple<int, int>> EmptyCells { get; }
+		private List<SudokuMove> Moves { get; }
+		private Random Random { get; }
+		public bool Solved { get; private set; }
 		public Sudoku Sudoku { get; }
 
-		public SudokuSolver(Sudoku sudoku) => this.Sudoku = sudoku ?? throw new ArgumentNullException(nameof (sudoku));
+		public SudokuSolver(Sudoku sudoku)
+		{
+			this.EmptyCells = new List<Tuple<int, int>>();
+			this.Moves = new List<SudokuMove>();
+			this.Random = new Random();
+			this.Solved = false;
+			this.Sudoku = sudoku ?? throw new ArgumentNullException(nameof (sudoku));
+
+			for (int i = 0; i < sudoku.Size; i ++)
+			{
+				for (int j = 0; j < sudoku.Size; j ++)
+				{
+					if (sudoku[i, j] == 0)
+					{
+						this.EmptyCells.Add(new Tuple<int, int>(i, j));
+					}
+				}
+			}
+		}
 
 		internal static int FindSolutions(Sudoku sudoku)
 		{
@@ -67,6 +89,59 @@ namespace Sudoku
 			return nextRow == sudoku.Size || SudokuSolver.RecursiveSolve(sudoku, nextRow, nextColumn, ref count, findMultiple);
 		}
 
-		public Object Solve() => throw new NotImplementedException();
+		public IEnumerable<SudokuMove> Solve()
+		{
+			if (!this.Solved)
+			{
+				while (this.EmptyCells.Count > 0)
+				{
+					if (!this.SolvePass())
+					{
+						break;
+					}
+				}
+
+				this.Solved = true;
+			}
+
+			return this.Moves;
+		}
+
+		private bool SolveNakedSingle(int row, int column)
+		{
+			int[] possible = this.Sudoku.GetPossible(row, column);
+
+			if (possible.Length == 1)
+			{
+				this.Sudoku[row, column] = possible[0];
+				this.Moves.Add(new SudokuMove(row, column, possible[0], SudokuPattern.NakedSingle, possible));
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool SolvePass()
+		{
+			List<Tuple<int, int>> remainingCells = new List<Tuple<int, int>>(this.EmptyCells);
+
+			while (remainingCells.Count > 0)
+			{
+				int index = this.Random.Next(remainingCells.Count);
+				Tuple<int, int> selected = remainingCells[index];
+
+				if (this.SolvePass(selected.Item1, selected.Item2))
+				{
+					this.EmptyCells.Remove(selected);
+					return true;
+				}
+
+				remainingCells.RemoveAt(index);
+			}
+
+			return false;
+		}
+
+		private bool SolvePass(int row, int column) => this.SolveNakedSingle(row, column);
 	}
 }
