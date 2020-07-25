@@ -8,4 +8,10 @@
     <DocumentationFile>D:\Documents\Work\Third Year\Honours Stage Project\NewSudoku\Sudoku\Sudoku.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="SystemExtensions">
+      <HintPath>SystemExtensions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
