@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 [assembly: InternalsVisibleTo("Sudoku.UI.Test")]
@@ -34,7 +37,7 @@ namespace Sudoku.UI
 
 			else
 			{
-				if (Program.WriteToFile(sudoku, outfile))
+				if (Program.WriteToFile(sudoku.ToString(), outfile))
 				{
 					Console.WriteLine($"Generated sudoku written to {outfile}");
 				}
@@ -273,16 +276,71 @@ namespace Sudoku.UI
 				return Program.FileNotFoundError;
 			}
 
-			throw new NotImplementedException();
+			Sudoku sudoku;
+
+			try
+			{
+				sudoku = Sudoku.Parse(text);
+			}
+
+			catch (FormatException)
+			{
+				Console.WriteLine(Program.FileFormatIncorrectErrorMessage);
+				return Program.FileFormatIncorrectError;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("Sudoku from file, unsolved:");
+			sb.AppendLine(sudoku.ToString());
+			sb.AppendLine();
+			Stopwatch stopwatch = new Stopwatch();
+			SudokuSolver solver = new SudokuSolver(sudoku);
+			stopwatch.Start();
+			IEnumerable<SudokuMove> moves = solver.Solve();
+			stopwatch.Stop();
+			double time = stopwatch.ElapsedMilliseconds;
+			int count = 0;
+			sb.AppendLine("Solved sudoku:");
+			sb.AppendLine(sudoku.ToString());
+			sb.AppendLine();
+			sb.AppendLine(String.Join('\t', '#', "Row", "Column", "Number", "Pattern", "Possible"));
+
+			foreach (SudokuMove move in moves)
+			{
+				sb.AppendLine(String.Join('\t', ++ count, move));
+			}
+
+			sb.AppendLine($"Solved puzzle using {count} moves in {time}ms");
+			String output = sb.ToString();
+
+			if (outfile is null)
+			{
+				Console.WriteLine(output);
+			}
+
+			else
+			{
+				if (Program.WriteToFile(output, outfile))
+				{
+					Console.WriteLine($"Solved puzzle using {count} moves in {time}ms");
+					Console.WriteLine($"Moves used to solve sudoku written to {outfile}");
+				}
+
+				else
+				{
+					Console.WriteLine(Program.FileOutputErrorMessage);
+					return Program.FileOutputError;
+				}
+			}
 
 			return 0;
 		}
 
-		private static bool WriteToFile(Sudoku sudoku, String filename)
+		private static bool WriteToFile(String s, String filename)
 		{
 			try
 			{
-				File.WriteAllText(filename, sudoku.ToString());
+				File.WriteAllText(filename, s);
 				return true;
 			}
 
