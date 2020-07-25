@@ -64,19 +64,16 @@ namespace Sudoku.UI
 				case Program.PrintCommand:
 					return Program.Print(filename);
 				case Program.SolveCommand:
-					Program.Solve(filename, outfile);
-					break;
+					return Program.Solve(filename, outfile);
 				default:
 					Console.WriteLine(Program.UsageMessage);
 					return Program.UsageMessageWarning;
 			}
-
-			return 0;
 		}
 
 		private static int Print(String filename)
 		{
-			String text = null;
+			String text;
 
 			try
 			{
@@ -261,9 +258,24 @@ namespace Sudoku.UI
 			return true;
 		}
 
-		private static void Solve(String filename, String outfile)
+		private static int Solve(String filename, String outfile)
 		{
-			//throw new NotImplementedException();
+			String text;
+
+			try
+			{
+				text = File.ReadAllText(filename);
+			}
+
+			catch
+			{
+				Console.WriteLine(Program.FileNotFoundErrorMessage);
+				return Program.FileNotFoundError;
+			}
+
+			throw new NotImplementedException();
+
+			return 0;
 		}
 
 		private static bool WriteToFile(Sudoku sudoku, String filename)
