@@ -339,5 +339,7 @@ namespace Sudoku
 
 			return false;
 		}
+
+		public static bool VerifySize(int size) => size > 0 && MathExtensions.IsSquare((ulong) size);
 	}
 }
