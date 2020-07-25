@@ -148,7 +148,8 @@ namespace Sudoku.UI
 							return false;
 						}
 
-						String param = Regex.Replace(args[i + 1].ToLower(), @"\s+", "");
+						//String param = Regex.Replace(args[i + 1].ToLower(), @"\s+", "");
+						String param = args[i + 1];
 
 						switch (arg[1])
 						{
