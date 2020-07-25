@@ -348,7 +348,6 @@ namespace Sudoku
 				throw new ArgumentNullException(nameof (s));
 			}
 
-			s = s.Replace(' ', '0');
 			s = Regex.Replace(s, @"[^0-9]", "");
 			int size = (int) Math.Sqrt(s.Length);
 
