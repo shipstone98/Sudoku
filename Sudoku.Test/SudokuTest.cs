@@ -46,6 +46,9 @@ namespace Sudoku.Test
 				SudokuTest.Difficulty = SudokuTest.DefaultDifficulty;
 				SudokuTest.Size = SudokuTest.DefaultSize;
 			}
+
+			Assert.AreNotEqual(SudokuTest.Difficulty, SudokuDifficulty.None, "Difficulty must not be None");
+			Assert.IsTrue(Sudoku.VerifySize(SudokuTest.Size), "Size must be a positive, square integer");
 		}
 
 		public SudokuTest()
