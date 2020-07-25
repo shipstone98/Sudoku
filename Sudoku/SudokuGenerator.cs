@@ -15,47 +15,8 @@ namespace Sudoku
 			}
 
 			Sudoku sudoku = new Sudoku(size, difficulty);
-			SudokuGenerator.FillNumbers(sudoku, 0, 0);
+			SudokuSolver.RecursiveSolve(sudoku);
 			return sudoku;
-		}
-
-		private static bool FillNumbers(Sudoku sudoku, int row, int column)
-		{
-			if (sudoku[row, column] != 0)
-			{
-				return SudokuGenerator.FillNextNumber(sudoku, row, column);
-			}
-
-			List<int> possible = new List<int>(sudoku.GetPossible(row, column));
-			SudokuGenerator.ShuffleNumbers(possible);
-
-			while (possible.Count != 0)
-			{
-				sudoku[row, column] = possible[0];
-
-				if (SudokuGenerator.FillNextNumber(sudoku, row, column))
-				{
-					return true;
-				}
-
-				possible.RemoveAt(0);
-			}
-
-			sudoku[row, column] = 0;
-			return false;
-		}
-
-		private static bool FillNextNumber(Sudoku sudoku, int row, int column)
-		{
-			int nextColumn = column + 1, nextRow = row;
-
-			if (nextColumn == sudoku.Size)
-			{
-				nextRow++;
-				nextColumn = 0;
-			}
-
-			return nextRow == sudoku.Size || SudokuGenerator.FillNumbers(sudoku, nextRow, nextColumn);
 		}
 
 		public static Sudoku Generate(int size, SudokuDifficulty difficulty)
