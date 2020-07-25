@@ -51,10 +51,13 @@ namespace Sudoku
 					throw new SudokuCellReadOnlyException(row, column);
 				}
 
+				int oldValue = this.Cells[row, column].Number;
+				this.Cells[row, column].Number = value;
+
 				//If newValue 0, add the currentValue to all possible cells in row, column and block
 				if (value == 0)
 				{
-					this.AddAllPossible(row, column, this.Cells[row, column].Number);
+					this.AddAllPossible(row, column, oldValue);
 				}
 
 				//Else if currentValue is 0, remove the newValue from all possible cells
@@ -66,11 +69,10 @@ namespace Sudoku
 				//Else, add the currentValue and remove the newValue from all possible cells
 				else
 				{
-					this.AddAllPossible(row, column, this.Cells[row, column].Number);
+					this.AddAllPossible(row, column, oldValue);
 					this.RemoveAllPossible(row, column, value);
 				}
 
-				this.Cells[row, column].Number = value;
 			}
 		}
 
@@ -134,7 +136,7 @@ namespace Sudoku
 			return true;
 		}
 
-		internal void AddPossible(int row, int column, int number, bool addToRow, bool addToColumn, bool addToBlock) => this.ModifyPossible(row, column, number, addToRow, addToColumn, addToBlock, true);
+		internal void AddPossible(int row, int column, int number, bool addToRow, bool addToColumn, bool addToBlock) => this.ModifyPossible(row, column, number, addToRow, addToColumn, addToBlock, false);
 
 		internal bool BlockContains(int row, int column, int number, bool ignoreCell = false)
 		{
