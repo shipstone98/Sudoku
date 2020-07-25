@@ -11,7 +11,7 @@ namespace Sudoku
 		{
 			if (difficulty == SudokuDifficulty.None)
 			{
-				throw new ArgumentException(nameof (difficulty));
+				throw new ArgumentException(nameof(difficulty));
 			}
 
 			Sudoku sudoku = new Sudoku(size, difficulty);
@@ -21,21 +21,19 @@ namespace Sudoku
 
 		private static bool FillNumbers(Sudoku sudoku, int row, int column)
 		{
+			if (sudoku[row, column] != 0)
+			{
+				return SudokuGenerator.FillNextNumber(sudoku, row, column);
+			}
+
 			List<int> possible = new List<int>(sudoku.GetPossible(row, column));
 			SudokuGenerator.ShuffleNumbers(possible);
 
 			while (possible.Count != 0)
 			{
 				sudoku[row, column] = possible[0];
-				int nextColumn = column + 1, nextRow = row;
 
-				if (nextColumn == sudoku.Size)
-				{
-					nextRow ++;
-					nextColumn = 0;
-				}
-
-				if (nextRow == sudoku.Size || SudokuGenerator.FillNumbers(sudoku, nextRow, nextColumn))
+				if (SudokuGenerator.FillNextNumber(sudoku, row, column))
 				{
 					return true;
 				}
@@ -45,6 +43,19 @@ namespace Sudoku
 
 			sudoku[row, column] = 0;
 			return false;
+		}
+
+		private static bool FillNextNumber(Sudoku sudoku, int row, int column)
+		{
+			int nextColumn = column + 1, nextRow = row;
+
+			if (nextColumn == sudoku.Size)
+			{
+				nextRow++;
+				nextColumn = 0;
+			}
+
+			return nextRow == sudoku.Size || SudokuGenerator.FillNumbers(sudoku, nextRow, nextColumn);
 		}
 
 		public static Sudoku Generate(int size, SudokuDifficulty difficulty)
@@ -58,15 +69,15 @@ namespace Sudoku
 		{
 			if (sudoku is null)
 			{
-				throw new NotImplementedException(nameof (sudoku));
+				throw new NotImplementedException(nameof(sudoku));
 			}
 
 			throw new NotImplementedException();
 		}
 
-		private static void ShuffleNumbers<T>(List<T> array)
+		internal static void ShuffleNumbers<T>(List<T> array)
 		{
-			for (int i = 0; i < array.Count - 1; i ++)
+			for (int i = 0; i < array.Count - 1; i++)
 			{
 				int j = SudokuGenerator.Random.Next(i, array.Count);
 				T temp = array[j];
