@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -7,12 +8,16 @@ namespace Sudoku.UI
 {
 	public static class Program
 	{
+		internal const int FileFormatIncorrectError = -2;
+		internal const int FileNotFoundError = -1;
 		internal const int UsageMessageWarning = 1;
 
 		private const int GenerateCommand = 1;
 		private const int PrintCommand = 2;
 		private const int SolveCommand = 3;
 
+		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
+		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
 		private const String UsageMessage = "Usage: sudoku command [options]\n\nOptions\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t-SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
 
 		private static void Generate(int size, SudokuDifficulty difficulty, String outfile)
@@ -34,7 +39,7 @@ namespace Sudoku.UI
 					Program.Generate(size, difficulty, outfile);
 					break;
 				case Program.PrintCommand:
-					Program.Print(filename);
+					return Program.Print(filename);
 					break;
 				case Program.SolveCommand:
 					Program.Solve(filename, outfile);
@@ -47,9 +52,32 @@ namespace Sudoku.UI
 			return 0;
 		}
 
-		private static void Print(String filename)
+		private static int Print(String filename)
 		{
-			//throw new NotImplementedException();
+			String text = null;
+
+			try
+			{
+				text = File.ReadAllText(filename);
+			}
+
+			catch
+			{
+				Console.WriteLine(Program.FileNotFoundErrorMessage);
+				return Program.FileNotFoundError;
+			}
+
+			try
+			{
+				Console.WriteLine(Sudoku.Parse(text));
+				return 0;
+			}
+
+			catch (FormatException)
+			{
+				Console.WriteLine(Program.FileFormatIncorrectErrorMessage);
+				return Program.FileFormatIncorrectError;
+			}
 		}
 
 		private static bool ParseArguments(String[] args, out int command, out int size, out SudokuDifficulty difficulty, out String filename, out String outfile)

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
+using System.Text;
+using System.Text.RegularExpressions;
 using SystemExtensions;
 
 [assembly: InternalsVisibleTo("Sudoku.Test")]
@@ -338,6 +339,68 @@ namespace Sudoku
 			}
 
 			return false;
+		}
+
+		public static Sudoku Parse(String s, SudokuDifficulty difficulty = SudokuDifficulty.None)
+		{
+			if (s is null)
+			{
+				throw new ArgumentNullException(nameof (s));
+			}
+
+			s = s.Replace(' ', '0');
+			s = Regex.Replace(s, @"[^0-9]", "");
+			int size = (int) Math.Sqrt(s.Length);
+
+			if (!Sudoku.VerifySize(size))
+			{
+				throw new FormatException();
+			}
+
+			Sudoku sudoku = new Sudoku(size, difficulty);
+
+			for (int i = 0; i < size; i ++)
+			{
+				int currentRow = i * size;
+
+				for (int j = 0; j < size; j ++)
+				{
+					sudoku[i, j] = s[currentRow + j] - '0';
+				}
+			}
+
+			return sudoku;
+		}
+
+		public override String ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			int length = this.Size * 2 + this.SizeSqrt * 2 + 1;
+			String line = new String('-', length);
+
+			for (int i = 0; i < this.Size; i ++)
+			{
+				if (i % this.SizeSqrt == 0)
+				{
+					sb.AppendLine(line);
+				}
+
+				for (int j = 0; j < this.Size; j ++)
+				{
+					if (j % this.SizeSqrt == 0)
+					{
+						sb.Append("| ");
+					}
+
+					int number = this.Cells[i, j].Number;
+					sb.Append(number == 0 ? "  " : number + " ");
+				}
+
+				sb.AppendLine("|");
+			}
+
+			sb.Append(line);
+			return sb.ToString();
 		}
 
 		public static bool VerifySize(int size) => size > 0 && MathExtensions.IsSquare((ulong) size);
