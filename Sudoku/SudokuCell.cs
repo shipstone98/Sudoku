@@ -2,7 +2,7 @@
 
 namespace Sudoku
 {
-	internal class SudokuCell
+	internal class SudokuCell: ICloneable
 	{
 		private int _Number;
 		private int _Solution;
@@ -56,6 +56,13 @@ namespace Sudoku
 			this._Number = this._Solution = 0;
 			this.ReadOnly = false;
 		}
+
+		public Object Clone() => new SudokuCell
+		{
+			_Number = _Number,
+			_Solution = _Solution,
+			ReadOnly = ReadOnly
+		};
 
 		internal void MakeReadOnly() => this.ReadOnly = true;
 	}

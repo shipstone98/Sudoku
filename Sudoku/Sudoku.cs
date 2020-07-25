@@ -207,7 +207,22 @@ namespace Sudoku
 			return this.Possible[row, column].Contains(number);
 		}
 
-		public Object Clone() => throw new NotImplementedException();
+		public Object Clone()
+		{
+			Sudoku clone = new Sudoku(this.Size, this.Difficulty);
+
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j];
+					clone.Possible[i, j] = new List<int>(this.Possible[i, j]);
+				}
+			}
+
+			return clone;
+		}
+
 		public override bool Equals(Object obj) => throw new NotImplementedException();
 		public bool Equals(Sudoku sudoku) => throw new NotImplementedException();
 		public override int GetHashCode() => throw new NotImplementedException();
