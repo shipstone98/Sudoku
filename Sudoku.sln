@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku", "Sudoku\Sudoku.csproj", "{28E92439-A4DD-4009-B005-ACAC8DBE9970}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku", "Sudoku\Sudoku.csproj", "{28E92439-A4DD-4009-B005-ACAC8DBE9970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.Test", "Sudoku.Test\Sudoku.Test.csproj", "{88263286-2F53-44D7-9007-D169D841B0A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku.Test", "Sudoku.Test\Sudoku.Test.csproj", "{88263286-2F53-44D7-9007-D169D841B0A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.UI", "Sudoku.UI\Sudoku.UI.csproj", "{13A31567-517A-4773-A4CD-BEC4A0199A89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.UI.Test", "Sudoku.UI.Test\Sudoku.UI.Test.csproj", "{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,30 @@ Global
 		{88263286-2F53-44D7-9007-D169D841B0A4}.Release|x64.Build.0 = Release|Any CPU
 		{88263286-2F53-44D7-9007-D169D841B0A4}.Release|x86.ActiveCfg = Release|Any CPU
 		{88263286-2F53-44D7-9007-D169D841B0A4}.Release|x86.Build.0 = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|x64.Build.0 = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Debug|x86.Build.0 = Debug|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|x64.ActiveCfg = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|x64.Build.0 = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|x86.ActiveCfg = Release|Any CPU
+		{13A31567-517A-4773-A4CD-BEC4A0199A89}.Release|x86.Build.0 = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|x64.Build.0 = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
