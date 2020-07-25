@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Documents\Work\Third Year\Honours Stage Project\NewSudoku\Sudoku\Sudoku.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>
