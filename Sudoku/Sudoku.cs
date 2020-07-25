@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,8 +16,6 @@ namespace Sudoku
 		private SudokuCell[,] Cells { get; }
 
 		public SudokuDifficulty Difficulty { get; }
-
-		private List<int>[,] Possible { get; }
 
 		/// <summary>
 		/// Gets the total number of elements in each row or column of the <see cref="Sudoku"/> puzzle.
@@ -98,7 +96,6 @@ namespace Sudoku
 
 			this.Cells = new SudokuCell[size, size];
 			this.Difficulty = difficulty;
-			this.Possible = new List<int>[size, size];
 			int[] numbers = new int[size];
 
 			for (int i = 0; i < size; i ++)
@@ -111,7 +108,11 @@ namespace Sudoku
 				for (int j = 0; j < size; j ++)
 				{
 					this.Cells[i, j] = new SudokuCell();
-					this.Possible[i, j] = new List<int>(numbers);
+
+					foreach (int number in numbers)
+					{
+						this.Cells[i, j].AddPossible(number);
+					}
 				}
 			}
 
@@ -129,11 +130,7 @@ namespace Sudoku
 				return false;
 			}
 
-			if (!this.Possible[row, column].Contains(number))
-			{
-				this.Possible[row, column].Add(number);
-			}
-
+			this.Cells[row, column].AddPossible(number);
 			return true;
 		}
 
@@ -204,7 +201,7 @@ namespace Sudoku
 			this.Check(row, nameof (row));
 			this.Check(column, nameof (column));
 			this.Check(number, nameof (number), true);
-			return this.Possible[row, column].Contains(number);
+			return this.Cells[row, column].Possible.Contains(number);
 		}
 
 		public Object Clone()
@@ -216,7 +213,6 @@ namespace Sudoku
 				for (int j = 0; j < this.Size; j ++)
 				{
 					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j];
-					clone.Possible[i, j] = new List<int>(this.Possible[i, j]);
 				}
 			}
 
@@ -226,13 +222,7 @@ namespace Sudoku
 		public override bool Equals(Object obj) => throw new NotImplementedException();
 		public bool Equals(Sudoku sudoku) => throw new NotImplementedException();
 		public override int GetHashCode() => throw new NotImplementedException();
-
-		internal int[] GetPossible(int row, int column)
-		{
-			this.Check(row, nameof (row));
-			this.Check(column, nameof (column));
-			return this.Possible[row, column].ToArray();
-		}
+		internal int[] GetPossible(int row, int column) => this.Cells[row, column].Possible;
 
 		internal void GetStartRowColumn(int row, int column, out int startRow, out int startColumn)
 		{
@@ -334,7 +324,7 @@ namespace Sudoku
 		}
 
 		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
-		internal bool RemovePossible(int row, int column, int number) => this.Possible[row, column].Remove(number);
+		internal bool RemovePossible(int row, int column, int number) => this.Cells[row, column].RemovePossible(number);
 		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);
 		internal bool RowContains(int row, int number) => this.RowContains(row, 0, number);
 
