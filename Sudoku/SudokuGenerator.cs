@@ -22,7 +22,7 @@ namespace Sudoku
 		public static Sudoku Generate(int size, SudokuDifficulty difficulty)
 		{
 			Sudoku sudoku = SudokuGenerator.AddNumbers(size, difficulty);
-			SudokuGenerator.RemoveNumbers(sudoku);
+			//SudokuGenerator.RemoveNumbers(sudoku);
 			return sudoku;
 		}
 
