@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Sudoku.Test
@@ -9,12 +10,43 @@ namespace Sudoku.Test
 	[TestClass]
 	public class SudokuTest
 	{
-		public const SudokuDifficulty Difficulty = SudokuDifficulty.Easy;
-		public const int Size = 9;
+		public const SudokuDifficulty DefaultDifficulty = SudokuDifficulty.Easy;
+		public const int DefaultSize = 9;
+		private const char SeparatorChar = '=';
+
+		public static SudokuDifficulty Difficulty { get; private set; }
+		public static int Size { get; private set; }
 
 		private int[] Possible { get; }
 		private Random Random { get; }
 		private Sudoku Sudoku { get; set; }
+
+		static SudokuTest()
+		{
+			try
+			{
+				if (File.Exists("vars.txt"))
+				{
+					SudokuTest.ParseFile("vars.txt");
+				}
+
+				else if (File.Exists("Variables.txt"))
+				{
+					SudokuTest.ParseFile("Variables.txt");
+				}
+
+				else
+				{
+					throw new Exception();
+				}
+			}
+
+			catch
+			{
+				SudokuTest.Difficulty = SudokuTest.DefaultDifficulty;
+				SudokuTest.Size = SudokuTest.DefaultSize;
+			}
+		}
 
 		public SudokuTest()
 		{
@@ -48,6 +80,69 @@ namespace Sudoku.Test
 			}
 
 			return true;
+		}
+
+		private static void ParseFile(String name)
+		{
+			String[] lines = File.ReadAllLines(name);
+
+			foreach (String line in lines)
+			{
+				String formattedLine = line.ToLower();
+				formattedLine = Regex.Replace(formattedLine, @"\s+", "");
+
+				if (formattedLine.Count(c => c == SudokuTest.SeparatorChar) != 1)
+				{
+					continue;
+				}
+
+				int index = formattedLine.IndexOf(SudokuTest.SeparatorChar);
+				String key = formattedLine.Substring(0, index);
+				String value = formattedLine.Substring(index + 1);
+
+				switch (key)
+				{
+					case "d":
+					case "diff":
+					case "difficulty":
+						try
+						{
+							SudokuTest.Difficulty = (SudokuDifficulty) Enum.Parse(typeof (SudokuDifficulty), value, true);
+						}
+
+						catch
+						{
+							try
+							{
+								uint parsedValue = UInt32.Parse(value);
+								SudokuTest.Difficulty = (SudokuDifficulty) parsedValue;
+							}
+
+							catch
+							{
+								continue;
+							}
+						}
+
+						break;
+
+					case "s":
+					case "size":
+						try
+						{
+							SudokuTest.Size = Int32.Parse(value);
+							break;
+						}
+
+						catch
+						{
+							continue;
+						}
+
+					default:
+						continue;
+				}
+			}
 		}
 
 		private int Generate(bool includeUpperLimit = false) => includeUpperLimit ? this.Random.Next(SudokuTest.Size + 1) : this.Random.Next(SudokuTest.Size);

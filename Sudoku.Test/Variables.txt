@@ -1,0 +1,2 @@
+SIZE=9
+DIFFICULTY=Easy
