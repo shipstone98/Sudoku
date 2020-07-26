@@ -28,12 +28,12 @@ namespace Sudoku
 
 			for (int i = 0; i < rows.Length; i ++)
 			{
-				rows[i] ++;
+				rows[i] = this._RowsAfffected[i] + 1;
 			}
 
 			for (int i = 0; i < columns.Length; i ++)
 			{
-				columns[i] ++;
+				columns[i] = this._ColumnsAffected[i] + 1;
 			}
 
 			return String.Join("\t", this.ToString(patternNamePadding, true), String.Join(",", rows).PadRight(patternNamePadding), String.Join(",", columns).PadRight(patternNamePadding), String.Join(",", this._NumbersAffected).PadRight(patternNamePadding));
