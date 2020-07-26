@@ -14,7 +14,10 @@ namespace Sudoku
 				throw new NotImplementedException(nameof (sudoku));
 			}
 
+			sudoku.DisablePossible = true;
 			SudokuSolver.RecursiveSolve(sudoku);
+			sudoku.DisablePossible = false;
+			sudoku.ResetPossible();
 		}
 
 		public static Sudoku AddNumbers(int size, SudokuDifficulty difficulty)

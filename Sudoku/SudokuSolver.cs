@@ -51,7 +51,10 @@ namespace Sudoku
 			}
 
 			int count = 0;
+			sudoku.DisablePossible = true;
 			SudokuSolver.RecursiveSolve(sudoku, 0, 0, ref count);
+			sudoku.DisablePossible = false;
+			sudoku.ResetPossible();
 		}
 
 		private static bool RecursiveSolve(Sudoku sudoku, int row, int column, ref int count, bool findMultiple = false)
@@ -61,16 +64,29 @@ namespace Sudoku
 				return SudokuSolver.RecursiveSolveNextNumber(sudoku, row, column, ref count, findMultiple);
 			}
 
-			List<int> possible = new List<int>(sudoku.GetPossible(row, column));
+			List<int> possible = new List<int>();
+
+			for (int i = 1; i <= sudoku.Size; i ++)
+			{
+				if (!(sudoku.RowContains(row, i) || sudoku.ColumnContains(column, i) || sudoku.BlockContains(row, column, i)))
+				{
+					possible.Add(i);
+				}
+			}
+
 			SudokuGenerator.ShuffleNumbers(possible);
 
-			while (possible.Count != 0)
+			while (possible.Count > 0)
 			{
 				sudoku[row, column] = possible[0];
+				bool solvable = SudokuSolver.RecursiveSolveNextNumber(sudoku, row, column, ref count, findMultiple);
 
-				if (SudokuSolver.RecursiveSolveNextNumber(sudoku, row, column, ref count, findMultiple))
+				if (solvable)
 				{
-					return true;
+					if (!findMultiple || count > 1)
+					{
+						return true;
+					}
 				}
 
 				possible.RemoveAt(0);
@@ -86,11 +102,17 @@ namespace Sudoku
 
 			if (nextColumn == sudoku.Size)
 			{
-				nextRow++;
+				nextRow ++;
 				nextColumn = 0;
 			}
 
-			return nextRow == sudoku.Size || SudokuSolver.RecursiveSolve(sudoku, nextRow, nextColumn, ref count, findMultiple);
+			if (nextRow == sudoku.Size)
+			{
+				count ++;
+				return true;
+			}
+
+			return SudokuSolver.RecursiveSolve(sudoku, nextRow, nextColumn, ref count, findMultiple);
 		}
 
 		public IEnumerable<SudokuMove> Solve()
