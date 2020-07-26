@@ -212,7 +212,7 @@ namespace Sudoku
 			{
 				for (int j = 0; j < this.Size; j ++)
 				{
-					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j];
+					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j].Clone();
 				}
 			}
 
