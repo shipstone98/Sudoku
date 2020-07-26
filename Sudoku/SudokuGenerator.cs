@@ -7,6 +7,16 @@ namespace Sudoku
 	{
 		private static readonly Random Random = new Random();
 
+		public static void AddNumbers(Sudoku sudoku)
+		{
+			if (sudoku is null)
+			{
+				throw new NotImplementedException(nameof (sudoku));
+			}
+			
+			SudokuSolver.RecursiveSolve(sudoku);
+		}
+
 		public static Sudoku AddNumbers(int size, SudokuDifficulty difficulty)
 		{
 			if (difficulty == SudokuDifficulty.None)
