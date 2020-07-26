@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="copy &quot;$(SolutionDir)Sudoku.UI\Sudoku.txt&quot; &quot;$(ProjectDir)$(OutDir)Sudoku.txt&quot;" />
+    <Exec Command="del &quot;$(ProjectDir)$(OutDir)Sudoku.txt&quot; &amp;&amp; copy &quot;$(SolutionDir)Sudoku.UI\Sudoku.txt&quot; &quot;$(ProjectDir)$(OutDir)Sudoku.txt&quot;" />
   </Target>
 
 </Project>
