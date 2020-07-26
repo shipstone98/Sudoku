@@ -47,5 +47,6 @@ namespace Sudoku
 
 		internal void MakeReadOnly() => this.ReadOnly = true;
 		internal bool RemovePossible(int number) => this._Possible.Remove(number);
+		internal void ResetPossible() => this._Possible.Clear();
 	}
 }
