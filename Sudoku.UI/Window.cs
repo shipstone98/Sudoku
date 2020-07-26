@@ -144,6 +144,10 @@ namespace Sudoku.UI
 					case ConsoleKey.Backspace:
 						this.EnterNumber(0);
 						break;
+
+					case ConsoleKey.Spacebar:
+						SudokuSolver.RecursiveSolve(this.Sudoku);
+						break;
 				}
 			}
 
