@@ -13,22 +13,22 @@ namespace Sudoku
 		public const String DefaultMessage = "An attempt was made to modify the value of a read-only Sudoku puzzle cell.";
 
 		/// <summary>
-		/// Represents an unspecified column in a <see cref="Sudoku"/> puzzle.
+		/// Represents a zero-based unspecified column in a <see cref="Sudoku"/> puzzle.
 		/// </summary>
 		public const int UnspecifiedColumn = -1;
 
 		/// <summary>
-		/// Represents an unspecified row in a <see cref="Sudoku"/> puzzle.
+		/// Represents a zero-based unspecified row in a <see cref="Sudoku"/> puzzle.
 		/// </summary>
 		public const int UnspecifiedRow = -1;
 
 		/// <summary>
-		/// Gets the column of the <see cref="Sudoku"/> puzzle where the exception was thrown.
+		/// Gets the zero-based column of the <see cref="Sudoku"/> puzzle where the exception was thrown.
 		/// </summary>
 		public int Column { get; }
 
 		/// <summary>
-		/// Gets the row of the <see cref="Sudoku"/> puzzle where the exception was thrown.
+		/// Gets the zero-based row of the <see cref="Sudoku"/> puzzle where the exception was thrown.
 		/// </summary>
 		public int Row { get; }
 
@@ -51,7 +51,7 @@ namespace Sudoku
 		public SudokuCellReadOnlyException(String message, Exception inner) : this(message ?? SudokuCellReadOnlyException.DefaultMessage, inner, SudokuCellReadOnlyException.UnspecifiedRow, SudokuCellReadOnlyException.UnspecifiedColumn) { }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with specified row and column values.
+		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> values.
 		/// </summary>
 		/// <param name="row">The row of the <see cref="Sudoku"/> puzzle where the exception was thrown.</param>
 		/// <param name="column">The column of the <see cref="Sudoku"/> puzzle where the exception was thrown.</param>
@@ -62,7 +62,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with a specified error message and row and column values.
+		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with a specified error message and <c><paramref name="row"/></c> and <c><paramref name="column"/></c> values.
 		/// </summary>
 		/// <param name="message">The error message that explains the reason for the exception.</param>
 		/// <param name="row">The row of the <see cref="Sudoku"/> puzzle where the exception was thrown.</param>
@@ -74,7 +74,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with a specified error message, a reference to the inner exception that is the cause of this exception and row and column values.
+		/// Initializes a new instance of the <see cref="SudokuCellReadOnlyException"/> class with a specified error message, a reference to the inner exception that is the cause of this exception and <c><paramref name="row"/></c> and <c><paramref name="column"/></c> values.
 		/// </summary>
 		/// <param name="message">The error message that explains the reason for the exception.</param>
 		/// <param name="inner">The exception that is the cause of the current exception, or a null reference (<c>Nothing</c> in Visual Basic) if no inner exception is specified.</param>
