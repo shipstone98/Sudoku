@@ -4,6 +4,7 @@ namespace Sudoku
     {
         None,
         HiddenSingle,
-        NakedSingle
+        NakedSingle,
+        PointingCandidate
     }
 }

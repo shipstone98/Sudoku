@@ -22,6 +22,8 @@ namespace Sudoku
                         return "Hidden Single";
                     case SudokuPattern.NakedSingle:
                         return "Naked Single";
+                    case SudokuPattern.PointingCandidate:
+                        return "Pointing Candidate";
                     default:
                         return String.Empty;
                 }
@@ -71,6 +73,6 @@ namespace Sudoku
         }
 
         public override String ToString() => this.ToString(SudokuMove.DefaultPatternNamePadding);
-        public virtual String ToString(int patternNamePadding) => String.Join("\t", this.Row, this.Column, this.Number, this.PatternName.PadRight(patternNamePadding), String.Join<int>(",", this.Possible));
+        public virtual String ToString(int patternNamePadding, bool zeroSpace = false) => String.Join("\t", this.Row + 1, this.Column + 1, this.Number == 0 && zeroSpace ? " " : this.Number.ToString(), this.PatternName.PadRight(patternNamePadding), String.Join<int>(",", this.Possible).PadRight(patternNamePadding));
     }
 }
