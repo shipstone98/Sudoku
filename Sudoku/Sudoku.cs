@@ -219,9 +219,45 @@ namespace Sudoku
 			return clone;
 		}
 
-		public override bool Equals(Object obj) => throw new NotImplementedException();
-		public bool Equals(Sudoku sudoku) => throw new NotImplementedException();
-		public override int GetHashCode() => throw new NotImplementedException();
+		public override bool Equals(Object obj) => this.Equals(obj as Sudoku);
+
+		public bool Equals(Sudoku sudoku)
+		{
+			if (sudoku is null || this.Size != sudoku.Size)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					if (this.Cells[i, j].Number != sudoku.Cells[i, j].Number)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			const int RANDOM = 78459;
+			int hash = RANDOM * this.Difficulty.GetHashCode() * this.Size.GetHashCode();
+
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					hash *= this.Cells[i, j].GetHashCode();
+				}
+			}
+
+			return hash;
+		}
+
 		internal int[] GetPossible(int row, int column) => this.Cells[row, column].Possible;
 
 		internal void GetStartRowColumn(int row, int column, out int startRow, out int startColumn)
@@ -323,29 +359,6 @@ namespace Sudoku
 			}
 		}
 
-		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
-		internal bool RemovePossible(int row, int column, int number) => this.Cells[row, column].RemovePossible(number);
-		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);
-		internal bool RowContains(int row, int number) => this.RowContains(row, 0, number);
-
-		internal bool RowContains(int row, int column, int number, bool ignoreCell = false)
-		{
-			for (int i = 0; i < this.Size; i ++)
-			{
-				if (ignoreCell && column == i)
-				{
-					continue;
-				}
-
-				if (this.Cells[row, i].Number == number)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		public static Sudoku Parse(String s, SudokuDifficulty difficulty = SudokuDifficulty.None)
 		{
 			if (s is null)
@@ -374,6 +387,29 @@ namespace Sudoku
 			}
 
 			return sudoku;
+		}
+
+		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
+		internal bool RemovePossible(int row, int column, int number) => this.Cells[row, column].RemovePossible(number);
+		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);
+		internal bool RowContains(int row, int number) => this.RowContains(row, 0, number);
+
+		internal bool RowContains(int row, int column, int number, bool ignoreCell = false)
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				if (ignoreCell && column == i)
+				{
+					continue;
+				}
+
+				if (this.Cells[row, i].Number == number)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public override String ToString()
@@ -408,5 +444,8 @@ namespace Sudoku
 		}
 
 		public static bool VerifySize(int size) => size > 0 && MathExtensions.IsSquare((ulong) size);
+
+		public static bool operator ==(Sudoku a, Sudoku b) => a is null ? b is null : a.Equals(b);
+		public static bool operator !=(Sudoku a, Sudoku b) => !(a == b);
 	}
 }
