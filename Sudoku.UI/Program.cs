@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 [assembly: InternalsVisibleTo("Sudoku.UI.Test")]
 namespace Sudoku.UI
 {
-	public static class Program
+	internal static class Program
 	{
 		internal const int InputError = -4;
 		internal const int FileOutputError = -3;
@@ -28,7 +28,7 @@ namespace Sudoku.UI
 		private const String FileOutputErrorMessage = "ERROR: couldn't write to file";
 		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
 		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
-		private const String UsageMessage = "Usage: sudoku command [options]\n\nOptions\n\t- COMPARE: Compare two puzzles, must specify both filenames with -f and -o\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t- SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
+		private const String UsageMessage = "Usage: sudoku command [options]\n\nCommmands\n\t- COMPARE: Compare two puzzles, must specify both filenames with -f and -o\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t- SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
 
 		private static int Compare(String file1, String file2)
 		{
@@ -109,7 +109,7 @@ namespace Sudoku.UI
 			return 0;
 		}
 
-		public static int Main(String[] args)
+		internal static int Main(String[] args)
 		{
 			if (!Console.IsInputRedirected)
 			{
