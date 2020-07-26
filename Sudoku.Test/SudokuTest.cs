@@ -254,5 +254,22 @@ namespace Sudoku.Test
 				}
 			}
 		}
+
+		[TestMethod]
+		public void TestOperators()
+		{
+			SudokuGenerator.AddNumbers(this.Sudoku);
+			Sudoku clone = (Sudoku) this.Sudoku.Clone();
+			Assert.AreEqual(this.Sudoku, clone);
+			Assert.IsTrue(this.Sudoku.Equals(clone));
+			Assert.IsTrue(this.Sudoku == clone);
+			//int row = this.Generate(), column = this.Generate();
+			int row = 0, column = 0;
+			clone[row, column] = 0;
+			Assert.AreNotEqual(this.Sudoku, clone);
+			Assert.IsFalse(this.Sudoku.Equals(clone));
+			Assert.IsFalse(this.Sudoku == clone);
+			Assert.IsTrue(this.Sudoku != clone);
+		}
 	}
 }
