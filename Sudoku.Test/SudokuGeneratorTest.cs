@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Sudoku.Test
@@ -24,6 +21,18 @@ namespace Sudoku.Test
 					Assert.IsFalse(sudoku.BlockContains(i, j, number, true));
 				}
 			}
+		}
+
+		[TestMethod]
+		public void TestRemoveNumbers()
+		{
+			Sudoku sudoku = SudokuGenerator.AddNumbers(SudokuTest.Size, SudokuTest.Difficulty);
+			Console.WriteLine(sudoku);
+			Sudoku original = (Sudoku) sudoku.Clone();
+			SudokuGenerator.RemoveNumbers(sudoku);
+			Console.WriteLine(sudoku);
+			SudokuSolver.RecursiveSolve(sudoku);
+			Assert.AreEqual(original, sudoku);
 		}
 	}
 }
