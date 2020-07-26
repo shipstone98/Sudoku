@@ -54,6 +54,25 @@ namespace Sudoku
 
 		internal bool DisablePossible { get; set; }
 
+		public bool IsComplete
+		{
+			get
+			{
+				foreach (IEnumerable<int> row in this)
+				{
+					foreach (int cell in row)
+					{
+						if (cell == 0)
+						{
+							return false;
+						}
+					}
+				}
+
+				return true;
+			}
+		}
+
 		public IEnumerable<IEnumerable<int>> Rows
 		{
 			get
