@@ -17,6 +17,7 @@ namespace Sudoku.UI
 
 		internal const int UsageMessageWarning = 1;
 
+		private const int CompareCommand = 0;
 		private const int GenerateCommand = 1;
 		private const int PrintCommand = 2;
 		private const int SolveCommand = 3;
@@ -24,8 +25,48 @@ namespace Sudoku.UI
 		private const String FileOutputErrorMessage = "ERROR: couldn't write to file";
 		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
 		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
-		private const String UsageMessage = "Usage: sudoku command [options]\n\nOptions\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t-SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
+		private const String UsageMessage = "Usage: sudoku command [options]\n\nOptions\n\t- COMPARE: Compare two puzzles, must specify both filenames with -f and -o\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t-SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
 
+		private static int Compare(String file1, String file2)
+		{
+			String text1, text2;
+
+			try
+			{
+				text1 = File.ReadAllText(file1);
+				text2 = File.ReadAllText(file2);
+			}
+
+			catch
+			{
+				Console.WriteLine(Program.FileNotFoundErrorMessage);
+				return Program.FileNotFoundError;
+			}
+
+			Sudoku a, b;
+			
+			try
+			{
+				a = Sudoku.Parse(text1);
+				b = Sudoku.Parse(text2);
+			}
+
+			catch (FormatException)
+			{
+				Console.WriteLine(Program.FileFormatIncorrectErrorMessage);
+				return Program.FileFormatIncorrectError;
+			}
+
+			Console.WriteLine("Sudoku puzzle A:");
+			Console.WriteLine(a);
+			Console.WriteLine();
+			Console.WriteLine("Sudoku puzzle B:");
+			Console.WriteLine(b);
+			Console.WriteLine();
+			Console.WriteLine(a == b ? "The two puzzles are equal." : "The two puzzles are NOT equal.");
+			return 0;
+		}
+		
 		private static int Generate(int size, SudokuDifficulty difficulty, String outfile)
 		{
 			Sudoku sudoku = SudokuGenerator.Generate(size, difficulty);
@@ -62,6 +103,8 @@ namespace Sudoku.UI
 
 			switch (command)
 			{
+				case Program.CompareCommand:
+					return Program.Compare(filename, outfile);
 				case Program.GenerateCommand:
 					return Program.Generate(size, difficulty, outfile);
 				case Program.PrintCommand:
@@ -112,6 +155,12 @@ namespace Sudoku.UI
 			{
 				switch (args[0].ToLower())
 				{
+					case "c":
+					case "comp":
+					case "compare":
+						command = Program.CompareCommand;
+						break;
+
 					case "g":
 					case "gen":
 					case "generate":
@@ -230,6 +279,14 @@ namespace Sudoku.UI
 
 			switch (command)
 			{
+				case Program.CompareCommand:
+					if (String.IsNullOrWhiteSpace(filename) || String.IsNullOrWhiteSpace(outfile))
+					{
+						return false;
+					}
+
+					break;
+
 				case Program.GenerateCommand:
 					if (!Sudoku.VerifySize(size) || difficulty == SudokuDifficulty.None)
 					{
