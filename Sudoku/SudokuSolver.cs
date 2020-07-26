@@ -8,6 +8,7 @@ namespace Sudoku
 	{
 		private List<Tuple<int, int>> EmptyCells { get; }
 		private List<SudokuMove> Moves { get; }
+		private List<Tuple<int, int, int>> PointingCandidates { get; }
 		private Random Random { get; }
 		public bool Solved { get; private set; }
 		public Sudoku Sudoku { get; }
@@ -16,6 +17,7 @@ namespace Sudoku
 		{
 			this.EmptyCells = new List<Tuple<int, int>>();
 			this.Moves = new List<SudokuMove>();
+			this.PointingCandidates = new List<Tuple<int, int, int>>();
 			this.Random = new Random();
 			this.Solved = false;
 			this.Sudoku = sudoku ?? throw new ArgumentNullException(nameof (sudoku));
@@ -109,6 +111,11 @@ namespace Sudoku
 
 		private bool SolveHiddenSingle(int row, int column)
 		{
+			if (row == 0 && column == 6)
+			{
+				int x = 3;
+			}
+
 			int[] possible = this.Sudoku.GetPossible(row, column);
 			
 			foreach (int number in possible)
@@ -136,12 +143,12 @@ namespace Sudoku
 				{
 					int currentColumn = startColumn + j;
 
-					if (row == currentRow && column == currentColumn)
+					if (row == currentRow && column == currentColumn || this.Sudoku[currentRow, currentColumn] != 0)
 					{
 						continue;
 					}
 
-					if (this.Sudoku.GetPossible(row, column).Contains(number))
+					if (this.Sudoku.GetPossible(currentRow, currentColumn).Contains(number))
 					{
 						return false;
 					}
@@ -155,7 +162,7 @@ namespace Sudoku
 		{
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
-				if (i == row)
+				if (i == row || this.Sudoku[i, column] != 0)
 				{
 					continue;
 				}
@@ -173,7 +180,7 @@ namespace Sudoku
 		{
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
-				if (i == column)
+				if (i == column || this.Sudoku[row, i] != 0)
 				{
 					continue;
 				}
@@ -191,11 +198,113 @@ namespace Sudoku
 		{
 			int[] possible = this.Sudoku.GetPossible(row, column);
 
-			if (possible.Length == 1)
+			if (possible.Length == 1 && this.Sudoku[row, column] == 0)
 			{
 				this.Sudoku[row, column] = possible[0];
 				this.Moves.Add(new SudokuMove(row, column, possible[0], SudokuPattern.NakedSingle, possible));
 				return true;
+			}
+
+			return false;
+		}
+
+		private bool SolvePointingCandidate(int row, int column)
+		{
+			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
+			int[] possible = this.Sudoku.GetPossible(row, column);
+			List<int> rowsAffected = new List<int>(), columnsAffected = new List<int>();
+
+			foreach (int number in possible)
+			{
+				bool confinedToRow = true, confinedToColumn = true;
+				rowsAffected.Clear();
+				columnsAffected.Clear();
+
+				for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+				{
+					int currentRow = startRow + i;
+
+					for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+					{
+						int currentColumn = startColumn + j;
+
+						if (currentRow == row && currentColumn == column || this.Sudoku[currentRow, currentColumn] != 0 || this.PointingCandidates.Any(item => item.Item1 == currentRow && item.Item2 == currentColumn && item.Item3 == number))
+						{
+							continue;
+						}
+
+						if (this.Sudoku.GetPossible(currentRow, currentColumn).Contains(number))
+						{
+							if (row != currentRow)
+							{
+								confinedToRow = false;
+
+								if (!rowsAffected.Contains(currentRow))
+								{
+									rowsAffected.Add(currentRow);
+								}
+							}
+
+							if (column != currentColumn)
+							{
+								confinedToColumn = false;
+
+								if (!columnsAffected.Contains(currentColumn))
+								{
+									columnsAffected.Add(currentColumn);
+								}
+							}
+						}
+					}
+				}
+
+				if (confinedToRow && !confinedToColumn)
+				{
+					int[] columns = columnsAffected.ToArray();
+
+					foreach (int c in columns)
+					{
+						this.PointingCandidates.Add(new Tuple<int, int, int>(row, c, number));
+					}
+
+					for (int i = 0; i < this.Sudoku.Size; i ++)
+					{
+						if (i == startColumn)
+						{
+							i += this.Sudoku.SizeSqrt - 1;
+							continue;
+						}
+
+						this.Sudoku.RemovePossible(row, i, number);
+					}
+
+					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.PointingCandidate, possible, null, columns, null));
+					return true;
+				}
+
+				else if (!confinedToRow && confinedToColumn)
+				{
+					int[] rows = rowsAffected.ToArray();
+
+					foreach (int r in rows)
+					{
+						this.PointingCandidates.Add(new Tuple<int, int, int>(r, column, number));
+					}
+
+					for (int i = 0; i < this.Sudoku.Size; i ++)
+					{
+						if (i == startRow)
+						{
+							i += this.Sudoku.SizeSqrt - 1;
+							continue;
+						}
+
+						this.Sudoku.RemovePossible(i, column, number);
+					}
+
+					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.PointingCandidate, possible, rows, null, null));
+					return true;
+				}
 			}
 
 			return false;
@@ -222,6 +331,6 @@ namespace Sudoku
 			return false;
 		}
 
-		private bool SolvePass(int row, int column) => this.SolveNakedSingle(row, column) || this.SolveHiddenSingle(row, column);
+		private bool SolvePass(int row, int column) => this.SolveNakedSingle(row, column) || this.SolveHiddenSingle(row, column) || this.SolvePointingCandidate(row, column);
 	}
 }
