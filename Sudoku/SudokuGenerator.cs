@@ -13,7 +13,7 @@ namespace Sudoku
 			{
 				throw new NotImplementedException(nameof (sudoku));
 			}
-			
+
 			SudokuSolver.RecursiveSolve(sudoku);
 		}
 
@@ -25,7 +25,7 @@ namespace Sudoku
 			}
 
 			Sudoku sudoku = new Sudoku(size, difficulty);
-			SudokuSolver.RecursiveSolve(sudoku);
+			SudokuGenerator.AddNumbers(sudoku);
 			return sudoku;
 		}
 
