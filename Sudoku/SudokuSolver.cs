@@ -193,7 +193,7 @@ namespace Sudoku
 						}
 					}
 
-					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.ClaimingCandidate, possible, new int[] { row }, affected.ToArray(), null));
+					this.Moves.Add(new SudokuMove(new int[] { row }, affected.ToArray(), new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
 					return true;
 				}
 
@@ -230,7 +230,7 @@ namespace Sudoku
 						}
 					}
 
-					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.ClaimingCandidate, possible, affected.ToArray(), new int[] { column }, null));
+					this.Moves.Add(new SudokuMove(affected.ToArray(), new int[] { column }, new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
 					return true;
 				}
 			}
@@ -445,7 +445,7 @@ namespace Sudoku
 						this.Sudoku.RemovePossible(row, i, number);
 					}
 
-					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.PointingCandidate, possible, null, columns, null));
+					this.Moves.Add(new SudokuMove(new int[] { row }, columns, new int[] { number }, SudokuPattern.PointingCandidate, possible));
 					return true;
 				}
 
@@ -469,7 +469,7 @@ namespace Sudoku
 						this.Sudoku.RemovePossible(i, column, number);
 					}
 
-					this.Moves.Add(new SudokuPossibleMove(row, column, number, SudokuPattern.PointingCandidate, possible, rows, null, null));
+					this.Moves.Add(new SudokuMove(rows, new int[] { column }, new int[] { number }, SudokuPattern.PointingCandidate, possible));
 					return true;
 				}
 			}

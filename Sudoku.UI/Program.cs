@@ -396,10 +396,11 @@ namespace Sudoku.UI
 			double time = stopwatch.ElapsedMilliseconds;
 			int count = 0;
 			const int PADDING = 16;
+			const String SEPARATOR = "\t";
 			sb.AppendLine("Solved sudoku:");
 			sb.AppendLine(sudoku.ToString());
 			sb.AppendLine();
-			sb.AppendLine(String.Join('\t', '#', "Row", "Column", "Number", "Pattern".PadRight(PADDING), "Possible".PadRight(PADDING), "Rows Affected".PadRight(PADDING), "Columns Affected\t".PadRight(PADDING), "Numbers Affected".PadRight(PADDING)));
+			sb.AppendLine(String.Join(SEPARATOR, '#', "Row(s)".PadRight(PADDING), "Column(s)".PadRight(PADDING), "Number(s)".PadRight(PADDING), "Pattern".PadRight(PADDING), "Possible".PadRight(PADDING)));
 
 			foreach (SudokuMove move in moves)
 			{
