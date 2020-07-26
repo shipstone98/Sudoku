@@ -11,6 +11,9 @@ namespace Sudoku.UI
 {
 	internal static class Program
 	{
+		private const SudokuDifficulty DefaultDifficulty = SudokuDifficulty.Easy;
+		private const int DefaultSize = 9;
+
 		internal const int InputError = -4;
 		internal const int FileOutputError = -3;
 		internal const int FileFormatIncorrectError = -2;
@@ -114,6 +117,19 @@ namespace Sudoku.UI
 			if (!Console.IsInputRedirected)
 			{
 				Console.Title = "Sudoku";
+			}
+
+			if (args.Length == 0)
+			{
+				if (Console.IsInputRedirected)
+				{
+					Console.WriteLine(Program.InputErrorMessage);
+					return Program.InputError;
+				}
+
+				Window window = new Window(SudokuGenerator.Generate(Program.DefaultSize, Program.DefaultDifficulty));
+				window.Init();
+				return 0;
 			}
 
 			if (!Program.ParseArguments(args, out int command, out int size, out SudokuDifficulty difficulty, out String filename, out String outfile))
