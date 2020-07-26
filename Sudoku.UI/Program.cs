@@ -14,7 +14,7 @@ namespace Sudoku.UI
 		private const SudokuDifficulty DefaultDifficulty = SudokuDifficulty.Easy;
 		private const int DefaultSize = 9;
 
-		internal const int InputError = -4;
+		internal const int IOError = -4;
 		internal const int FileOutputError = -3;
 		internal const int FileFormatIncorrectError = -2;
 		internal const int FileNotFoundError = -1;
@@ -27,7 +27,7 @@ namespace Sudoku.UI
 		private const int PrintCommand = 2;
 		private const int SolveCommand = 3;
 
-		private const String InputErrorMessage = "ERROR: couldn't open the input stream";
+		private const String IOErrorMessage = "ERROR: couldn't opening the I/O streams";
 		private const String FileOutputErrorMessage = "ERROR: couldn't write to file";
 		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
 		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
@@ -101,10 +101,10 @@ namespace Sudoku.UI
 
 		private static int Interactive(int size, String filename)
 		{
-			if (Console.IsInputRedirected)
+			if (Console.IsInputRedirected || Console.IsOutputRedirected)
 			{
-				Console.WriteLine(Program.InputErrorMessage);
-				return Program.InputError;
+				Console.WriteLine(Program.IOErrorMessage);
+				return Program.IOError;
 			}
 
 			Window window = filename is null ? new Window(size) : new Window(filename);
@@ -121,10 +121,10 @@ namespace Sudoku.UI
 
 			if (args.Length == 0)
 			{
-				if (Console.IsInputRedirected)
+				if (Console.IsInputRedirected || Console.IsOutputRedirected)
 				{
-					Console.WriteLine(Program.InputErrorMessage);
-					return Program.InputError;
+					Console.WriteLine(Program.IOErrorMessage);
+					return Program.IOError;
 				}
 
 				Window window = new Window(SudokuGenerator.Generate(Program.DefaultSize, Program.DefaultDifficulty));

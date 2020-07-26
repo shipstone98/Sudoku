@@ -13,7 +13,7 @@ namespace Sudoku
 	/// <summary>
 	/// Represents a sudoku puzzle.
 	/// </summary>
-	public class Sudoku: ICloneable, IEnumerable<IEnumerable<int>>, IEquatable<Sudoku>
+	public class Sudoku: ICloneable, IEnumerable, IEnumerable<IEnumerable<int>>, IEquatable<Sudoku>
 	{
 		/// <summary>
 		/// Represents the largest possible number of rows and columns in a <see cref="Sudoku"/> puzzle. This field is constant.
@@ -27,6 +27,9 @@ namespace Sudoku
 
 		private SudokuCell[,] Cells { get; }
 
+		/// <summary>
+		/// Gets an enumeration containing the columns in the <see cref="Sudoku"/> puzzle.
+		/// </summary>
 		public IEnumerable<IEnumerable<int>> Columns
 		{
 			get
@@ -54,6 +57,9 @@ namespace Sudoku
 
 		internal bool DisablePossible { get; set; }
 
+		/// <summary>
+		/// Gets a value that indicates whether the puzzle is complete (i.e. there are no empty cells). This does not mean the puzzle is completed correctly.
+		/// </summary>
 		public bool IsComplete
 		{
 			get
@@ -73,6 +79,9 @@ namespace Sudoku
 			}
 		}
 
+		/// <summary>
+		/// Gets an enumeration containing the rows in the <see cref="Sudoku"/> puzzle.
+		/// </summary>
 		public IEnumerable<IEnumerable<int>> Rows
 		{
 			get
@@ -111,22 +120,22 @@ namespace Sudoku
 		{
 			get
 			{
-				this.Check(row, nameof (row));
-				this.Check(column, nameof (column));
+				this.CheckArgument(row, nameof (row));
+				this.CheckArgument(column, nameof (column));
 				return this.Cells[row, column].Number;
 			}
 
 			set
 			{
-				this.Check(row, nameof (row));
-				this.Check(column, nameof (column));
+				this.CheckArgument(row, nameof (row));
+				this.CheckArgument(column, nameof (column));
 
 				if (this.Cells[row, column].Number == value)
 				{
 					return;
 				}
 
-				this.Check(value, nameof (value), true);
+				this.CheckArgument(value, nameof (value), true);
 
 				if (this.Cells[row, column].ReadOnly)
 				{
@@ -249,7 +258,27 @@ namespace Sudoku
 			return false;
 		}
 
-		private void Check(int value, String valueName, bool excludeUpperLimit = false)
+		/// <summary>
+		/// Determines whether the numbers in all cells of the <see cref="Sudoku"/> puzzle match the same cell's solution.
+		/// </summary>
+		/// <returns><c>true</c> the numbers in all cells of the <see cref="Sudoku"/> puzzle match the same cell's solution; otherwise, false.</returns>
+		public bool Check()
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					if (!this.Cells[i, j].IsCorrect)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private void CheckArgument(int value, String valueName, bool excludeUpperLimit = false)
 		{
 			if (value < 0)
 			{
@@ -260,6 +289,25 @@ namespace Sudoku
 			{
 				throw new ArgumentException(valueName);
 			}
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="Sudoku"/> puzzle that is a copy of the current instance.
+		/// </summary>
+		/// <returns>A new <see cref="Sudoku"/> puzzle that is a copy of this instance.</returns>
+		public Object Clone()
+		{
+			Sudoku clone = new Sudoku(this.Size, this.Difficulty);
+
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j].Clone();
+				}
+			}
+
+			return clone;
 		}
 
 		internal bool ColumnContains(int column, int number) => this.ColumnContains(0, column, number);
@@ -293,29 +341,10 @@ namespace Sudoku
 		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c> is less than 0 - or - <c><paramref name="column"/></c> is less than 0 - or - <c><paramref name="number"/></c> is less than 0.</exception>
 		public bool ContainsPossible(int row, int column, int number)
 		{
-			this.Check(row, nameof (row));
-			this.Check(column, nameof (column));
-			this.Check(number, nameof (number), true);
+			this.CheckArgument(row, nameof (row));
+			this.CheckArgument(column, nameof (column));
+			this.CheckArgument(number, nameof (number), true);
 			return this.Cells[row, column].ContainsPossible(number);
-		}
-
-		/// <summary>
-		/// Creates a new <see cref="Sudoku"/> puzzle that is a copy of the current instance.
-		/// </summary>
-		/// <returns>A new <see cref="Sudoku"/> puzzle that is a copy of this instance.</returns>
-		public Object Clone()
-		{
-			Sudoku clone = new Sudoku(this.Size, this.Difficulty);
-
-			for (int i = 0; i < this.Size; i ++)
-			{
-				for (int j = 0; j < this.Size; j ++)
-				{
-					clone.Cells[i, j] = (SudokuCell) this.Cells[i, j].Clone();
-				}
-			}
-
-			return clone;
 		}
 
 		/// <summary>
@@ -351,7 +380,12 @@ namespace Sudoku
 			return true;
 		}
 
+		/// <summary>
+		/// Returns an enumerator that iterates through the rows of the <see cref="Sudoku"/> puzzle.
+		/// </summary>
+		/// <returns>An enumerator that can be used to iterate through the rows of the <see cref="Sudoku"/> puzzle.</returns>
 		public IEnumerator<IEnumerable<int>> GetEnumerator() => this.Rows.GetEnumerator();
+
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		/// <summary>
@@ -375,6 +409,28 @@ namespace Sudoku
 		}
 
 		/// <summary>
+		/// Creates a new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="Sudoku"/> puzzle.
+		/// </summary>
+		/// <returns>A new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="Sudoku"/> puzzle.</returns>
+		public IEnumerable<Tuple<int, int>> GetIncorrect()
+		{
+			List<Tuple<int, int>> cells = new List<Tuple<int, int>>();
+			
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					if (!this.Cells[i, j].IsCorrect)
+					{
+						cells.Add(new Tuple<int, int>(i, j));
+					}
+				}
+			}
+
+			return cells;
+		}
+
+		/// <summary>
 		/// Copies the elements of the collection of possible values at the specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> in the <see cref="Sudoku"/> puzzle to a new array.
 		/// </summary>
 		/// <param name="row">The zero-based row index.</param>
@@ -384,8 +440,8 @@ namespace Sudoku
 		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c> is less than 0 - or - <c><paramref name="column"/></c> is less than 0.</exception>
 		public int[] GetPossible(int row, int column)
 		{
-			this.Check(row, nameof (row));
-			this.Check(column, nameof (column));
+			this.CheckArgument(row, nameof (row));
+			this.CheckArgument(column, nameof (column));
 			return this.Cells[row, column].Number == 0 ? this.Cells[row, column].Possible : null;
 		}
 
@@ -577,6 +633,31 @@ namespace Sudoku
 			}
 
 			return false;
+		}
+
+		internal void SetReadOnlyProperties()
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					if (this.Cells[i, j].Number != 0)
+					{
+						this.Cells[i, j].ReadOnly = true;
+					}
+				}
+			}
+		}
+
+		internal void SetSolutions()
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					this.Cells[i, j].Solution = this.Cells[i, j].Number;
+				}
+			}
 		}
 
 		/// <summary>

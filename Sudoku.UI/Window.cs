@@ -47,6 +47,16 @@ namespace Sudoku.UI
 			this.UpperLimit = this.Size - 1;
 		}
 
+		private void Clear()
+		{
+			try
+			{
+				Console.Clear();
+			}
+
+			catch { }
+		}
+
 		private bool HandleKeyPress(ConsoleKeyInfo cki)
 		{
 			if (cki.Key >= ConsoleKey.D0 && cki.Key <= ConsoleKey.D9 || cki.Key >= ConsoleKey.NumPad0 && cki.Key <= ConsoleKey.NumPad9)
@@ -185,7 +195,7 @@ namespace Sudoku.UI
 
 		private void UpdateScreen()
 		{
-			Console.Clear();
+			this.Clear();
 			Console.WriteLine($"Row: {this.Y + 1}\tColumn: {this.X + 1}");
 			Console.WriteLine(this.Sudoku);
 			Console.WriteLine("Press ESC to quit...");

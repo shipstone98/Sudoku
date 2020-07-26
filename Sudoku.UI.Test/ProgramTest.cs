@@ -8,13 +8,6 @@ namespace Sudoku.UI.Test
 	public class ProgramTest
 	{
 		[TestMethod]
-		public void TestEmptyArguments()
-		{
-			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[0]));
-			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(null));
-		}
-
-		[TestMethod]
 		public void TestCompareArguments()
 		{
 			const String BAD_FILENAME = "";
