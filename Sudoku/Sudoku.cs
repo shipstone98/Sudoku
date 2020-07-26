@@ -19,6 +19,7 @@ namespace Sudoku
 		private SudokuCell[,] Cells { get; }
 
 		public SudokuDifficulty Difficulty { get; }
+		internal bool DisablePossible { get; set; }
 
 		/// <summary>
 		/// Gets the total number of elements in each row or column of the <see cref="Sudoku"/> puzzle.
@@ -54,25 +55,27 @@ namespace Sudoku
 				int oldValue = this.Cells[row, column].Number;
 				this.Cells[row, column].Number = value;
 
-				//If newValue 0, add the currentValue to all possible cells in row, column and block
-				if (value == 0)
+				if (!this.DisablePossible)
 				{
-					this.AddAllPossible(row, column, oldValue);
-				}
+					//If newValue 0, add the currentValue to all possible cells in row, column and block
+					if (value == 0)
+					{
+						this.AddAllPossible(row, column, oldValue);
+					}
 
-				//Else if currentValue is 0, remove the newValue from all possible cells
-				else if (this.Cells[row, column].Number == 0)
-				{
-					this.RemoveAllPossible(row, column, value);
-				}
+					//Else if currentValue is 0, remove the newValue from all possible cells
+					else if (this.Cells[row, column].Number == 0)
+					{
+						this.RemoveAllPossible(row, column, value);
+					}
 
-				//Else, add the currentValue and remove the newValue from all possible cells
-				else
-				{
-					this.AddAllPossible(row, column, oldValue);
-					this.RemoveAllPossible(row, column, value);
+					//Else, add the currentValue and remove the newValue from all possible cells
+					else
+					{
+						this.AddAllPossible(row, column, oldValue);
+						this.RemoveAllPossible(row, column, value);
+					}
 				}
-
 			}
 		}
 
@@ -97,6 +100,7 @@ namespace Sudoku
 
 			this.Cells = new SudokuCell[size, size];
 			this.Difficulty = difficulty;
+			this.DisablePossible = false;
 			int[] numbers = new int[size];
 
 			for (int i = 0; i < size; i ++)
@@ -398,6 +402,26 @@ namespace Sudoku
 		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
 		internal bool RemovePossible(int row, int column, int number) => this.Cells[row, column].RemovePossible(number);
 		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);
+		
+		internal void ResetPossible()
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					this.Cells[i, j].ResetPossible();
+
+					for (int k = 1; k <= this.Size; k ++)
+					{
+						if (!(this.RowContains(i, k) && this.ColumnContains(j, k) && this.BlockContains(i, j, k)))
+						{
+							this.Cells[i, j].AddPossible(k);
+						}
+					}
+				}
+			}
+		}
+		
 		internal bool RowContains(int row, int number) => this.RowContains(row, 0, number);
 
 		internal bool RowContains(int row, int column, int number, bool ignoreCell = false)
