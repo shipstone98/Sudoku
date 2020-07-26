@@ -40,6 +40,13 @@ namespace Sudoku.UI
 			this.UpperLimit = this.Size - 1;
 		}
 
+		internal Window(Sudoku sudoku) : this()
+		{
+			this.Size = sudoku.Size;
+			this.Sudoku = sudoku;
+			this.UpperLimit = this.Size - 1;
+		}
+
 		private bool HandleKeyPress(ConsoleKeyInfo cki)
 		{
 			if (cki.Key >= ConsoleKey.D0 && cki.Key <= ConsoleKey.D9 || cki.Key >= ConsoleKey.NumPad0 && cki.Key <= ConsoleKey.NumPad9)
