@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sudoku
 {
-	internal class SudokuCell: ICloneable
+	internal class SudokuCell: ICloneable, IEquatable<SudokuCell>
 	{
 		private readonly List<int> _Possible;
 
@@ -46,8 +46,14 @@ namespace Sudoku
 		}
 
 		internal bool ContainsPossible(int number) => this._Possible.Contains(number);
+		public override bool Equals(Object obj) => this.Equals(obj as SudokuCell);
+		public bool Equals(SudokuCell cell) => cell is null ? false : this.Number == cell.Number;
+		public override int GetHashCode() => 8733563 * this.Number.GetHashCode();
 		internal void MakeReadOnly() => this.ReadOnly = true;
 		internal bool RemovePossible(int number) => this._Possible.Remove(number);
 		internal void ResetPossible() => this._Possible.Clear();
+
+		public static bool operator ==(SudokuCell a, SudokuCell b) => a is null ? b is null : a.Equals(b);
+		public static bool operator !=(SudokuCell a, SudokuCell b) => !(a == b);
 	}
 }
