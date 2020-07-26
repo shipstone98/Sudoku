@@ -408,6 +408,20 @@ namespace Sudoku.UI
 			}
 
 			sb.AppendLine($"Solved puzzle using {count} moves in {time}ms");
+
+			if (!sudoku.IsComplete)
+			{
+				stopwatch.Restart();
+				SudokuSolver.RecursiveSolve(sudoku);
+				stopwatch.Stop();
+				double newTime = stopwatch.ElapsedMilliseconds;
+				sb.AppendLine();
+				sb.AppendLine(sudoku.ToString());
+				sb.AppendLine();
+				sb.AppendLine($"Solved remainder of puzzle using recursion in {newTime}ms");
+				sb.AppendLine($"Total time for solving is {time + newTime} ms");
+			}
+
 			String output = sb.ToString();
 
 			if (outfile is null)
