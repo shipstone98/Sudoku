@@ -35,7 +35,7 @@ namespace Sudoku
 		public static Sudoku Generate(int size, SudokuDifficulty difficulty)
 		{
 			Sudoku sudoku = SudokuGenerator.AddNumbers(size, difficulty);
-			//SudokuGenerator.RemoveNumbers(sudoku);
+			SudokuGenerator.RemoveNumbers(sudoku);
 			return sudoku;
 		}
 
@@ -46,7 +46,37 @@ namespace Sudoku
 				throw new NotImplementedException(nameof(sudoku));
 			}
 
-			throw new NotImplementedException();
+			int attempts = 45;
+
+			switch (sudoku.Difficulty)
+			{
+				case SudokuDifficulty.Medium:
+					attempts = 60;
+					break;
+				case SudokuDifficulty.Hard:
+					attempts = 80;
+					break;
+			}
+
+			do
+			{
+				int row, column;
+
+				do
+				{
+					row = SudokuGenerator.Random.Next(sudoku.Size);
+					column = SudokuGenerator.Random.Next(sudoku.Size);
+				} while (sudoku[row, column] == 0);
+
+				int value = sudoku[row, column];
+				sudoku[row, column] = 0;
+				Sudoku clone = (Sudoku) sudoku.Clone();
+
+				if (SudokuSolver.FindSolutions(clone) != 1)
+				{
+					sudoku[row, column] = value;
+				}
+			} while (attempts -- > 0);
 		}
 
 		internal static void ShuffleNumbers<T>(List<T> array)
