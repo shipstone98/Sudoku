@@ -201,12 +201,12 @@ namespace Sudoku
 			return false;
 		}
 
-		internal bool ContainsPossible(int row, int column, int number)
+		public bool ContainsPossible(int row, int column, int number)
 		{
 			this.Check(row, nameof (row));
 			this.Check(column, nameof (column));
 			this.Check(number, nameof (number), true);
-			return this.Cells[row, column].Possible.Contains(number);
+			return this.Cells[row, column].ContainsPossible(number);
 		}
 
 		public Object Clone()

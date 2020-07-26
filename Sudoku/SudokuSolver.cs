@@ -153,7 +153,7 @@ namespace Sudoku
 					{
 						int currentColumn = startColumn + i;
 
-						if (currentColumn == column || !(this.Sudoku[row, currentColumn] == 0 && this.Sudoku.GetPossible(row, currentColumn).Contains(number)))
+						if (currentColumn == column || !(this.Sudoku[row, currentColumn] == 0 && this.Sudoku.ContainsPossible(row, currentColumn, number)))
 						{
 							continue;
 						}
@@ -190,7 +190,7 @@ namespace Sudoku
 					{
 						int currentRow = startRow + i;
 
-						if (currentRow == row || !(this.Sudoku[currentRow, column] == 0 && this.Sudoku.GetPossible(currentRow, column).Contains(number)))
+						if (currentRow == row || !(this.Sudoku[currentRow, column] == 0 && this.Sudoku.ContainsPossible(currentRow, column, number)))
 						{
 							continue;
 						}
@@ -238,7 +238,7 @@ namespace Sudoku
 					continue;
 				}
 
-				if (this.Sudoku.GetPossible(i, column).Contains(number))
+				if (this.Sudoku.ContainsPossible(i, column, number))
 				{
 					return false;
 				}
@@ -262,7 +262,7 @@ namespace Sudoku
 					continue;
 				}
 
-				if (this.Sudoku.GetPossible(row, i).Contains(number))
+				if (this.Sudoku.ContainsPossible(row, i, number))
 				{
 					return false;
 				}
@@ -310,7 +310,7 @@ namespace Sudoku
 						continue;
 					}
 
-					if (this.Sudoku.GetPossible(currentRow, currentColumn).Contains(number))
+					if (this.Sudoku.ContainsPossible(currentRow, currentColumn, number))
 					{
 						return false;
 					}
@@ -329,7 +329,7 @@ namespace Sudoku
 					continue;
 				}
 
-				if (this.Sudoku.GetPossible(i, column).Contains(number))
+				if (this.Sudoku.ContainsPossible(i, column, number))
 				{
 					return false;
 				}
@@ -347,7 +347,7 @@ namespace Sudoku
 					continue;
 				}
 
-				if (this.Sudoku.GetPossible(row, i).Contains(number))
+				if (this.Sudoku.ContainsPossible(row, i, number))
 				{
 					return false;
 				}
@@ -395,7 +395,7 @@ namespace Sudoku
 							continue;
 						}
 
-						if (this.Sudoku.GetPossible(currentRow, currentColumn).Contains(number))
+						if (this.Sudoku.ContainsPossible(currentRow, currentColumn, number))
 						{
 							if (row != currentRow)
 							{

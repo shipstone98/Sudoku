@@ -45,6 +45,7 @@ namespace Sudoku
 			return cell;
 		}
 
+		internal bool ContainsPossible(int number) => this._Possible.Contains(number);
 		internal void MakeReadOnly() => this.ReadOnly = true;
 		internal bool RemovePossible(int number) => this._Possible.Remove(number);
 		internal void ResetPossible() => this._Possible.Clear();
