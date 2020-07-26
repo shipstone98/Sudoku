@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Sudoku
 {
@@ -107,6 +107,86 @@ namespace Sudoku
 			return this.Moves;
 		}
 
+		private bool SolveHiddenSingle(int row, int column)
+		{
+			int[] possible = this.Sudoku.GetPossible(row, column);
+			
+			foreach (int number in possible)
+			{
+				if (this.SolveHiddenSingleRow(row, column, number) || this.SolveHiddenSingleColumn(row, column, number) || this.SolveHiddenSingleBlock(row, column, number))
+				{
+					this.Sudoku[row, column] = number;
+					this.Moves.Add(new SudokuMove(row, column, number, SudokuPattern.HiddenSingle, possible));
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool SolveHiddenSingleBlock(int row, int column, int number)
+		{
+			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
+
+			for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+			{
+				int currentRow = startRow + i;
+
+				for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+				{
+					int currentColumn = startColumn + j;
+
+					if (row == currentRow && column == currentColumn)
+					{
+						continue;
+					}
+
+					if (this.Sudoku.GetPossible(row, column).Contains(number))
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private bool SolveHiddenSingleColumn(int row, int column, int number)
+		{
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				if (i == row)
+				{
+					continue;
+				}
+
+				if (this.Sudoku.GetPossible(i, column).Contains(number))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private bool SolveHiddenSingleRow(int row, int column, int number)
+		{
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				if (i == column)
+				{
+					continue;
+				}
+
+				if (this.Sudoku.GetPossible(row, i).Contains(number))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		private bool SolveNakedSingle(int row, int column)
 		{
 			int[] possible = this.Sudoku.GetPossible(row, column);
@@ -142,6 +222,6 @@ namespace Sudoku
 			return false;
 		}
 
-		private bool SolvePass(int row, int column) => this.SolveNakedSingle(row, column);
+		private bool SolvePass(int row, int column) => this.SolveNakedSingle(row, column) || this.SolveHiddenSingle(row, column);
 	}
 }
