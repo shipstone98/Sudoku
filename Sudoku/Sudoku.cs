@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using SystemExtensions;
 
 [assembly: InternalsVisibleTo("Sudoku.Test")]
@@ -13,6 +14,8 @@ namespace Sudoku
 	/// </summary>
 	public class Sudoku: ICloneable, IEquatable<Sudoku>
 	{
+		public int BlockSize { get; }
+
 		private SudokuCell[,] Cells { get; }
 
 		public SudokuDifficulty Difficulty { get; }
@@ -21,8 +24,6 @@ namespace Sudoku
 		/// Gets the total number of elements in each row or column of the <see cref="Sudoku"/> puzzle.
 		/// </summary>
 		public int Size { get; }
-
-		internal int SizeSqrt { get; }
 
 		public int this[int row, int column]
 		{
@@ -117,7 +118,7 @@ namespace Sudoku
 			}
 
 			this.Size = size;
-			this.SizeSqrt = (int) Math.Sqrt(size);
+			this.BlockSize = (int) Math.Sqrt(size);
 		}
 
 		internal void AddAllPossible(int row, int column, int number) => this.AddPossible(row, column, number, true, true, true);
@@ -140,11 +141,11 @@ namespace Sudoku
 		{
 			this.GetStartRowColumn(row, column, out int startRow, out int startColumn);
 
-			for (int i = 0; i < this.SizeSqrt; i ++)
+			for (int i = 0; i < this.BlockSize; i ++)
 			{
 				int currentRow = startRow + i;
 
-				for (int j = 0; j < this.SizeSqrt; j ++)
+				for (int j = 0; j < this.BlockSize; j ++)
 				{
 					int currentColumn = startColumn + j;
 
@@ -258,12 +259,17 @@ namespace Sudoku
 			return hash;
 		}
 
-		internal int[] GetPossible(int row, int column) => this.Cells[row, column].Possible;
+		public int[] GetPossible(int row, int column)
+		{
+			this.Check(row, nameof (row));
+			this.Check(column, nameof (column));
+			return this.Cells[row, column].Number == 0 ? this.Cells[row, column].Possible : null;
+		}
 
 		internal void GetStartRowColumn(int row, int column, out int startRow, out int startColumn)
 		{
-			startRow = row - row % this.SizeSqrt;
-			startColumn = column - column % this.SizeSqrt;
+			startRow = row - row % this.BlockSize;
+			startColumn = column - column % this.BlockSize;
 		}
 
 		internal void ModifyPossible(int row, int column, int number, bool modifyRow, bool modifyColumn, bool modifyBlock, bool remove)
@@ -327,7 +333,7 @@ namespace Sudoku
 			{
 				this.GetStartRowColumn(row, column, out int startRow, out int startColumn);
 
-				for (int i = 0; i < this.SizeSqrt; i++)
+				for (int i = 0; i < this.BlockSize; i++)
 				{
 					int currentRow = startRow + i;
 
@@ -336,7 +342,7 @@ namespace Sudoku
 						continue;
 					}
 
-					for (int j = 0; j < this.SizeSqrt; j++)
+					for (int j = 0; j < this.BlockSize; j++)
 					{
 						int currentColumn = startColumn + j;
 
@@ -415,19 +421,19 @@ namespace Sudoku
 		public override String ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			int length = this.Size * 2 + this.SizeSqrt * 2 + 1;
+			int length = this.Size * 2 + this.BlockSize * 2 + 1;
 			String line = new String('-', length);
 
 			for (int i = 0; i < this.Size; i ++)
 			{
-				if (i % this.SizeSqrt == 0)
+				if (i % this.BlockSize == 0)
 				{
 					sb.AppendLine(line);
 				}
 
 				for (int j = 0; j < this.Size; j ++)
 				{
-					if (j % this.SizeSqrt == 0)
+					if (j % this.BlockSize == 0)
 					{
 						sb.Append("| ");
 					}

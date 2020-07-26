@@ -127,7 +127,7 @@ namespace Sudoku
 				{
 					List<int> affected = new List<int>();
 
-					for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 					{
 						int currentColumn = startColumn + i;
 
@@ -140,7 +140,7 @@ namespace Sudoku
 						this.ClaimingCandidates.Add(new Tuple<int, int, int>(row, i, number));
 					}
 
-					for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 					{
 						int currentRow = startRow + i;
 
@@ -149,7 +149,7 @@ namespace Sudoku
 							continue;
 						}
 
-						for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+						for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 						{
 							int currentColumn = startColumn + j;
 							this.Sudoku.RemovePossible(currentRow, currentColumn, number);
@@ -164,7 +164,7 @@ namespace Sudoku
 				{
 					List<int> affected = new List<int>();
 
-					for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 					{
 						int currentRow = startRow + i;
 
@@ -177,7 +177,7 @@ namespace Sudoku
 						this.ClaimingCandidates.Add(new Tuple<int, int, int>(i, column, number));
 					}
 
-					for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+					for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 					{
 						int currentColumn = startColumn + j;
 
@@ -186,7 +186,7 @@ namespace Sudoku
 							continue;
 						}
 
-						for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+						for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 						{
 							int currentRow = startRow + j;
 							this.Sudoku.RemovePossible(currentRow, currentColumn, number);
@@ -207,7 +207,7 @@ namespace Sudoku
 			{
 				if (i == startRow)
 				{
-					i += this.Sudoku.SizeSqrt - 1;
+					i += this.Sudoku.BlockSize - 1;
 					continue;
 				}
 
@@ -231,7 +231,7 @@ namespace Sudoku
 			{
 				if (i == startColumn)
 				{
-					i += this.Sudoku.SizeSqrt - 1;
+					i += this.Sudoku.BlockSize - 1;
 					continue;
 				}
 
@@ -275,11 +275,11 @@ namespace Sudoku
 		{
 			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
 
-			for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 			{
 				int currentRow = startRow + i;
 
-				for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 				{
 					int currentColumn = startColumn + j;
 
@@ -360,11 +360,11 @@ namespace Sudoku
 				rowsAffected.Clear();
 				columnsAffected.Clear();
 
-				for (int i = 0; i < this.Sudoku.SizeSqrt; i ++)
+				for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 				{
 					int currentRow = startRow + i;
 
-					for (int j = 0; j < this.Sudoku.SizeSqrt; j ++)
+					for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 					{
 						int currentColumn = startColumn + j;
 
@@ -411,7 +411,7 @@ namespace Sudoku
 					{
 						if (i == startColumn)
 						{
-							i += this.Sudoku.SizeSqrt - 1;
+							i += this.Sudoku.BlockSize - 1;
 							continue;
 						}
 
@@ -435,7 +435,7 @@ namespace Sudoku
 					{
 						if (i == startRow)
 						{
-							i += this.Sudoku.SizeSqrt - 1;
+							i += this.Sudoku.BlockSize - 1;
 							continue;
 						}
 
