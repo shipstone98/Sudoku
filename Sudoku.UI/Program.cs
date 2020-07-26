@@ -11,6 +11,7 @@ namespace Sudoku.UI
 {
 	public static class Program
 	{
+		internal const int InputError = -4;
 		internal const int FileOutputError = -3;
 		internal const int FileFormatIncorrectError = -2;
 		internal const int FileNotFoundError = -1;
@@ -19,9 +20,11 @@ namespace Sudoku.UI
 
 		private const int CompareCommand = 0;
 		private const int GenerateCommand = 1;
+		private const int InteractiveCommand = 4;
 		private const int PrintCommand = 2;
 		private const int SolveCommand = 3;
 
+		private const String InputErrorMessage = "ERROR: couldn't open the input stream";
 		private const String FileOutputErrorMessage = "ERROR: couldn't write to file";
 		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
 		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
@@ -93,8 +96,26 @@ namespace Sudoku.UI
 			return 0;
 		}
 
+		private static int Interactive(int size, String filename)
+		{
+			if (Console.IsInputRedirected)
+			{
+				Console.WriteLine(Program.InputErrorMessage);
+				return Program.InputError;
+			}
+
+			Window window = filename is null ? new Window(size) : new Window(filename);
+			window.Init();
+			return 0;
+		}
+
 		public static int Main(String[] args)
 		{
+			if (!Console.IsInputRedirected)
+			{
+				Console.Title = "Sudoku";
+			}
+
 			if (!Program.ParseArguments(args, out int command, out int size, out SudokuDifficulty difficulty, out String filename, out String outfile))
 			{
 				Console.WriteLine(Program.UsageMessage);
@@ -107,6 +128,8 @@ namespace Sudoku.UI
 					return Program.Compare(filename, outfile);
 				case Program.GenerateCommand:
 					return Program.Generate(size, difficulty, outfile);
+				case Program.InteractiveCommand:
+					return Program.Interactive(size, filename);
 				case Program.PrintCommand:
 					return Program.Print(filename);
 				case Program.SolveCommand:
@@ -165,6 +188,13 @@ namespace Sudoku.UI
 					case "gen":
 					case "generate":
 						command = Program.GenerateCommand;
+						break;
+
+					case "i":
+					case "int":
+					case "inter":
+					case "interactive":
+						command = Program.InteractiveCommand;
 						break;
 
 					case "p":
@@ -226,7 +256,7 @@ namespace Sudoku.UI
 								break;
 
 							case 'f':
-								if (command == Program.GenerateCommand || !(filename is null) || String.IsNullOrWhiteSpace(param))
+								if (command == Program.GenerateCommand || !(filename is null) || String.IsNullOrWhiteSpace(param) || command == Program.InteractiveCommand && size != 0)
 								{
 									return false;
 								}
@@ -244,7 +274,7 @@ namespace Sudoku.UI
 								break;
 
 							case 's':
-								if (command != Program.GenerateCommand || size != 0)
+								if (!(command == Program.GenerateCommand || command == Program.InteractiveCommand) || size != 0 || command == Program.InteractiveCommand && !(filename is null))
 								{
 									return false;
 								}
@@ -289,6 +319,14 @@ namespace Sudoku.UI
 
 				case Program.GenerateCommand:
 					if (!Sudoku.VerifySize(size) || difficulty == SudokuDifficulty.None)
+					{
+						return false;
+					}
+
+					break;
+
+				case Program.InteractiveCommand:
+					if (filename is null && !Sudoku.VerifySize(size) || !(filename is null || size == 0))
 					{
 						return false;
 					}
