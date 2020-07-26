@@ -83,6 +83,25 @@ namespace Sudoku.UI.Test
 		}
 
 		[TestMethod]
+		public void TestInteractiveArguments()
+		{
+			const int NEGATIVE_SIZE = -1;
+			const int ZERO_SIZE = 0;
+			const int BAD_POSITIVE_SIZE = 2;
+			const int GOOD_POSITIVE_SIZE = 9;
+			const String BAD_FILENAME = "";
+
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE" }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-f" }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", "-f" }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", NEGATIVE_SIZE.ToString() }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", ZERO_SIZE.ToString() }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", BAD_POSITIVE_SIZE.ToString() }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", GOOD_POSITIVE_SIZE.ToString(), "-f" }));
+			Assert.AreEqual(Program.UsageMessageWarning, Program.Main(new String[] { "INTERACTIVE", "-s", GOOD_POSITIVE_SIZE.ToString(), "-f", BAD_FILENAME }));
+		}
+
+		[TestMethod]
 		public void TestPrintArguments()
 		{
 			const String BAD_FILENAME = "";
