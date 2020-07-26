@@ -18,6 +18,8 @@ namespace Sudoku
             {
                 switch (this.Pattern)
                 {
+                    case SudokuPattern.ClaimingCandidate:
+                        return "Claiming Candidate";
                     case SudokuPattern.HiddenSingle:
                         return "Hidden Single";
                     case SudokuPattern.NakedSingle:
