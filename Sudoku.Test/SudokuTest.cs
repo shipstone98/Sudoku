@@ -170,12 +170,28 @@ namespace Sudoku.Test
 					if (i == row || j == column || currentStartRow == startRow && currentStartColumn == startColumn)
 					{
 						//Check against affectedPossible
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+						if (this.Sudoku[i, j] == 0)
+						{
+							Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+						}
+
+						else
+						{
+							Assert.IsNull(this.Sudoku.GetPossible(i, j));
+						}
 					}
 
 					else
 					{
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						if (this.Sudoku[i, j] == 0)
+						{
+							Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						}
+
+						else
+						{
+							Assert.IsNull(this.Sudoku.GetPossible(i, j));
+						}
 					}
 				}
 			}
@@ -193,11 +209,19 @@ namespace Sudoku.Test
 			this.TestSetNumberFromZeroToNumber(out int row, out int column, out int number);
 			this.Sudoku[row, column] = 0;
 
-			for (int i = 0; i < SudokuTest.Size; i++)
+			for (int i = 0; i < SudokuTest.Size; i ++)
 			{
-				for (int j = 0; j < SudokuTest.Size; j++)
+				for (int j = 0; j < SudokuTest.Size; j ++)
 				{
-					Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+					if (this.Sudoku[i, j] == 0)
+					{
+						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+					}
+
+					else
+					{
+						Assert.IsNull(this.Sudoku.GetPossible(i, j));
+					}
 				}
 			}
 		}
@@ -228,12 +252,25 @@ namespace Sudoku.Test
 					if (i == row || j == column || currentStartRow == startRow && currentStartColumn == startColumn)
 					{
 						//Check against affectedPossible
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+						if (this.Sudoku[i, j] == 0)
+						{
+							Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+						}
+
+						else
+						{
+							Assert.IsNull(this.Sudoku.GetPossible(i, j));
+						}
+					}
+
+					else if (this.Sudoku[i, j] == 0)
+					{
+						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
 					}
 
 					else
 					{
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						Assert.IsNull(this.Sudoku.GetPossible(i, j));
 					}
 				}
 			}
