@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Documents\Work\Third Year\Honours Stage Project\NewSudoku\Sudoku\Sudoku.xml</DocumentationFile>
+    <DocumentationFile>D:\Documents\Work\Third Year\Honours Stage Project\C#\Sudoku\Sudoku.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>D:\Documents\Work\Third Year\Honours Stage Project\C#\Sudoku\Sudoku.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
