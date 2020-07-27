@@ -4,4 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <fragment
+        android:name="Sudoku.Android.Views.MenuFragment"
+        android:id="@+id/menu_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_menu"
+        />
 </RelativeLayout>
