@@ -35,11 +35,24 @@ namespace Sudoku
 			this.Sudoku = sudoku ?? throw new ArgumentNullException(nameof (sudoku));
 		}
 
-		internal static int FindSolutions(Sudoku sudoku)
+		/// <summary>
+		/// Determines whether a specified <c><paramref name="sudoku"/></c> can be solved.
+		/// </summary>
+		/// <param name="sudoku">The <see cref="T:Sudoku.Sudoku"/> puzzle to check.</param>
+		/// <param name="multipleSolutions"><c>true</c> if <c><paramref name="sudoku"/></c> has multiple possible solutions; otherwise, <c>false</c>.</param>
+		/// <returns><c>true</c> if <c><paramref name="sudoku"/></c> has one or more possible solution; otherwise, <c>false</c>.</returns>
+		/// <exception cref="ArgumentNullException"><c><paramref name="sudoku"/></c> is <c>null</c>.</exception>
+		public static bool CheckSolvable(Sudoku sudoku, out bool multipleSolutions)
 		{
+			if (sudoku is null)
+			{
+				throw new ArgumentNullException(nameof (sudoku));
+			}
+
 			int count = 0;
-			SudokuSolver.RecursiveSolve(sudoku, 0, 0, ref count, true);
-			return count;
+			SudokuSolver.RecursiveSolve((Sudoku) sudoku.Clone(), 0, 0, ref count, true);
+			multipleSolutions = count > 1;
+			return count == 0;
 		}
 
 		/// <summary>
