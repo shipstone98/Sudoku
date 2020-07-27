@@ -7,9 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku", "Sudoku\Sudoku.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku.Test", "Sudoku.Test\Sudoku.Test.csproj", "{88263286-2F53-44D7-9007-D169D841B0A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.UI", "Sudoku.UI\Sudoku.UI.csproj", "{13A31567-517A-4773-A4CD-BEC4A0199A89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku.UI", "Sudoku.UI\Sudoku.UI.csproj", "{13A31567-517A-4773-A4CD-BEC4A0199A89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.UI.Test", "Sudoku.UI.Test\Sudoku.UI.Test.csproj", "{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku.UI.Test", "Sudoku.UI.Test\Sudoku.UI.Test.csproj", "{B6E786AB-38DF-4476-9EE2-DFC6E2308BC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{685B8741-6D18-47E1-A82C-B4CC287F62F5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
