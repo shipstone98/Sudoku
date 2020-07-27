@@ -163,7 +163,7 @@ namespace Sudoku
 
 				this.CheckArgument(value, nameof (value), true);
 
-				if (this.Cells[row, column].ReadOnly)
+				if (this.Cells[row, column].IsReadOnly)
 				{
 					throw new SudokuCellReadOnlyException(row, column);
 				}
@@ -322,6 +322,20 @@ namespace Sudoku
 			{
 				throw new ArgumentException(valueName);
 			}
+		}
+
+		/// <summary>
+		/// Determines whether a specified cell in the <see cref="Sudoku"/> puzzle is read-only.
+		/// </summary>
+		/// <param name="row">The zero-based row of the cell.</param>
+		/// <param name="column">The zero-based column of the cell.</param>
+		/// <returns><c>true</c> if the specified cell at <c><paramref name="row"/></c> and <c><paramref name="column"/></c> is read-only; otherwise, <c>false</c>.</returns>
+		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c> is less than 0 - or - <c><paramref name="column"/></c> is less than 0.</exception>
+		public bool CheckReadOnly(int row, int column)
+		{
+			this.CheckArgument(row, nameof (row));
+			this.CheckArgument(column, nameof (column));
+			return this.Cells[row, column].IsReadOnly;
 		}
 
 		/// <summary>
@@ -676,7 +690,7 @@ namespace Sudoku
 				{
 					if (this.Cells[i, j].Number != 0)
 					{
-						this.Cells[i, j].ReadOnly = true;
+						this.Cells[i, j].IsReadOnly = true;
 					}
 				}
 			}

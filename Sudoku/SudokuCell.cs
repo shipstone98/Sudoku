@@ -10,14 +10,14 @@ namespace Sudoku
 		internal bool IsCorrect => this.Number == this.Solution && this.Number != 0;
 		internal int Number { get; set; }
 		internal int[] Possible => this._Possible.ToArray();
-		internal bool ReadOnly { get; set; }
+		internal bool IsReadOnly { get; set; }
 		internal int Solution { get; set; }
 
 		internal SudokuCell()
 		{
 			this.Number = this.Solution = 0;
 			this._Possible = new List<int>();
-			this.ReadOnly = false;
+			this.IsReadOnly = false;
 		}
 
 		internal void AddPossible(int number)
@@ -34,7 +34,7 @@ namespace Sudoku
 			{
 				Number = Number,
 				Solution = Solution,
-				ReadOnly = ReadOnly
+				IsReadOnly = IsReadOnly
 			};
 
 			foreach (int number in this._Possible)
@@ -49,7 +49,7 @@ namespace Sudoku
 		public override bool Equals(Object obj) => this.Equals(obj as SudokuCell);
 		public bool Equals(SudokuCell cell) => !(cell is null) && this.Number == cell.Number;
 		public override int GetHashCode() => 8733563 * this.Number.GetHashCode();
-		internal void MakeReadOnly() => this.ReadOnly = true;
+		internal void MakeReadOnly() => this.IsReadOnly = true;
 		internal bool RemovePossible(int number) => this._Possible.Remove(number);
 		internal void ResetPossible() => this._Possible.Clear();
 
