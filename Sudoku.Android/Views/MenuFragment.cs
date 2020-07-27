@@ -42,7 +42,7 @@ namespace Sudoku.Android.Views
 		public override void OnActivityCreated(Bundle savedInstanceState)
 		{
 			base.OnActivityCreated(savedInstanceState);
-			Button generateButton = this.View.FindViewById<Button>(Resource.Id.new_button);
+			Button generateButton = this.View.FindViewById<Button>(Resource.Id.generate_button);
 			generateButton.SetOnClickListener(new ButtonOnClickListener(ButtonOnClickListener.GenerateAction, this.Activity));
 		}
 

@@ -59,8 +59,13 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="SystemExtensions">
+      <HintPath>..\Sudoku\SystemExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Views\ControlFragment.cs" />
+    <Compile Include="Views\Custom\SudokuView.cs" />
     <Compile Include="Views\MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,6 +130,17 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_sudoku.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sudoku\Sudoku.csproj">
+      <Project>{28e92439-a4dd-4009-b005-acac8dbe9970}</Project>
+      <Name>Sudoku</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_control.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
