@@ -100,9 +100,9 @@ namespace Sudoku
 
 				int value = sudoku[row, column];
 				sudoku[row, column] = 0;
-				Sudoku clone = (Sudoku) sudoku.Clone();
+				bool solvable = SudokuSolver.CheckSolvable(sudoku, out bool multipleSolutions);
 
-				if (SudokuSolver.FindSolutions(clone) != 1)
+				if (!solvable || multipleSolutions)
 				{
 					sudoku[row, column] = value;
 				}
