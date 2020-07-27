@@ -12,6 +12,7 @@ namespace Sudoku.UI
 
 		private int CursorX { get; set; }
 		private int CursorY { get; set; }
+		private bool Running { get; set; }
 		internal int Size { get; }
 		private Sudoku Sudoku { get; }
 		private int UpperLimit { get; }
@@ -22,6 +23,7 @@ namespace Sudoku.UI
 		{
 			this.CursorX = Window.CursorXStart;
 			this.CursorY = Window.CursorYStart;
+			this.Running = true;
 			this.Y = this.X = 0;
 		}
 
@@ -61,13 +63,24 @@ namespace Sudoku.UI
 		{
 			if (cki.Key >= ConsoleKey.D0 && cki.Key <= ConsoleKey.D9 || cki.Key >= ConsoleKey.NumPad0 && cki.Key <= ConsoleKey.NumPad9)
 			{
-				this.EnterNumber(cki.KeyChar - '0');
+				return this.EnterNumber(cki.KeyChar - '0');
 			}
 
 			else
 			{
 				switch (cki.Key)
 				{
+					case ConsoleKey.C:
+						if (cki.Modifiers == ConsoleModifiers.Control)
+						{
+							this.Running = false;
+						}
+
+						return false;
+
+					case ConsoleKey.Pause:
+						return this.Running = false;
+
 					case ConsoleKey.UpArrow:
 					case ConsoleKey.W:
 						if (this.Y == 0)
@@ -159,8 +172,7 @@ namespace Sudoku.UI
 						break;
 
 					case ConsoleKey.Backspace:
-						this.EnterNumber(0);
-						break;
+						return this.EnterNumber(0);
 
 					case ConsoleKey.Spacebar:
 						SudokuSolver.RecursiveSolve(this.Sudoku);
@@ -173,25 +185,39 @@ namespace Sudoku.UI
 
 		internal void Init()
 		{
+			Console.TreatControlCAsInput = true;
+			//Console.CancelKeyPress += new ConsoleCancelEventHandler((sender, e) => this.Running = false);
 			this.UpdateScreen();
 
-			while (true)
+			while (this.Running)
 			{
 				ConsoleKeyInfo cki = Console.ReadKey(true);
 
 				if (cki.Key == ConsoleKey.Escape)
 				{
-					return;
+					this.Running = false;
 				}
 
-				if (this.HandleKeyPress(cki))
+				else if (this.HandleKeyPress(cki))
 				{
 					this.UpdateScreen();
 				}
 			}
+
+			Console.CursorLeft = Console.CursorTop = 0;
+			Console.Clear();
 		}
 
-		private void EnterNumber(int number) => this.Sudoku[this.Y, this.X] = number;
+		private bool EnterNumber(int number)
+		{
+			if (this.Sudoku.CheckReadOnly(this.Y, this.X) || this.Sudoku[this.Y, this.X] == number)
+			{
+				return false;
+			}
+
+			this.Sudoku[this.Y, this.X] = number;
+			return true;
+		}
 
 		private void UpdateScreen()
 		{
