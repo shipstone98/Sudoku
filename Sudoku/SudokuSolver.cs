@@ -52,7 +52,7 @@ namespace Sudoku
 			int count = 0;
 			SudokuSolver.RecursiveSolve((Sudoku) sudoku.Clone(), 0, 0, ref count, true);
 			multipleSolutions = count > 1;
-			return count == 0;
+			return count != 0;
 		}
 
 		/// <summary>
