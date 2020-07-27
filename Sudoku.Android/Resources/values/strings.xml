@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Sudoku</string>
     <string name="action_settings">Settings</string>
+
+	<string name="new_button_text">New Game</string>
+	<string name="continue_button_text">Continue Game</string>
+	<string name="generate_button_text">Generate Sudoku</string>
+	<string name="solve_button_text">Solve Sudoku</string>
+	<string name="about_button_text">About Sudoku</string>
 </resources>
