@@ -20,6 +20,10 @@ namespace Sudoku
 		/// </summary>
 		public const int MaximumSupportedSize = 9;
 
+		private readonly Object LockObject;
+
+		private event SudokuChangedEventHandler _Changed;
+
 		/// <summary>
 		/// Gets the number of elements in each row or column of a block, or sub-grid, contained in the <see cref="Sudoku"/> puzzle. This is the positive square root of the <see cref="Size"/> property.
 		/// </summary>
@@ -108,6 +112,28 @@ namespace Sudoku
 		public int Size { get; }
 
 		/// <summary>
+		/// Occurs when the number in a cell in the <see cref="Sudoku"/> puzzle is changed.
+		/// </summary>
+		public event SudokuChangedEventHandler Changed
+		{
+			add
+			{
+				lock (this.LockObject)
+				{
+					this._Changed += value;
+				}
+			}
+
+			remove
+			{
+				lock (this.LockObject)
+				{
+					this._Changed -= value;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the number at the specified row and column.
 		/// </summary>
 		/// <param name="row">The zero-based row index of the number to get or set.</param>
@@ -144,6 +170,11 @@ namespace Sudoku
 
 				int oldValue = this.Cells[row, column].Number;
 				this.Cells[row, column].Number = value;
+				
+				if (!(this._Changed is null))
+				{
+					this._Changed(this, new SudokuEventArgs(row, column, value));
+				}
 
 				if (!this.DisablePossible)
 				{
@@ -188,6 +219,8 @@ namespace Sudoku
 				throw new ArgumentException(nameof (size));
 			}
 
+			this.LockObject = new Object();
+			this._Changed = null;
 			this.Cells = new SudokuCell[size, size];
 			this.Difficulty = difficulty;
 			this.DisablePossible = false;

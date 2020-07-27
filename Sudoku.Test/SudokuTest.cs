@@ -198,6 +198,23 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestChanged()
+		{
+			bool changed = false;
+			this.Sudoku.Changed += new SudokuChangedEventHandler((sender, e) => changed = true);
+			const int ROW = 0, COLUMN = 0;
+			int value = this.Sudoku[ROW, COLUMN], newValue;
+
+			do
+			{
+				newValue = this.Random.Next(this.Sudoku.Size);
+			} while (value == newValue);
+
+			this.Sudoku[ROW, COLUMN] = newValue;
+			Assert.IsTrue(changed);
+		}
+
+		[TestMethod]
 		public void TestSetNumberFromZeroToNumber()
 		{
 			this.TestSetNumberFromZeroToNumber(out int row, out int column, out int number);
