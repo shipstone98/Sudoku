@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Sudoku
+﻿namespace Sudoku
 {
 	/// <summary>
 	/// Specifies constants that define difficulties for <see cref="Sudoku"/> puzzles.

@@ -8,9 +8,9 @@ namespace Sudoku
 		private readonly List<int> _Possible;
 
 		internal bool IsCorrect => this.Number == this.Solution && this.Number != 0;
+		internal bool IsReadOnly { get; set; }
 		internal int Number { get; set; }
 		internal int[] Possible => this._Possible.ToArray();
-		internal bool IsReadOnly { get; set; }
 		internal int Solution { get; set; }
 
 		internal SudokuCell()
