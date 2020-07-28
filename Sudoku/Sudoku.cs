@@ -498,7 +498,7 @@ namespace Sudoku
 			startColumn = column - column % this.BlockSize;
 		}
 
-		internal void ModifyPossible(int row, int column, int number, bool modifyRow, bool modifyColumn, bool modifyBlock, bool remove)
+		private void ModifyPossible(int row, int column, int number, bool modifyRow, bool modifyColumn, bool modifyBlock, bool remove)
 		{
 			if (remove)
 			{

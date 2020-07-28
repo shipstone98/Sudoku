@@ -154,15 +154,14 @@ namespace Sudoku.Android.Views.Custom
 				this.FillCell(canvas, i, this.Column, this.NeighbourFill);
 			}
 
-			int sqrt = (int) Math.Sqrt(this.Sudoku.Size);
-			int row = this.Row - this.Row % sqrt;
-			int column = this.Column - this.Column % sqrt;
+			int row = this.Row - this.Row % this.Sudoku.BlockSize;
+			int column = this.Column - this.Column % this.Sudoku.BlockSize;
 
-			for (int i = 0; i < sqrt; i ++)
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 			{
 				int currentRow = row + i;
 
-				for (int j = 0; j < sqrt; j ++)
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 				{
 					this.FillCell(canvas, currentRow, column + j, this.NeighbourFill);
 				}
