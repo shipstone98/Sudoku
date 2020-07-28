@@ -89,7 +89,7 @@ namespace Sudoku.Android.ViewModels
 					case ControlEvent.Number:
 						if (!this.Sudoku.CheckReadOnly(row, column))
 						{
-							this.Sudoku[row, column] = this._State.Number;
+							this.Sudoku[row, column] = this.Sudoku[row, column] == this._State.Number ? 0 : this._State.Number;
 						}
 
 						break;
@@ -124,8 +124,9 @@ namespace Sudoku.Android.ViewModels
 					case ControlEvent.Clear:
 						this.Sudoku[this.Row, this.Column] = 0;
 						break;
+
 					case ControlEvent.Number:
-						this.Sudoku[this.Row, this.Column] = state.Number;
+						this.Sudoku[this.Row, this.Column] = this.Sudoku[this.Row, this.Column] == state.Number ? 0 : state.Number;
 						break;
 				}
 
