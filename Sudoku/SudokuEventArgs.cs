@@ -5,10 +5,10 @@ namespace Sudoku
 	/// <summary>
 	/// Provides data for when a <see cref="Sudoku"/> puzzle event is raised.
 	/// </summary>
-	public class SudokuEventArgs : EventArgs
+	public class SudokuEventArgs : EventArgs, ISudokuEventArgs
 	{
 		/// <summary>
-		/// Gets the zero-based column of the <see cref="Sudoku"/> puzzle where the event was raised.
+		/// <inheritdoc/>
 		/// </summary>
 		public int Column { get; }
 
@@ -18,7 +18,7 @@ namespace Sudoku
 		public int Number { get; }
 
 		/// <summary>
-		/// Gets the zero-based row of the <see cref="Sudoku"/> puzzle where the event was raised.
+		/// <inheritdoc/>
 		/// </summary>
 		public int Row { get; }
 
