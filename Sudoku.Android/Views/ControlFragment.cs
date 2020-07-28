@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Android.Bluetooth;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
@@ -18,39 +19,36 @@ namespace Sudoku.Android.Views
 
 		public void OnClick(View v)
 		{
+			Button button = v as Button;
+
 			if (this.Fragment is null)
 			{
 				return;
 			}
 
-			try
+			switch (button.Text)
 			{
-				Button button = (Button) v;
+				case "Check":
+					this.Fragment.State = new ControlEventArgs(ControlEvent.Check, 0);
+					this.Fragment.Update();
+					break;
+				case "Clear":
+					this.Fragment.State = new ControlEventArgs(ControlEvent.Clear, 0);
+					this.Fragment.Update();
+					break;
+				case "Notes":
+					this.Fragment.State = new ControlEventArgs(ControlEvent.Notes, 0);
+					this.Fragment.Update();
+					break;
 
-				switch (button.Text)
-				{
-					case "Clear":
-						//this.Fragment.State = new ControlEventArgs(ControlEvent.Clear, 0);
-						this.Fragment.Update(ControlEvent.Clear, 0);
-						return;
-					case "Check":
-						//this.Fragment.State = new ControlEventArgs(ControlEvent.Check, 0);
-						this.Fragment.Update(ControlEvent.Check, 0);
-						return;
-					case "Notes":
-						//this.Fragment.State = new ControlEventArgs(ControlEvent.Notes, 0);
-						this.Fragment.Update(ControlEvent.Notes, 0);
-						return;
-					default:
-						//this.Fragment.State = new ControlEventArgs(ControlEvent.Number, Int32.Parse(button.Text));
-						this.Fragment.Update(ControlEvent.Number, Int32.Parse(button.Text));
-						return;
-				}
-			}
+				default:
+					if (Int32.TryParse(button.Text, out int result))
+					{
+						this.Fragment.State = new ControlEventArgs(ControlEvent.Number, result);
+						this.Fragment.Update();
+					}
 
-			catch
-			{
-				return;
+					break;
 			}
 		}
 	}
@@ -59,13 +57,13 @@ namespace Sudoku.Android.Views
 	{
 		private const int Size = 9;
 
-		private ControlEventArgs _State;
+		internal ControlEventArgs _State;
 		private readonly Object LockObject;
 
 		private event ControlEventHandler _Changed;
 
 		private bool ActivityCreated { get; set; }
-		private Button[] Buttons { get; }
+		private Button[] NumberButtons { get; }
 		private Button CheckButton { get; set; }
 		private Button ClearButton { get; set; }
 		private Button NotesButton { get; set; }
@@ -73,12 +71,7 @@ namespace Sudoku.Android.Views
 		public ControlEventArgs State
 		{
 			get => this._State;
-
-			set
-			{
-				this._State = value ?? ControlEventArgs.Empty;
-				this.Update();
-			}
+			set => this.Update(value);
 		}
 
 		public event ControlEventHandler Changed
@@ -95,18 +88,18 @@ namespace Sudoku.Android.Views
 			{
 				lock (this.LockObject)
 				{
-					this.Changed -= value;
+					this._Changed -= value;
 				}
 			}
 		}
 
 		public ControlFragment()
 		{
-			this.LockObject = new Object();
 			this._State = ControlEventArgs.Empty;
+			this.LockObject = new Object();
 			this._Changed = null;
 			this.ActivityCreated = false;
-			this.Buttons = new Button[ControlFragment.Size];
+			this.NumberButtons = new Button[ControlFragment.Size];
 			this.CheckButton = this.ClearButton = this.NotesButton = null;
 		}
 
@@ -143,49 +136,69 @@ namespace Sudoku.Android.Views
 			this.CheckButton.SetOnClickListener(listener);
 			this.ClearButton.SetOnClickListener(listener);
 			this.NotesButton.SetOnClickListener(listener);
-			this.Buttons[0] = oneButton;
-			this.Buttons[1] = twoButton;
-			this.Buttons[2] = threeButton;
-			this.Buttons[3] = fourButton;
-			this.Buttons[4] = fiveButton;
-			this.Buttons[5] = sixButton;
-			this.Buttons[6] = sevenButton;
-			this.Buttons[7] = eightButton;
-			this.Buttons[8] = nineButton;
+			this.NumberButtons[0] = oneButton;
+			this.NumberButtons[1] = twoButton;
+			this.NumberButtons[2] = threeButton;
+			this.NumberButtons[3] = fourButton;
+			this.NumberButtons[4] = fiveButton;
+			this.NumberButtons[5] = sixButton;
+			this.NumberButtons[6] = sevenButton;
+			this.NumberButtons[7] = eightButton;
+			this.NumberButtons[8] = nineButton;
 			this.ActivityCreated = true;
-			this.Update();
+			this.Update(this._State);
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) => inflater.Inflate(Resource.Layout.fragment_control, container, false);
 
-		private void Update()
+		internal void Update()
+		{
+			this.Update(this._State);
+
+			if (!(this._Changed is null))
+			{
+				this._Changed(this, this._State);
+			}
+		}
+
+		private void Update(ControlEventArgs state)
 		{
 			if (!this.ActivityCreated)
 			{
 				return;
 			}
 
+			this._State = state;
+			ColorStateList gray = ColorStateList.ValueOf(Color.Gray);
+
 			for (int i = 0; i < ControlFragment.Size; i ++)
 			{
-				this.Buttons[i].BackgroundTintList = ColorStateList.ValueOf(Color.Gray);
+				this.NumberButtons[i].BackgroundTintList = gray;
 			}
 
-			if (this.State.Event == ControlEvent.Number)
+			this.CheckButton.BackgroundTintList = this.ClearButton.BackgroundTintList = this.NotesButton.BackgroundTintList = gray;
+			Button selectedButton = null;
+
+			switch (state.Event)
 			{
-				this.Buttons[this.State.Number - 1].BackgroundTintList = ColorStateList.ValueOf(Color.Blue);
+				case ControlEvent.Check:
+					selectedButton = this.CheckButton;
+					break;
+				case ControlEvent.Clear:
+					selectedButton = this.ClearButton;
+					break;
+				case ControlEvent.Notes:
+					selectedButton = this.NotesButton;
+					break;
+				case ControlEvent.Number:
+					selectedButton = this.NumberButtons[state.Number - 1];
+					break;
 			}
-		}
 
-		internal void Update(ControlEvent e, int number)
-		{
-			this._State = new ControlEventArgs(e, number);
-
-			if (!(this._Changed is null))
+			if (!(selectedButton is null))
 			{
-				this._Changed(this, this._State);
+				selectedButton.BackgroundTintList = ColorStateList.ValueOf(Color.Blue);
 			}
-
-			this.Update();
 		}
 	}
 }
