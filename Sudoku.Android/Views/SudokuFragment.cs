@@ -13,26 +13,20 @@ namespace Sudoku.Android.Views
 {
 	public class SudokuFragment : Fragment
 	{
-		private ControlFragment ControlFragment { get; set; }
 		private SudokuViewModel ViewModel { get; set; }
-
-		private void ViewUpdated(Object sender, SudokuViewEventArgs e)
-		{
-			this.ViewModel.SetRowAndColumn(e.Row, e.Column);
-		}
 
 		public override void OnActivityCreated(Bundle savedInstanceState)
 		{
 			base.OnActivityCreated(savedInstanceState);
 			this.ViewModel = (SudokuViewModel) new ViewModelProvider(this).Get(Java.Lang.Class.FromType(typeof (SudokuViewModel)));
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
-			this.ControlFragment = (ControlFragment) this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment);
-			this.ControlFragment.State = this.ViewModel.State;
-			sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
+			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
 			sudokuView.Sudoku = this.ViewModel.Sudoku;
-			this.ViewModel.Sudoku.Changed += new SudokuChangedEventHandler((sender, e) => sudokuView.Update());
-			sudokuView.Changed += new SudokuViewEventHandler(this.ViewUpdated);
-			this.ControlFragment.Changed += new ControlEventHandler((sender, e) => this.ViewModel.State = e);
+			controlFragment.State = this.ViewModel.State;
+			controlFragment.Changed += new ControlEventHandler((sender, e) => this.ViewModel.State = e);
+			sudokuView.Changed += new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
+			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => controlFragment.State = e);
+			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column));
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) => inflater.Inflate(Resource.Layout.fragment_sudoku, container, false);

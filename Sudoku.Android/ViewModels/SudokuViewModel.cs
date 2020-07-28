@@ -1,4 +1,6 @@
-﻿using AndroidX.Lifecycle;
+﻿using System;
+
+using AndroidX.Lifecycle;
 
 namespace Sudoku.Android.ViewModels
 {
@@ -8,71 +10,136 @@ namespace Sudoku.Android.ViewModels
 		private const int DefaultRow = -1;
 
 		private ControlEventArgs _State;
+		private readonly Object StateChangedLockObject;
 
-		public int Column { get; private set; }
-		public int Row { get; private set; }
+		private event ControlEventHandler _StateChanged;
 
 		public ControlEventArgs State
 		{
 			get => this._State;
-			set => this.Update(value ?? ControlEventArgs.Empty);
+			set => this.Update(value);
 		}
 
-		public Sudoku Sudoku { get; set; }
+		public int Column { get; private set; }
+		public int Row { get; private set; }
+		public Sudoku Sudoku { get; }
+
+		public event ControlEventHandler StateChanged
+		{
+			add
+			{
+				lock (this.StateChangedLockObject)
+				{
+					this._StateChanged += value;
+				}
+			}
+
+			remove
+			{
+				lock (this.StateChangedLockObject)
+				{
+					this._StateChanged -= value;
+				}
+			}
+		}
 
 		public SudokuViewModel()
 		{
 			this._State = ControlEventArgs.Empty;
+			this.StateChangedLockObject = new Object();
+			this._StateChanged = null;
 			this.Column = SudokuViewModel.DefaultColumn;
 			this.Row = SudokuViewModel.DefaultRow;
-			this.Sudoku = new Sudoku(9, SudokuDifficulty.Easy);
-			SudokuGenerator.AddNumbers(this.Sudoku);
+			this.Sudoku = SudokuGenerator.AddNumbers(9, SudokuDifficulty.Easy);
 			SudokuGenerator.RemoveNumbers(this.Sudoku);
 		}
 
 		public void SetRowAndColumn(int row, int column)
 		{
-			if (row < 0 || column < 0 || row == this.Row && column == this.Column)
+			if (row < 0 || column < 0 || this.Sudoku.CheckReadOnly(row, column))
 			{
-				row = SudokuViewModel.DefaultRow;
-				column = SudokuViewModel.DefaultColumn;
+				this.Column = SudokuViewModel.DefaultColumn;
+				this.Row = SudokuViewModel.DefaultRow;
 			}
 
-			else if (!(this.Sudoku is null) && this.Sudoku.CheckReadOnly(row, column))
+			if (this._State == ControlEventArgs.Empty)
 			{
-				return;
+				if (this.Row == row && this.Column == column || this.Sudoku.CheckReadOnly(row, column))
+				{
+					column = SudokuViewModel.DefaultColumn;
+					row = SudokuViewModel.DefaultRow;
+				}
+
+				this.Row = row;
+				this.Column = column;
 			}
 
-			this.Row = row;
-			this.Column = column;
+			else
+			{
+				switch (this._State.Event)
+				{
+					case ControlEvent.Clear:
+						if (!this.Sudoku.CheckReadOnly(row, column))
+						{
+							this.Sudoku[row, column] = 0;
+						}
+
+						break;
+
+					case ControlEvent.Number:
+						if (!this.Sudoku.CheckReadOnly(row, column))
+						{
+							this.Sudoku[row, column] = this._State.Number;
+						}
+
+						break;
+				}
+
+				this.Column = SudokuViewModel.DefaultColumn;
+				this.Row = SudokuViewModel.DefaultRow;
+			}
+
+			if (!(this._StateChanged is null))
+			{
+				this._StateChanged(this, this._State);
+			}
 		}
 
 		private void Update(ControlEventArgs state)
 		{
-			switch (state.Event)
+			if (state == this._State)
 			{
-				case ControlEvent.Clear:
-					if (this.Row < 0 || this.Column < 0 || this.Sudoku.CheckReadOnly(this.Row, this.Column))
-					{
+				state = ControlEventArgs.Empty;
+			}
+
+			else if (this.Row < 0 || this.Column < 0 || this.Sudoku.CheckReadOnly(this.Row, this.Column))
+			{
+				//Do nothing except set state
+			}
+
+			else
+			{
+				switch (state.Event)
+				{
+					case ControlEvent.Clear:
+						this.Sudoku[this.Row, this.Column] = 0;
 						break;
-					}
-
-					this.Sudoku[this.Row, this.Column] = 0;
-					state = ControlEventArgs.Empty;
-					break;
-
-				case ControlEvent.Number:
-					if (this.Row < 0 || this.Column < 0 || this.Sudoku.CheckReadOnly(this.Row, this.Column))
-					{
+					case ControlEvent.Number:
+						this.Sudoku[this.Row, this.Column] = state.Number;
 						break;
-					}
+				}
 
-					this.Sudoku[this.Row, this.Column] = state.Number;
-					state = ControlEventArgs.Empty;
-					break;
+				state = ControlEventArgs.Empty;
+				this.Column = SudokuViewModel.DefaultColumn;
+				this.Row = SudokuViewModel.DefaultRow;
 			}
 
 			this._State = state;
+			
+			if (!(this._StateChanged is null))
+			{
+				this._StateChanged(this, this._State);
+			}
 		}
 	}
 }

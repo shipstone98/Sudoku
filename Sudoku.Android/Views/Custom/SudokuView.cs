@@ -205,17 +205,6 @@ namespace Sudoku.Android.Views.Custom
 
 		public void SetRowAndColumn(int row, int column)
 		{
-			if (row < 0 || column < 0 || row == this.Row && column == this.Column)
-			{
-				column = SudokuView.DefaultColumn;
-				row = SudokuView.DefaultRow;
-			}
-
-			else if (!(this.Sudoku is null) && this.Sudoku.CheckReadOnly(row, column))
-			{
-				return;
-			}
-
 			this.Row = row;
 			this.Column = column;
 			this.Invalidate();
