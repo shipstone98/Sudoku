@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Graphics;
 using Android.Views;
 using Android.Util;
+using Sudoku.Android.ViewModels;
 
 namespace Sudoku.Android.Views.Custom
 {
@@ -15,6 +16,10 @@ namespace Sudoku.Android.Views.Custom
 		private const float DefaultStrokeWidth = 2F;
 		private const float DefaultTextSize = 40F;
 		private const int OuterBorderRatio = 3;
+
+		private readonly Object LockObject;
+
+		private event SudokuViewEventHandler _Changed;
 
 		private Paint CellText { get; }
 		private Paint IncorrectCellText { get; }
@@ -29,9 +34,32 @@ namespace Sudoku.Android.Views.Custom
 		public int Row { get; private set; }
 		public Sudoku Sudoku { get; set; }
 
+		public event SudokuViewEventHandler Changed
+		{
+			add
+			{
+				lock (this.LockObject)
+				{
+					this._Changed += value;
+				}
+			}
+
+			remove
+			{
+				lock (this.LockObject)
+				{
+					this.Changed -= value;
+				}
+			}
+		}
+
 		public SudokuView(Context context, IAttributeSet attributeSet) : base(context, attributeSet)
 		{
 			//TypedArray attributes = context.Theme.ObtainStyledAttributes(attributeSet, Resource.Styleable.Sudoku)
+
+			this.LockObject = new Object();
+
+			this._Changed = null;
 
 			this.Column = SudokuView.DefaultColumn;
 			this.Pixels = SudokuView.DefaultPixels;
@@ -60,7 +88,7 @@ namespace Sudoku.Android.Views.Custom
 			this.OuterBorder.Color = Color.Black;
 			this.OuterBorder.StrokeWidth = SudokuView.DefaultStrokeWidth * SudokuView.OuterBorderRatio;
 			this.OuterBorder.SetStyle(Paint.Style.Stroke);
-			this.ReadOnlyCellText.Color = Color.Black;
+			this.ReadOnlyCellText.Color = Color.DarkBlue;
 			this.ReadOnlyCellText.TextSize = SudokuView.DefaultTextSize;
 			this.ReadOnlyCellText.SetStyle(Paint.Style.FillAndStroke);
 			this.SelectedFill.Color = Color.Rgb(220, 220, 255);
@@ -145,9 +173,15 @@ namespace Sudoku.Android.Views.Custom
 		{
 			if (e.Action == MotionEventActions.Down)
 			{
-				float y = e.GetY();
-				float x = e.GetX();
-				this.SetRowAndColumn((int) (y / this.Pixels), (int) (x / this.Pixels));
+				int row = (int) (e.GetY() / this.Pixels);
+				int column = (int) (e.GetX() / this.Pixels);
+				this.SetRowAndColumn(row, column);
+
+				if (!(this._Changed is null))
+				{
+					this._Changed(this, new SudokuViewEventArgs(row, column));
+				}
+
 				return true;
 			}
 
@@ -156,10 +190,15 @@ namespace Sudoku.Android.Views.Custom
 
 		public void SetRowAndColumn(int row, int column)
 		{
-			if (row < 0 || column < 0)
+			if (row < 0 || column < 0 || row == this.Row && column == this.Column)
 			{
 				column = SudokuView.DefaultColumn;
 				row = SudokuView.DefaultRow;
+			}
+
+			else if (!(this.Sudoku is null) && this.Sudoku.CheckReadOnly(row, column))
+			{
+				return;
 			}
 
 			this.Row = row;

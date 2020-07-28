@@ -64,6 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ViewModels\SudokuViewEventArgs.cs" />
+    <Compile Include="ViewModels\SudokuViewEventHandler.cs" />
+    <Compile Include="ViewModels\SudokuViewModel.cs" />
     <Compile Include="Views\ControlFragment.cs" />
     <Compile Include="Views\Custom\SudokuView.cs" />
     <Compile Include="Views\MainActivity.cs" />
@@ -106,11 +109,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout">
       <Version>1.1.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel">
+      <Version>2.2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0-preview02" />
     <PackageReference Include="Xamarin.AndroidX.Legacy.Support.Core.Utils" Version="1.0.0-preview02" />
