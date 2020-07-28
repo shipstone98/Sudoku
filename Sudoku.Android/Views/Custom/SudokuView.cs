@@ -13,10 +13,12 @@ namespace Sudoku.Android.Views.Custom
 		private const int DefaultColumn = -1;
 		private const float DefaultPixels = 0F;
 		private const int DefaultRow = -1;
+		private const int DefaultSize = 9;
 		private const float DefaultStrokeWidth = 2F;
 		private const float DefaultTextSize = 40F;
 		private const int OuterBorderRatio = 3;
 
+		private Sudoku _Sudoku;
 		private readonly Object LockObject;
 
 		private event SudokuViewEventHandler _Changed;
@@ -33,7 +35,20 @@ namespace Sudoku.Android.Views.Custom
 		public int Column { get; private set; }
 		private float Pixels { get; set; }
 		public int Row { get; private set; }
-		public Sudoku Sudoku { get; set; }
+		public int Size { get; private set; }
+
+		public Sudoku Sudoku
+		{
+			get => this._Sudoku;
+
+			set
+			{
+				this._Sudoku = value;
+				this.Size = this._Sudoku.Size;
+				this.Invalidate();
+				this.RequestLayout();
+			}
+		}
 
 		public event SudokuViewEventHandler Changed
 		{
@@ -65,7 +80,8 @@ namespace Sudoku.Android.Views.Custom
 			this.Column = SudokuView.DefaultColumn;
 			this.Pixels = SudokuView.DefaultPixels;
 			this.Row = SudokuView.DefaultRow;
-			this.Sudoku = null;
+			this.Size = SudokuView.DefaultSize;
+			this._Sudoku = null;
 
 			this.CellText = new Paint();
 			this.IncorrectCellText = new Paint();
@@ -101,14 +117,9 @@ namespace Sudoku.Android.Views.Custom
 
 		private void DrawBorders(Canvas canvas)
 		{
-			if (this.Sudoku is null)
-			{
-				return;
-			}
+			int sqrt = (int) Math.Sqrt(this.Size);
 
-			int sqrt = (int) Math.Sqrt(this.Sudoku.Size);
-
-			for (int i = 0; i <= this.Sudoku.Size; i ++)
+			for (int i = 0; i <= this.Size; i ++)
 			{
 				Paint paint = i % sqrt == 0 ? this.OuterBorder : this.InnerBorder;
 				float coordinate = i * this.Pixels;
