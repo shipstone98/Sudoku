@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
-using AndroidX.Lifecycle;
+﻿using AndroidX.Lifecycle;
 
 namespace Sudoku.Android.ViewModels
 {
@@ -19,12 +7,22 @@ namespace Sudoku.Android.ViewModels
 		private const int DefaultColumn = -1;
 		private const int DefaultRow = -1;
 
+		private ControlEventArgs _State;
+
 		public int Column { get; private set; }
 		public int Row { get; private set; }
+
+		public ControlEventArgs State
+		{
+			get => this._State;
+			set => this.Update(value ?? ControlEventArgs.Empty);
+		}
+
 		public Sudoku Sudoku { get; set; }
 
 		public SudokuViewModel()
 		{
+			this._State = ControlEventArgs.Empty;
 			this.Column = SudokuViewModel.DefaultColumn;
 			this.Row = SudokuViewModel.DefaultRow;
 			this.Sudoku = new Sudoku(9, SudokuDifficulty.Easy);
@@ -47,6 +45,34 @@ namespace Sudoku.Android.ViewModels
 
 			this.Row = row;
 			this.Column = column;
+		}
+
+		private void Update(ControlEventArgs state)
+		{
+			switch (state.Event)
+			{
+				case ControlEvent.Clear:
+					if (this.Row < 0 || this.Column < 0 || this.Sudoku.CheckReadOnly(this.Row, this.Column))
+					{
+						break;
+					}
+
+					this.Sudoku[this.Row, this.Column] = 0;
+					state = ControlEventArgs.Empty;
+					break;
+
+				case ControlEvent.Number:
+					if (this.Row < 0 || this.Column < 0 || this.Sudoku.CheckReadOnly(this.Row, this.Column))
+					{
+						break;
+					}
+
+					this.Sudoku[this.Row, this.Column] = state.Number;
+					state = ControlEventArgs.Empty;
+					break;
+			}
+
+			this._State = state;
 		}
 	}
 }

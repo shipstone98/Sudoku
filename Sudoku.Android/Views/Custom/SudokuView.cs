@@ -24,6 +24,7 @@ namespace Sudoku.Android.Views.Custom
 		private Paint CellText { get; }
 		private Paint IncorrectCellText { get; }
 		private Paint InnerBorder { get; }
+		private Paint MatchingFill { get; }
 		private Paint NeighbourFill { get; }
 		private Paint OuterBorder { get; }
 		private Paint ReadOnlyCellText { get; }
@@ -69,6 +70,7 @@ namespace Sudoku.Android.Views.Custom
 			this.CellText = new Paint();
 			this.IncorrectCellText = new Paint();
 			this.InnerBorder = new Paint();
+			this.MatchingFill = new Paint();
 			this.NeighbourFill = new Paint();
 			this.OuterBorder = new Paint();
 			this.ReadOnlyCellText = new Paint();
@@ -83,6 +85,8 @@ namespace Sudoku.Android.Views.Custom
 			this.InnerBorder.Color = Color.Black;
 			this.InnerBorder.StrokeWidth = SudokuView.DefaultStrokeWidth;
 			this.InnerBorder.SetStyle(Paint.Style.Stroke);
+			this.MatchingFill.Color = Color.Rgb(220, 230, 140);
+			this.MatchingFill.SetStyle(Paint.Style.FillAndStroke);
 			this.NeighbourFill.Color = Color.Rgb(220, 240, 255);
 			this.NeighbourFill.SetStyle(Paint.Style.FillAndStroke);
 			this.OuterBorder.Color = Color.Black;
@@ -120,6 +124,17 @@ namespace Sudoku.Android.Views.Custom
 			if (this.Column < 0 || this.Row < 0 || this.Sudoku is null)
 			{
 				return;
+			}
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j++)
+				{
+					if (this.Sudoku[i, j] != 0 && this.Sudoku[i, j] == this.Sudoku[this.Row, this.Column])
+					{
+						this.FillCell(canvas, i, j, this.MatchingFill);
+					}
+				}
 			}
 
 			for (int i = 0; i < this.Sudoku.Size; i ++)
