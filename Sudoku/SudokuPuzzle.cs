@@ -503,6 +503,21 @@ namespace Sudoku
 			return this.Cells[row, column].Number == 0 ? this.Cells[row, column].Possible : null;
 		}
 
+		/// <summary>
+		/// Returns the solution value of the specified cell in the <see cref="SudokuPuzzle"/>.
+		/// </summary>
+		/// <param name="row">The zero-based row index.</param>
+		/// <param name="column">The zero-based column index.</param>
+		/// <returns>The solution value of the specified cell.</returns>
+		/// <exception cref="ArgumentException"><c><paramref name="row"/></c> is greater than or equal to the <see cref="Size"/> property - or - <c><paramref name="column"/></c> is greater than or equal to the <see cref="Size"/> property.</exception>
+		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c> is less than 0 - or - <c><paramref name="column"/></c> is less than 0.</exception>
+		internal int GetSolution(int row, int column)
+		{
+			this.CheckArgument(row, nameof (row));
+			this.CheckArgument(column, nameof (column));
+			return this.Cells[row, column].Solution;
+		}
+
 		internal void GetStartRowColumn(int row, int column, out int startRow, out int startColumn)
 		{
 			startRow = row - row % this.BlockSize;
@@ -648,6 +663,27 @@ namespace Sudoku
 			}
 
 			return sudoku;
+		}
+
+		internal static SudokuPuzzle Parse(int size, SudokuDifficulty difficulty, int[] numbers, int[] solutions, bool[] readOnly)
+		{
+			SudokuPuzzle puzzle = new SudokuPuzzle(size, difficulty);
+
+			for (int i = 0; i < size; i ++)
+			{
+				int row = i * size;
+
+				for (int j = 0; j < size; j ++)
+				{
+					int index = row + j;
+					SudokuCell cell = puzzle.Cells[i, j];
+					cell.Number = numbers[index];
+					cell.Solution = solutions[index];
+					cell.IsReadOnly = readOnly[index];
+				}
+			}
+
+			return puzzle;
 		}
 
 		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
