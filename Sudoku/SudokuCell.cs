@@ -28,11 +28,7 @@ namespace Sudoku
 			}
 		}
 
-		internal void ClearReadOnly()
-		{
-			this.IsReadOnly = false;
-			this.Solution = 0;
-		}
+		internal void ClearReadOnly() => this.IsReadOnly = false;
 
 		public Object Clone()
 		{
