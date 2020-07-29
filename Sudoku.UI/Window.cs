@@ -14,7 +14,7 @@ namespace Sudoku.UI
 		private int CursorY { get; set; }
 		private bool Running { get; set; }
 		internal int Size { get; }
-		private Sudoku Sudoku { get; }
+		private SudokuPuzzle Sudoku { get; }
 		private int UpperLimit { get; }
 		private int X { get; set; }
 		private int Y { get; set; }
@@ -30,19 +30,19 @@ namespace Sudoku.UI
 		internal Window(int size) : this()
 		{
 			this.Size = size;
-			this.Sudoku = new Sudoku(size, SudokuDifficulty.None);
+			this.Sudoku = new SudokuPuzzle(size, SudokuDifficulty.None);
 			this.UpperLimit = this.Size - 1;
 		}
 
 		internal Window(String filename) : this()
 		{
 			String text = File.ReadAllText(filename);
-			this.Sudoku = Sudoku.Parse(text);
+			this.Sudoku = SudokuPuzzle.Parse(text);
 			this.Size = this.Sudoku.Size;
 			this.UpperLimit = this.Size - 1;
 		}
 
-		internal Window(Sudoku sudoku) : this()
+		internal Window(SudokuPuzzle sudoku) : this()
 		{
 			this.Size = sudoku.Size;
 			this.Sudoku = sudoku;

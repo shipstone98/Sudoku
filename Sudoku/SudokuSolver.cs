@@ -18,14 +18,14 @@ namespace Sudoku
 		/// <summary>
 		/// Gets the underlying <see cref="T:Sudoku.Sudoku"/> puzzle.
 		/// </summary>
-		public Sudoku Sudoku { get; }
+		public SudokuPuzzle Sudoku { get; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuSolver"/> class with the specified <see cref="T:Sudoku.Sudoku"/> puzzle.
 		/// </summary>
 		/// <param name="sudoku">The <see cref="T:Sudoku.Sudoku"/> puzzle to solve.</param>
 		/// <exception cref="ArgumentNullException"><c><paramref name="sudoku"/></c> is <c>null</c>.</exception>
-		public SudokuSolver(Sudoku sudoku)
+		public SudokuSolver(SudokuPuzzle sudoku)
 		{
 			this.ClaimingCandidates = new List<Tuple<int, int, int>>();
 			this.EmptyCells = new List<Tuple<int, int>>();
@@ -42,7 +42,7 @@ namespace Sudoku
 		/// <param name="multipleSolutions"><c>true</c> if <c><paramref name="sudoku"/></c> has multiple possible solutions; otherwise, <c>false</c>.</param>
 		/// <returns><c>true</c> if <c><paramref name="sudoku"/></c> has one or more possible solution; otherwise, <c>false</c>.</returns>
 		/// <exception cref="ArgumentNullException"><c><paramref name="sudoku"/></c> is <c>null</c>.</exception>
-		public static bool CheckSolvable(Sudoku sudoku, out bool multipleSolutions)
+		public static bool CheckSolvable(SudokuPuzzle sudoku, out bool multipleSolutions)
 		{
 			if (sudoku is null)
 			{
@@ -50,7 +50,7 @@ namespace Sudoku
 			}
 
 			int count = 0;
-			SudokuSolver.RecursiveSolve((Sudoku) sudoku.Clone(), 0, 0, ref count, true);
+			SudokuSolver.RecursiveSolve((SudokuPuzzle) sudoku.Clone(), 0, 0, ref count, true);
 			multipleSolutions = count > 1;
 			return count != 0;
 		}
@@ -60,7 +60,7 @@ namespace Sudoku
 		/// </summary>
 		/// <param name="sudoku">The <see cref="T:Sudoku.Sudoku"/> puzzle to solve.</param>
 		/// <exception cref="ArgumentNullException"><c><paramref name="sudoku"/></c> is <c>null</c>.</exception>
-		public static void RecursiveSolve(Sudoku sudoku)
+		public static void RecursiveSolve(SudokuPuzzle sudoku)
 		{
 			if (sudoku is null)
 			{
@@ -74,7 +74,7 @@ namespace Sudoku
 			sudoku.ResetPossible();
 		}
 
-		private static bool RecursiveSolve(Sudoku sudoku, int row, int column, ref int count, bool findMultiple = false)
+		private static bool RecursiveSolve(SudokuPuzzle sudoku, int row, int column, ref int count, bool findMultiple = false)
 		{
 			if (sudoku[row, column] != 0)
 			{
@@ -113,7 +113,7 @@ namespace Sudoku
 			return false;
 		}
 
-		private static bool RecursiveSolveNextNumber(Sudoku sudoku, int row, int column, ref int count, bool findMultiple = false)
+		private static bool RecursiveSolveNextNumber(SudokuPuzzle sudoku, int row, int column, ref int count, bool findMultiple = false)
 		{
 			int nextColumn = column + 1, nextRow = row;
 

@@ -19,7 +19,7 @@ namespace Sudoku.Test
 
 		private int[] Possible { get; }
 		private Random Random { get; }
-		private Sudoku Sudoku { get; set; }
+		private SudokuPuzzle Sudoku { get; set; }
 
 		static SudokuTest()
 		{
@@ -48,7 +48,7 @@ namespace Sudoku.Test
 			}
 
 			Assert.AreNotEqual(SudokuTest.Difficulty, SudokuDifficulty.None, "Difficulty must not be None");
-			Assert.IsTrue(Sudoku.VerifySize(SudokuTest.Size), "Size must be a positive, square integer");
+			Assert.IsTrue(SudokuPuzzle.VerifySize(SudokuTest.Size), "Size must be a positive, square integer");
 		}
 
 		public SudokuTest()
@@ -65,7 +65,7 @@ namespace Sudoku.Test
 		}
 
 		[TestInitialize]
-		public void TestInitialize() => this.Sudoku = new Sudoku(SudokuTest.Size, SudokuTest.Difficulty);
+		public void TestInitialize() => this.Sudoku = new SudokuPuzzle(SudokuTest.Size, SudokuTest.Difficulty);
 
 		private static bool ArraysEqual<T>(T[] a, T[] b)
 		{
@@ -313,7 +313,7 @@ namespace Sudoku.Test
 		public void TestOperators()
 		{
 			SudokuGenerator.AddNumbers(this.Sudoku);
-			Sudoku clone = (Sudoku) this.Sudoku.Clone();
+			SudokuPuzzle clone = (SudokuPuzzle) this.Sudoku.Clone();
 			Assert.AreEqual(this.Sudoku, clone);
 			Assert.IsTrue(this.Sudoku.Equals(clone));
 			Assert.IsTrue(this.Sudoku == clone);

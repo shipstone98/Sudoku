@@ -18,7 +18,7 @@ namespace Sudoku.Android.Views.Custom
 		private const float DefaultTextSize = 40F;
 		private const int OuterBorderRatio = 3;
 
-		private Sudoku _Sudoku;
+		private SudokuPuzzle _Sudoku;
 		private readonly Object LockObject;
 
 		private event SudokuViewEventHandler _Changed;
@@ -37,7 +37,7 @@ namespace Sudoku.Android.Views.Custom
 		public int Row { get; private set; }
 		public int Size { get; private set; }
 
-		public Sudoku Sudoku
+		public SudokuPuzzle Sudoku
 		{
 			get => this._Sudoku;
 

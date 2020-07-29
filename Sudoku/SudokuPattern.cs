@@ -1,7 +1,7 @@
 namespace Sudoku
 {
 	/// <summary>
-	/// Specified constants that define moves used to solve <see cref="Sudoku"/> puzzles.
+	/// Specified constants that define moves used to solve a <see cref="SudokuPuzzle"/>.
 	/// </summary>
     public enum SudokuPattern
     {

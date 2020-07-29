@@ -38,11 +38,11 @@ namespace Sudoku.Test
 				return;
 			}
 
-			Sudoku sudoku;
+			SudokuPuzzle sudoku;
 
 			try
 			{
-				sudoku = Sudoku.Parse(sudokuText);
+				sudoku = SudokuPuzzle.Parse(sudokuText);
 			}
 
 			catch (FormatException)
@@ -51,11 +51,11 @@ namespace Sudoku.Test
 				return;
 			}
 
-			Sudoku solution;
+			SudokuPuzzle solution;
 
 			try
 			{
-				solution = Sudoku.Parse(solutionText);
+				solution = SudokuPuzzle.Parse(solutionText);
 			}
 
 			catch (FormatException)

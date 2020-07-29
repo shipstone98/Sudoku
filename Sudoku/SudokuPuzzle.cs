@@ -13,10 +13,10 @@ namespace Sudoku
 	/// <summary>
 	/// Represents a sudoku puzzle.
 	/// </summary>
-	public class Sudoku: ICloneable, IEnumerable, IEnumerable<IEnumerable<int>>, IEquatable<Sudoku>
+	public class SudokuPuzzle: ICloneable, IEnumerable, IEnumerable<IEnumerable<int>>, IEquatable<SudokuPuzzle>
 	{
 		/// <summary>
-		/// Represents the largest possible number of rows and columns in a <see cref="Sudoku"/> puzzle. This field is constant.
+		/// Represents the largest possible number of rows and columns in a <see cref="SudokuPuzzle"/>. This field is constant.
 		/// </summary>
 		public const int MaximumSupportedSize = 9;
 
@@ -25,14 +25,14 @@ namespace Sudoku
 		private event SudokuChangedEventHandler _Changed;
 
 		/// <summary>
-		/// Gets the number of elements in each row or column of a block, or sub-grid, contained in the <see cref="Sudoku"/> puzzle. This is the positive square root of the <see cref="Size"/> property.
+		/// Gets the number of elements in each row or column of a block, or sub-grid, contained in the <see cref="SudokuPuzzle"/>. This is the positive square root of the <see cref="Size"/> property.
 		/// </summary>
 		public int BlockSize { get; }
 
 		private SudokuCell[,] Cells { get; }
 
 		/// <summary>
-		/// Gets an enumeration containing the columns in the <see cref="Sudoku"/> puzzle.
+		/// Gets an enumeration containing the columns in the <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		public IEnumerable<IEnumerable<int>> Columns
 		{
@@ -55,7 +55,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Gets the difficulty associated with the current <see cref="Sudoku"/> puzzle.
+		/// Gets the difficulty associated with the current <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		public SudokuDifficulty Difficulty { get; }
 
@@ -84,7 +84,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Gets an enumeration containing the rows in the <see cref="Sudoku"/> puzzle.
+		/// Gets an enumeration containing the rows in the <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		public IEnumerable<IEnumerable<int>> Rows
 		{
@@ -107,12 +107,12 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Gets the total number of elements in each row or column of the <see cref="Sudoku"/> puzzle.
+		/// Gets the total number of elements in each row or column of the <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		public int Size { get; }
 
 		/// <summary>
-		/// Occurs when the number in a cell in the <see cref="Sudoku"/> puzzle is changed.
+		/// Occurs when the number in a cell in the <see cref="SudokuPuzzle"/> is changed.
 		/// </summary>
 		public event SudokuChangedEventHandler Changed
 		{
@@ -201,15 +201,15 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Sudoku"/> class that is empty and has the specified <c><paramref name="size"/></c> and <c><paramref name="difficulty"/></c>.
+		/// Initializes a new instance of the <see cref="SudokuPuzzle"/> class that is empty and has the specified <c><paramref name="size"/></c> and <c><paramref name="difficulty"/></c>.
 		/// </summary>
 		/// <param name="size">The number of elements that the new sudoku can store in each row, column and block.</param>
-		/// <param name="difficulty">The difficulty associated with the <see cref="Sudoku"/> puzzle.</param>
+		/// <param name="difficulty">The difficulty associated with the <see cref="SudokuPuzzle"/>.</param>
 		/// <exception cref="ArgumentException"><c><paramref name="size"/></c> is not a positive, square integer.</exception>
-		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="size"/></c> is less than or equal to 0 or greater than <see cref="Sudoku.MaximumSupportedSize"/>.</exception>
-		public Sudoku(int size, SudokuDifficulty difficulty)
+		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="size"/></c> is less than or equal to 0 or greater than <see cref="SudokuPuzzle.MaximumSupportedSize"/>.</exception>
+		public SudokuPuzzle(int size, SudokuDifficulty difficulty)
 		{
-			if (size <= 0 || size > Sudoku.MaximumSupportedSize)
+			if (size <= 0 || size > SudokuPuzzle.MaximumSupportedSize)
 			{
 				throw new ArgumentOutOfRangeException(nameof (size));
 			}
@@ -292,9 +292,9 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Determines whether the numbers in all cells of the <see cref="Sudoku"/> puzzle match the same cell's solution.
+		/// Determines whether the numbers in all cells of the <see cref="SudokuPuzzle"/> match the same cell's solution.
 		/// </summary>
-		/// <returns><c>true</c> the numbers in all cells of the <see cref="Sudoku"/> puzzle match the same cell's solution; otherwise, false.</returns>
+		/// <returns><c>true</c> the numbers in all cells of the <see cref="SudokuPuzzle"/> match the same cell's solution; otherwise, false.</returns>
 		public bool Check()
 		{
 			for (int i = 0; i < this.Size; i ++)
@@ -325,7 +325,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Determines whether a specified cell in the <see cref="Sudoku"/> puzzle is read-only.
+		/// Determines whether a specified cell in the <see cref="SudokuPuzzle"/> is read-only.
 		/// </summary>
 		/// <param name="row">The zero-based row of the cell.</param>
 		/// <param name="column">The zero-based column of the cell.</param>
@@ -350,12 +350,12 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Creates a new <see cref="Sudoku"/> puzzle that is a copy of the current instance.
+		/// Creates a new <see cref="SudokuPuzzle"/> that is a copy of the current instance.
 		/// </summary>
-		/// <returns>A new <see cref="Sudoku"/> puzzle that is a copy of this instance.</returns>
+		/// <returns>A new <see cref="SudokuPuzzle"/> that is a copy of this instance.</returns>
 		public Object Clone()
 		{
-			Sudoku clone = new Sudoku(this.Size, this.Difficulty);
+			SudokuPuzzle clone = new SudokuPuzzle(this.Size, this.Difficulty);
 
 			for (int i = 0; i < this.Size; i ++)
 			{
@@ -389,7 +389,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Determines whether a number is in the collection of possible values at a specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> in the <see cref="Sudoku"/> puzzle.
+		/// Determines whether a number is in the collection of possible values at a specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> in the <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		/// <param name="row">The zero-based row index.</param>
 		/// <param name="column">The zero-based column index.</param>
@@ -406,18 +406,18 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Determines whether the specified object is equal to the current <see cref="Sudoku"/> puzzle.
+		/// Determines whether the specified object is equal to the current <see cref="SudokuPuzzle"/>.
 		/// </summary>
-		/// <param name="obj">The object to compare with the current <see cref="Sudoku"/> puzzle.</param>
-		/// <returns><c>true</c> if the specified object is equal to the current <see cref="Sudoku"/> puzzle; otherwise, <c>false</c>.</returns>
-		public override bool Equals(Object obj) => this.Equals(obj as Sudoku);
+		/// <param name="obj">The object to compare with the current <see cref="SudokuPuzzle"/>.</param>
+		/// <returns><c>true</c> if the specified object is equal to the current <see cref="SudokuPuzzle"/>; otherwise, <c>false</c>.</returns>
+		public override bool Equals(Object obj) => this.Equals(obj as SudokuPuzzle);
 
 		/// <summary>
-		/// Determines whether the specified <c><paramref name="sudoku"/></c> is equal to the current <see cref="Sudoku"/> puzzle.
+		/// Determines whether the specified <c><paramref name="sudoku"/></c> is equal to the current <see cref="SudokuPuzzle"/>.
 		/// </summary>
-		/// <param name="sudoku">The puzzle to compare with the current <see cref="Sudoku"/> puzzle.</param>
-		/// <returns><c>true</c> if <c><paramref name="sudoku"/></c> is equal to the current <see cref="Sudoku"/> puzzle; otherwise, <c>false</c>.</returns>
-		public bool Equals(Sudoku sudoku)
+		/// <param name="sudoku">The puzzle to compare with the current <see cref="SudokuPuzzle"/>.</param>
+		/// <returns><c>true</c> if <c><paramref name="sudoku"/></c> is equal to the current <see cref="SudokuPuzzle"/>; otherwise, <c>false</c>.</returns>
+		public bool Equals(SudokuPuzzle sudoku)
 		{
 			if (sudoku is null || this.Size != sudoku.Size)
 			{
@@ -439,9 +439,9 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Returns an enumerator that iterates through the rows of the <see cref="Sudoku"/> puzzle.
+		/// Returns an enumerator that iterates through the rows of the <see cref="SudokuPuzzle"/>.
 		/// </summary>
-		/// <returns>An enumerator that can be used to iterate through the rows of the <see cref="Sudoku"/> puzzle.</returns>
+		/// <returns>An enumerator that can be used to iterate through the rows of the <see cref="SudokuPuzzle"/>.</returns>
 		public IEnumerator<IEnumerable<int>> GetEnumerator() => this.Rows.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
@@ -467,9 +467,9 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Creates a new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="Sudoku"/> puzzle.
+		/// Creates a new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="SudokuPuzzle"/>.
 		/// </summary>
-		/// <returns>A new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="Sudoku"/> puzzle.</returns>
+		/// <returns>A new enumeration containing the zero-based row and column indices of all empty and incorrect cells in the <see cref="SudokuPuzzle"/>.</returns>
 		public IEnumerable<Tuple<int, int>> GetIncorrect()
 		{
 			List<Tuple<int, int>> cells = new List<Tuple<int, int>>();
@@ -489,7 +489,7 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Copies the elements of the collection of possible values at the specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> in the <see cref="Sudoku"/> puzzle to a new array.
+		/// Copies the elements of the collection of possible values at the specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> in the <see cref="SudokuPuzzle"/> to a new array.
 		/// </summary>
 		/// <param name="row">The zero-based row index.</param>
 		/// <param name="column">The zero-based column index.</param>
@@ -603,14 +603,14 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Converts the string representation to its <see cref="Sudoku"/> puzzle equivalent.
+		/// Converts the string representation to its <see cref="SudokuPuzzle"/> equivalent.
 		/// </summary>
 		/// <param name="s">A string containing a puzzle to convert.</param>
-		/// <param name="difficulty">An optional difficulty to associate with the <see cref="Sudoku"/> puzzle.</param>
-		/// <returns>A <see cref="Sudoku"/> puzzle equivalent to the puzzle contained in <c><paramref name="s"/></c>.</returns>
+		/// <param name="difficulty">An optional difficulty to associate with the <see cref="SudokuPuzzle"/>.</param>
+		/// <returns>A <see cref="SudokuPuzzle"/> equivalent to the puzzle contained in <c><paramref name="s"/></c>.</returns>
 		/// <exception cref="ArgumentNullException"><c><paramref name="s"/></c> is <c>null</c>.</exception>
 		/// <exception cref="FormatException"><c><paramref name="s"/></c> is not in the correct format.</exception>
-		public static Sudoku Parse(String s, SudokuDifficulty difficulty = SudokuDifficulty.None)
+		public static SudokuPuzzle Parse(String s, SudokuDifficulty difficulty = SudokuDifficulty.None)
 		{
 			if (s is null)
 			{
@@ -620,16 +620,16 @@ namespace Sudoku
 			s = Regex.Replace(s, @"[^0-9]", "");
 			int size = (int) Math.Sqrt(s.Length);
 
-			if (!Sudoku.VerifySize(size))
+			if (!SudokuPuzzle.VerifySize(size))
 			{
 				throw new FormatException();
 			}
 
-			Sudoku sudoku;
+			SudokuPuzzle sudoku;
 
 			try
 			{
-				sudoku = new Sudoku(size, difficulty);
+				sudoku = new SudokuPuzzle(size, difficulty);
 			}
 
 			catch
@@ -719,9 +719,9 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Returns a string that represents the current <see cref="Sudoku"/> puzzle.
+		/// Returns a string that represents the current <see cref="SudokuPuzzle"/>.
 		/// </summary>
-		/// <returns>A string that represents the current <see cref="Sudoku"/> puzzle.</returns>
+		/// <returns>A string that represents the current <see cref="SudokuPuzzle"/>.</returns>
 		public override String ToString()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -754,26 +754,26 @@ namespace Sudoku
 		}
 
 		/// <summary>
-		/// Determines whether the specified <c><paramref name="size"/></c> is acceptable for a <see cref="Sudoku"/> puzzle.
+		/// Determines whether the specified <c><paramref name="size"/></c> is acceptable for a <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		/// <param name="size">The size to verify.</param>
-		/// <returns><c>true</c> if the specified <c><paramref name="size"/></c> is acceptable for a <see cref="Sudoku"/> puzzle; otherwise, <c>false</c>.</returns>
-		public static bool VerifySize(int size) => size > 0 && size <= Sudoku.MaximumSupportedSize && MathExtensions.IsSquare((ulong) size);
+		/// <returns><c>true</c> if the specified <c><paramref name="size"/></c> is acceptable for a <see cref="SudokuPuzzle"/>; otherwise, <c>false</c>.</returns>
+		public static bool VerifySize(int size) => size > 0 && size <= SudokuPuzzle.MaximumSupportedSize && MathExtensions.IsSquare((ulong) size);
 
 		/// <summary>
-		/// Determines whether two specified <see cref="Sudoku"/> puzzles have the same numbers in all cells.
+		/// Determines whether two specified <see cref="SudokuPuzzle"/> instances have the same numbers in all cells.
 		/// </summary>
-		/// <param name="a">The first <see cref="Sudoku"/> puzzle to compare, or <c>null</c>.</param>
-		/// <param name="b">The second <see cref="Sudoku"/> puzzle to compare, or <c>null</c>.</param>
+		/// <param name="a">The first <see cref="SudokuPuzzle"/> to compare, or <c>null</c>.</param>
+		/// <param name="b">The second <see cref="SudokuPuzzle"/> to compare, or <c>null</c>.</param>
 		/// <returns><c>true</c> if the number in each cell in <c><paramref name="a"/></c> is the same as the number in the same cell in <c><paramref name="b"/></c>; otherwise, <c>false</c>.</returns>
-		public static bool operator ==(Sudoku a, Sudoku b) => a is null ? b is null : a.Equals(b);
+		public static bool operator ==(SudokuPuzzle a, SudokuPuzzle b) => a is null ? b is null : a.Equals(b);
 
 		/// <summary>
-		/// Determines whether two specified <see cref="Sudoku"/> puzzles have the same numbers in any cell.
+		/// Determines whether two specified <see cref="SudokuPuzzle"/> instances have the same numbers in any cell.
 		/// </summary>
-		/// <param name="a">The first <see cref="Sudoku"/> puzzle to compare, or <c>null</c>.</param>
-		/// <param name="b">The second <see cref="Sudoku"/> puzzle to compare, or <c>null</c>.</param>
+		/// <param name="a">The first <see cref="SudokuPuzzle"/> to compare, or <c>null</c>.</param>
+		/// <param name="b">The second <see cref="SudokuPuzzle"/> to compare, or <c>null</c>.</param>
 		/// <returns><c>true</c> if the number in any cell in <c><paramref name="a"/></c> is different to the number in the same cell in <c><paramref name="b"/></c>; otherwise, <c>false</c>.</returns>
-		public static bool operator !=(Sudoku a, Sudoku b) => !(a == b);
+		public static bool operator !=(SudokuPuzzle a, SudokuPuzzle b) => !(a == b);
 	}
 }

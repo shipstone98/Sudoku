@@ -49,12 +49,12 @@ namespace Sudoku.UI
 				return Program.FileNotFoundError;
 			}
 
-			Sudoku a, b;
+			SudokuPuzzle a, b;
 			
 			try
 			{
-				a = Sudoku.Parse(text1);
-				b = Sudoku.Parse(text2);
+				a = SudokuPuzzle.Parse(text1);
+				b = SudokuPuzzle.Parse(text2);
 			}
 
 			catch (FormatException)
@@ -75,7 +75,7 @@ namespace Sudoku.UI
 		
 		private static int Generate(int size, SudokuDifficulty difficulty, String outfile)
 		{
-			Sudoku sudoku = SudokuGenerator.Generate(size, difficulty);
+			SudokuPuzzle sudoku = SudokuGenerator.Generate(size, difficulty);
 
 			if (outfile is null)
 			{
@@ -173,7 +173,7 @@ namespace Sudoku.UI
 
 			try
 			{
-				Console.WriteLine(Sudoku.Parse(text));
+				Console.WriteLine(SudokuPuzzle.Parse(text));
 				return 0;
 			}
 
@@ -297,7 +297,7 @@ namespace Sudoku.UI
 
 								size = Int32.Parse(param);
 
-								if (!Sudoku.VerifySize(size))
+								if (!SudokuPuzzle.VerifySize(size))
 								{
 									return false;
 								}
@@ -334,7 +334,7 @@ namespace Sudoku.UI
 					break;
 
 				case Program.GenerateCommand:
-					if (!Sudoku.VerifySize(size) || difficulty == SudokuDifficulty.None)
+					if (!SudokuPuzzle.VerifySize(size) || difficulty == SudokuDifficulty.None)
 					{
 						return false;
 					}
@@ -342,7 +342,7 @@ namespace Sudoku.UI
 					break;
 
 				case Program.InteractiveCommand:
-					if (filename is null && !Sudoku.VerifySize(size) || !(filename is null || size == 0))
+					if (filename is null && !SudokuPuzzle.VerifySize(size) || !(filename is null || size == 0))
 					{
 						return false;
 					}
@@ -387,11 +387,11 @@ namespace Sudoku.UI
 				return Program.FileNotFoundError;
 			}
 
-			Sudoku sudoku;
+			SudokuPuzzle sudoku;
 
 			try
 			{
-				sudoku = Sudoku.Parse(text);
+				sudoku = SudokuPuzzle.Parse(text);
 			}
 
 			catch (FormatException)

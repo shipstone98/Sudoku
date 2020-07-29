@@ -4,7 +4,7 @@ using System.Linq;
 namespace Sudoku
 {
     /// <summary>
-    /// Represents a strategy-based move used to solve <see cref="Sudoku"/> puzzles.
+    /// Represents a strategy-based move used to solve a <see cref="SudokuPuzzle"/>.
     /// </summary>
     public class SudokuMove
     {
@@ -18,7 +18,7 @@ namespace Sudoku
         private readonly int[] _Rows;
 
         /// <summary>
-        /// Gets a new array containing the zero-based columns of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.
+        /// Gets a new array containing the zero-based columns of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.
         /// </summary>
         public int[] Columns
 		{
@@ -85,7 +85,7 @@ namespace Sudoku
         }
 
         /// <summary>
-        /// Gets a new array containing the zero-based rows of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.
+        /// Gets a new array containing the zero-based rows of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.
         /// </summary>
         public int[] Rows
 		{
@@ -101,8 +101,8 @@ namespace Sudoku
         /// <summary>
         /// Initializes a new instance of the <see cref="SudokuMove"/> class.
         /// </summary>
-        /// <param name="rows">An array containing the zero-based rows of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.</param>
-        /// <param name="columns">An array containing the zero-based columns of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.</param>
+        /// <param name="rows">An array containing the zero-based rows of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.</param>
+        /// <param name="columns">An array containing the zero-based columns of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.</param>
         /// <param name="numbers">An array containing the numbers used in the <see cref="SudokuMove"/>.</param>
         /// <param name="pattern">The pattern used in the <see cref="SudokuMove"/>.</param>
         /// <param name="possible">An array containing the numbers that were possible instantly before the <see cref="SudokuMove"/> move was made.</param>
@@ -202,8 +202,8 @@ namespace Sudoku
         /// <summary>
         /// Initializes a new instance of the <see cref="SudokuMove"/> class.
         /// </summary>
-        /// <param name="row">The zero-based row of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.</param>
-        /// <param name="column">The zero-based column of the <see cref="Sudoku"/> puzzle affected by the <see cref="SudokuMove"/>.</param>
+        /// <param name="row">The zero-based row of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.</param>
+        /// <param name="column">The zero-based column of the <see cref="SudokuPuzzle"/> affected by the <see cref="SudokuMove"/>.</param>
         /// <param name="number">The number used in the <see cref="SudokuMove"/>.</param>
         /// <param name="pattern">The pattern used in the <see cref="SudokuMove"/>.</param>
         /// <param name="possible">An array containing the numbers that were possible instantly before the <see cref="SudokuMove"/> move was made.</param>
