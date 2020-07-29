@@ -9,7 +9,7 @@ namespace Sudoku.Test
 		[TestMethod]
 		public void TestAddNumbers()
 		{
-			Sudoku sudoku = SudokuGenerator.AddNumbers(SudokuTest.Size, SudokuTest.Difficulty);
+			SudokuPuzzle sudoku = SudokuGenerator.AddNumbers(SudokuTest.Size, SudokuTest.Difficulty);
 
 			for (int i = 0; i < sudoku.Size; i ++)
 			{
@@ -26,9 +26,9 @@ namespace Sudoku.Test
 		[TestMethod]
 		public void TestRemoveNumbers()
 		{
-			Sudoku sudoku = SudokuGenerator.AddNumbers(SudokuTest.Size, SudokuTest.Difficulty);
+			SudokuPuzzle sudoku = SudokuGenerator.AddNumbers(SudokuTest.Size, SudokuTest.Difficulty);
 			Console.WriteLine(sudoku);
-			Sudoku original = (Sudoku) sudoku.Clone();
+			SudokuPuzzle original = (SudokuPuzzle) sudoku.Clone();
 			SudokuGenerator.RemoveNumbers(sudoku);
 			Console.WriteLine(sudoku);
 			SudokuSolver.RecursiveSolve(sudoku);

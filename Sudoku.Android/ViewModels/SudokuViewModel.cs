@@ -22,7 +22,7 @@ namespace Sudoku.Android.ViewModels
 
 		public int Column { get; private set; }
 		public int Row { get; private set; }
-		public Sudoku Sudoku { get; }
+		public SudokuPuzzle Sudoku { get; }
 
 		public event ControlEventHandler StateChanged
 		{

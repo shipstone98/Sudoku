@@ -3,7 +3,7 @@
 namespace Sudoku
 {
 	/// <summary>
-	/// Provides data for when a <see cref="Sudoku"/> puzzle event is raised.
+	/// Provides data for when a <see cref="SudokuPuzzle"/> event is raised.
 	/// </summary>
 	public class SudokuEventArgs : EventArgs, ISudokuEventArgs
 	{
@@ -25,8 +25,8 @@ namespace Sudoku
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuEventArgs"/> class, specifying the <c><paramref name="row"/></c> and <c><paramref name="column"/></c> where the event was raised and the <c><paramref name="number"/></c> that raised the event.
 		/// </summary>
-		/// <param name="row">The zero-based row of the <see cref="Sudoku"/> puzzle where the event was raised.</param>
-		/// <param name="column">The zero-based column of the <see cref="Sudoku"/> puzzle where the event was raised.</param>
+		/// <param name="row">The zero-based row of the <see cref="SudokuPuzzle"/> where the event was raised.</param>
+		/// <param name="column">The zero-based column of the <see cref="SudokuPuzzle"/> where the event was raised.</param>
 		/// <param name="number">The <c><paramref name="number"/></c> that raised the event.</param>
 		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c>, <c><paramref name="column"/></c> or <c><paramref name="number"/></c> are less than 0.</exception>
 		public SudokuEventArgs(int row, int column, int number)

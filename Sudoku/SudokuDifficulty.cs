@@ -1,7 +1,7 @@
 ﻿namespace Sudoku
 {
 	/// <summary>
-	/// Specifies constants that define difficulties for <see cref="Sudoku"/> puzzles.
+	/// Specifies constants that define difficulties for a <see cref="SudokuPuzzle"/>.
 	/// </summary>
 	public enum SudokuDifficulty
 	{
@@ -11,17 +11,17 @@
 		None,
 
 		/// <summary>
-		/// An easy, low difficulty <see cref="Sudoku"/> puzzle.
+		/// An easy, low difficulty <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		Easy,
 
 		/// <summary>
-		/// A medium difficulty <see cref="Sudoku"/> puzzle.
+		/// A medium difficulty <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		Medium,
 
 		/// <summary>
-		/// A hard, high difficulty <see cref="Sudoku"/> puzzle.
+		/// A hard, high difficulty <see cref="SudokuPuzzle"/>.
 		/// </summary>
 		Hard
 	}
