@@ -28,6 +28,12 @@ namespace Sudoku
 			}
 		}
 
+		internal void ClearReadOnly()
+		{
+			this.IsReadOnly = false;
+			this.Solution = 0;
+		}
+
 		public Object Clone()
 		{
 			SudokuCell cell = new SudokuCell
