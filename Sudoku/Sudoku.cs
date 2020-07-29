@@ -337,6 +337,17 @@ namespace Sudoku
 			this.CheckArgument(column, nameof (column));
 			return this.Cells[row, column].IsReadOnly;
 		}
+		
+		internal void ClearReadOnlyProperties()
+		{
+			for (int i = 0; i < this.Size; i ++)
+			{
+				for (int j = 0; j < this.Size; j ++)
+				{
+					this.Cells[i, j].ClearReadOnly();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Creates a new <see cref="Sudoku"/> puzzle that is a copy of the current instance.

@@ -26,6 +26,7 @@ namespace Sudoku
 			SudokuSolver.RecursiveSolve(sudoku);
 			sudoku.DisablePossible = false;
 			sudoku.ResetPossible();
+			sudoku.ClearReadOnlyProperties();
 			sudoku.SetSolutions();
 		}
 
@@ -76,6 +77,7 @@ namespace Sudoku
 				throw new NotImplementedException(nameof (sudoku));
 			}
 
+			sudoku.ClearReadOnlyProperties();
 			int attempts = 45;
 
 			switch (sudoku.Difficulty)
