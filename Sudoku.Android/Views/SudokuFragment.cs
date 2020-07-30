@@ -50,7 +50,13 @@ namespace Sudoku.Android.Views
 			controlFragment.Changed += new ControlEventHandler((sender, e) => this.ViewModel.State = e);
 			sudokuView.Changed += new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
 			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => controlFragment.State = e);
-			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column));
+
+			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) =>
+			{
+				sudokuView.SelectedNumber = e.Number;
+				sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
+			});
+
 			this.ViewModel.Completed += new EventHandler(this.OnCompletion);
 		}
 
