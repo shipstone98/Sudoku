@@ -21,6 +21,11 @@ namespace Sudoku
         HiddenSingle,
 
 		/// <summary>
+		/// Defines a naked locked pair.
+		/// </summary>
+		NakedPair,
+
+		/// <summary>
 		/// Defines a naked single.
 		/// </summary>
         NakedSingle,
