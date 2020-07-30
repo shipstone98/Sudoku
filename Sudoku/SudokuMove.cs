@@ -61,6 +61,8 @@ namespace Sudoku
                         return "Claiming Candidate";
                     case SudokuPattern.HiddenSingle:
                         return "Hidden Single";
+					case SudokuPattern.NakedPair:
+						return "Naked Pair";
                     case SudokuPattern.NakedSingle:
                         return "Naked Single";
                     case SudokuPattern.PointingCandidate:

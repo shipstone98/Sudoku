@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using SystemExtensions;
+
 namespace Sudoku
 {
 	/// <summary>
@@ -12,6 +14,7 @@ namespace Sudoku
 		private List<Tuple<int, int, int>> ClaimingCandidates { get; }
 		private List<Tuple<int, int>> EmptyCells { get; }
 		private List<SudokuMove> Moves { get; }
+		private List<Tuple<int, int, int>> NakedPairs { get; }
 		private List<Tuple<int, int, int>> PointingCandidates { get; }
 		private Random Random { get; }
 
@@ -30,6 +33,7 @@ namespace Sudoku
 			this.ClaimingCandidates = new List<Tuple<int, int, int>>();
 			this.EmptyCells = new List<Tuple<int, int>>();
 			this.Moves = new List<SudokuMove>();
+			this.NakedPairs = new List<Tuple<int, int, int>>();
 			this.PointingCandidates = new List<Tuple<int, int, int>>();
 			this.Random = new Random();
 			this.Sudoku = sudoku ?? throw new ArgumentNullException(nameof (sudoku));
@@ -53,6 +57,44 @@ namespace Sudoku
 			SudokuSolver.RecursiveSolve((SudokuPuzzle) sudoku.Clone(), 0, 0, ref count, true);
 			multipleSolutions = count > 1;
 			return count != 0;
+		}
+
+		private static bool Compare<T>(IEnumerable<T> a, IEnumerable<T> b)
+		{
+			if (a is null && b is null)
+			{
+				return true;
+			}
+
+			if (a is null && !(b is null) || !(a is null) && b is null)
+			{
+				return false;
+			}
+
+			int aCount = a.Count(), bCount = b.Count();
+
+			if (aCount != bCount)
+			{
+				return false;
+			}
+
+			foreach (T item in a)
+			{
+				if (!b.Contains(item))
+				{
+					return false;
+				}
+			}
+
+			foreach (T item in b)
+			{
+				if (!a.Contains(item))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -162,6 +204,7 @@ namespace Sudoku
 			return this.Moves;
 		}
 
+		#region Methods
 		private bool SolveClaimingCandidate(int row, int column, int[] possible)
 		{
 			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
@@ -489,6 +532,74 @@ namespace Sudoku
 
 			return false;
 		}
+		#endregion
+
+		private bool SolveNakedPair(int row, int column, int[] possible)
+		{
+			return this.SolveNakedPairRow(row, column, possible);
+		}
+
+		private bool SolveNakedPairRow(int row, int column, int[] possible)
+		{
+			FrequencyTable<int> table = new FrequencyTable<int>();
+			Dictionary<int, List<int>> indices = new Dictionary<int, List<int>>();
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				if (this.Sudoku[row, i] != 0)
+				{
+					continue;
+				}
+
+				foreach (int number in i == column ? possible : this.Sudoku.GetPossible(row, i))
+				{
+					table.Add(number);
+
+					if (!indices.ContainsKey(number))
+					{
+						indices.Add(number, new List<int>());
+					}
+
+					indices[number].Add(i);
+				}
+			}
+
+			int[] twos = table.GetAllWithFrequency(2);
+
+			if (twos.Length == 2)
+			{
+				int a = twos[0], b = twos[1];
+				List<int> aIndices = indices[a], bIndices = indices[b];
+
+				if (aIndices.Count == 2 && SudokuSolver.Compare(aIndices, bIndices))
+				{
+					for (int i = 0; i < this.Sudoku.Size; i ++)
+					{
+						if (aIndices.Contains(i))
+						{
+							continue;
+						}
+
+						this.Sudoku.RemovePossible(row, i, a);
+						this.Sudoku.RemovePossible(row, i, b);
+					}
+
+					this.Moves.Add(new SudokuMove(new int[] { row }, aIndices.ToArray(), twos, SudokuPattern.NakedPair, twos));
+
+					for (int i = 0; i < 2; i ++)
+					{
+						for (int j = 0; j < 2; j ++)
+						{
+							this.NakedPairs.Add(new Tuple<int, int, int>(row, aIndices[i], twos[j]));
+						}
+					}
+
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 		private bool SolvePass()
 		{
@@ -514,7 +625,7 @@ namespace Sudoku
 		private bool SolvePass(int row, int column)
 		{
 			int[] possible = this.Sudoku.GetPossible(row, column);
-			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.SolvePointingCandidate(row, column, possible) || this.SolveClaimingCandidate(row, column, possible);
+			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.SolvePointingCandidate(row, column, possible) || this.SolveClaimingCandidate(row, column, possible) || this.SolveNakedPair(row, column, possible);
 		}
 	}
 }
