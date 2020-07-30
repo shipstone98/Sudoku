@@ -6,7 +6,7 @@ namespace Sudoku
     /// <summary>
     /// Represents a strategy-based move used to solve a <see cref="SudokuPuzzle"/>.
     /// </summary>
-    public class SudokuMove
+    public class SudokuMove : IEquatable<SudokuMove>
     {
         private const String DefaultNumberSeparator = ",";
         private const int DefaultPadding = 16;
@@ -108,7 +108,7 @@ namespace Sudoku
         /// <param name="numbers">An array containing the numbers used in the <see cref="SudokuMove"/>.</param>
         /// <param name="pattern">The pattern used in the <see cref="SudokuMove"/>.</param>
         /// <param name="possible">An array containing the numbers that were possible instantly before the <see cref="SudokuMove"/> move was made.</param>
-        /// <exception cref="ArgumentException">The lengths of <c><paramref name="rows"/></c>, <c><paramref name="columns"/></c>, <c><paramref name="numbers"/></c> or <c><paramref name="possible"/></c> are equal to 0, or any of their items are less than 0 - or - the length of <c><paramref name="numbers"/></c> is greater than the length of <c><paramref name="possible"/></c> - or - <c><paramref name="pattern"/></c> is equal to <see cref="SudokuPattern.None"/> - or - <c><paramref name="possible"/></c> does not contain all values in <c><paramref name="numbers"/></c>.</exception>
+        /// <exception cref="ArgumentException">The lengths of <c><paramref name="rows"/></c>, <c><paramref name="columns"/></c>, <c><paramref name="numbers"/></c> or <c><paramref name="possible"/></c> are equal to 0, or any of their items are less than 0 - or - the length of <c><paramref name="numbers"/></c> is greater than the length of <c><paramref name="possible"/></c> - or - <c><paramref name="pattern"/></c> is equal to <see cref="SudokuPattern.None"/></exception>
         /// <exception cref="ArgumentNullException"><c><paramref name="rows"/></c>, <c><paramref name="columns"/></c>, <c><paramref name="numbers"/></c> or <c><paramref name="possible"/></c> is <c>null</c>.</exception>
         public SudokuMove(int[] rows, int[] columns, int[] numbers, SudokuPattern pattern, int[] possible)
 		{
@@ -170,14 +170,6 @@ namespace Sudoku
                 if (columns[i] < 0)
 				{
                     throw new ArgumentException(nameof (columns));
-				}
-			}
-
-            for (int i = 0; i < numbers.Length; i ++)
-			{
-                if (numbers[i] < 0 || !possible.Contains(numbers[i]))
-				{
-                    throw new ArgumentException(nameof (numbers));
 				}
 			}
 
@@ -256,11 +248,35 @@ namespace Sudoku
             this.Pattern = pattern;
 		}
 
-        /// <summary>
-        /// Returns a string that represents the current <see cref="SudokuMove"/> with default padding and separators.
-        /// </summary>
-        /// <returns>A string that represents the current <see cref="SudokuMove"/>.</returns>
-        public override String ToString() => this.ToString(SudokuMove.DefaultPadding);
+		/// <summary>
+		/// Determines whether the specified object is equal to the current <see cref="SudokuMove"/>.
+		/// </summary>
+		/// <param name="obj">The object to compare with the current <see cref="SudokuMove"/>.</param>
+		/// <returns><c>true</c> if the specified object is equal to the current <see cref="SudokuMove"/>; otherwise, <c>false</c>.</returns>
+		public override bool Equals(Object obj) => this.Equals(obj as SudokuMove);
+
+		/// <summary>
+		/// Determines whether the specified <c><paramref name="move"/></c> is equal to the current <see cref="SudokuMove"/>.
+		/// </summary>
+		/// <param name="move">The move to compare with the current <see cref="SudokuMove"/>.</param>
+		/// <returns><c>true</c> if <c><paramref name="move"/></c> is equal to the current <see cref="SudokuMove"/>; otherwise, <c>false</c>.</returns>
+		public bool Equals(SudokuMove move) => !(move is null) && (SudokuSolver.Compare(this._Columns, move._Columns) || SudokuSolver.Compare(this._Rows, move._Rows) || SudokuSolver.Compare(this._Numbers, move._Numbers) || SudokuSolver.Compare(this._Possible, move._Possible)) && this.Pattern == move.Pattern;
+
+		/// <summary>
+		/// Returns the hash code for this instance.
+		/// </summary>
+		/// <returns>The hash code.</returns>
+		public override int GetHashCode()
+		{
+			const int RANDOM = 73248275;
+			return RANDOM * this._Columns.GetHashCode() * this._Rows.GetHashCode() * this._Numbers.GetHashCode() * this._Possible.GetHashCode() * this.Pattern.GetHashCode();
+		}
+
+		/// <summary>
+		/// Returns a string that represents the current <see cref="SudokuMove"/> with default padding and separators.
+		/// </summary>
+		/// <returns>A string that represents the current <see cref="SudokuMove"/>.</returns>
+		public override String ToString() => this.ToString(SudokuMove.DefaultPadding);
 
         /// <summary>
         /// Returns a string that represents the current <see cref="SudokuMove"/> with the specified <c><paramref name="padding"/></c> and default separators.
@@ -304,5 +320,21 @@ namespace Sudoku
             String possibleString = String.Join(numberSeparator, this._Possible).PadRight(padding);
             return String.Join(separator, rowString, columnString, numberString, this.PatternName.PadRight(padding), possibleString);
         }
-    }
+
+		/// <summary>
+		/// Determines whether two specified <see cref="SudokuMove"/> instances have the same values in all properties.
+		/// </summary>
+		/// <param name="a">The first <see cref="SudokuMove"/> to compare, or <c>null</c>.</param>
+		/// <param name="b">The second <see cref="SudokuMove"/> to compare, or <c>null</c>.</param>
+		/// <returns><c>true</c> if values in all properties in <c><paramref name="a"/></c> are contained in <c><paramref name="b"/></c>, and vice versa; otherwise, <c>false</c>.</returns>
+		public static bool operator ==(SudokuMove a, SudokuMove b) => a is null ? b is null : a.Equals(b);
+
+		/// <summary>
+		/// Determines whether two specified <see cref="SudokuMove"/> instances have the same values in all properties.
+		/// </summary>
+		/// <param name="a">The first <see cref="SudokuMove"/> to compare, or <c>null</c>.</param>
+		/// <param name="b">The second <see cref="SudokuMove"/> to compare, or <c>null</c>.</param>
+		/// <returns><c>true</c> if any value in any property in <c><paramref name="a"/></c> is not contained in <c><paramref name="b"/></c>, and vice versa; otherwise, <c>false</c>.</returns>
+		public static bool operator !=(SudokuMove a, SudokuMove b) => !(a == b);
+	}
 }
