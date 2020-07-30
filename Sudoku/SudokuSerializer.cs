@@ -55,7 +55,9 @@ namespace Sudoku
 					readOnly[i] = split[3][i] == '1';
 				}
 
-				return SudokuPuzzle.Parse(size, difficulty, numbers, solutions, readOnly);
+				SudokuPuzzle puzzle = SudokuPuzzle.Parse(size, difficulty, numbers, solutions, readOnly);
+				puzzle.ResetPossible();
+				return puzzle;
 			}
 
 			catch

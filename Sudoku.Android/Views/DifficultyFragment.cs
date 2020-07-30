@@ -27,8 +27,9 @@ namespace Sudoku.Android.Views
 			}
 
 			Intent intent = new Intent(this.Fragment.Context, Java.Lang.Class.FromType(typeof (SudokuActivity)));
-			intent.PutExtra("selected", this.Fragment.View.FindViewById<Spinner>(Resource.Id.difficulty_spinner).SelectedItemPosition);
+			intent.PutExtra("difficulty", this.Fragment.View.FindViewById<Spinner>(Resource.Id.difficulty_spinner).SelectedItemPosition + 1);
 			ActionType action = (ActionType) (int) this.Fragment.Activity.Intent.Extras.Get("action");
+			intent.PutExtra("action", (int) action);
 			this.Fragment.StartActivity(intent);
 			DifficultyFragment fragment = this.Fragment;
 			this.Fragment = null;
