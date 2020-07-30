@@ -402,7 +402,7 @@ namespace Sudoku
 			this.CheckArgument(row, nameof (row));
 			this.CheckArgument(column, nameof (column));
 			this.CheckArgument(number, nameof (number), true);
-			return this.Cells[row, column].Number == 0 ? this.Cells[row, column].ContainsPossible(number) : false;
+			return this.Cells[row, column].Number == 0 && this.Cells[row, column].ContainsPossible(number);
 		}
 
 		/// <summary>
