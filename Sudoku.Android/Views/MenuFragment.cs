@@ -7,16 +7,16 @@ using Android.Widget;
 
 using AndroidX.Fragment.App;
 
+using Sudoku.Android.ViewModels;
+
 namespace Sudoku.Android.Views
 {
-	public class ButtonOnClickListener : Java.Lang.Object, View.IOnClickListener
+	public class MenuFragmentOnClickListener : Java.Lang.Object, View.IOnClickListener
 	{
-		public const String GenerateAction = "Generate";
+		public ActionType Action { get; }
+		public FragmentActivity Activity { get; private set; }
 
-		public String Action { get; }
-		public FragmentActivity Activity { get; }
-
-		public ButtonOnClickListener(String action, FragmentActivity activity)
+		public MenuFragmentOnClickListener(ActionType action, FragmentActivity activity)
 		{
 			this.Action = action;
 			this.Activity = activity;
@@ -24,16 +24,28 @@ namespace Sudoku.Android.Views
 
 		public void OnClick(View view)
 		{
+			if (this.Activity is null)
+			{
+				return;
+			}
+
+			Intent intent;
+
 			switch (this.Action)
 			{
-				case ButtonOnClickListener.GenerateAction:
-					Intent intent = new Intent(this.Activity.ApplicationContext, Java.Lang.Class.FromType(typeof (SudokuActivity)));
-					this.Activity.StartActivity(intent);
-					//Open new activity
+				case ActionType.Generate:
+					intent = new Intent(this.Activity.ApplicationContext, Java.Lang.Class.FromType(typeof (SudokuActivity)));
+					intent.PutExtra("action", (int) ActionType.Generate);
+					break;
+				case ActionType.New:
+					intent = new Intent(this.Activity.ApplicationContext, Java.Lang.Class.FromType(typeof (DifficultyActivity)));
+					intent.PutExtra("action", (int) ActionType.New);
 					break;
 				default:
 					throw new NotImplementedException();
 			}
+
+			this.Activity.StartActivity(intent);
 		}
 	}
 
@@ -43,7 +55,9 @@ namespace Sudoku.Android.Views
 		{
 			base.OnActivityCreated(savedInstanceState);
 			Button generateButton = this.View.FindViewById<Button>(Resource.Id.generate_button);
-			generateButton.SetOnClickListener(new ButtonOnClickListener(ButtonOnClickListener.GenerateAction, this.Activity));
+			generateButton.SetOnClickListener(new MenuFragmentOnClickListener(ActionType.Generate, this.Activity));
+			Button newButton = this.View.FindViewById<Button>(Resource.Id.new_button);
+			newButton.SetOnClickListener(new MenuFragmentOnClickListener(ActionType.New, this.Activity));
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) => inflater.Inflate(Resource.Layout.fragment_menu, container, false);
