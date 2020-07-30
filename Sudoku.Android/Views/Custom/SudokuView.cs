@@ -35,6 +35,7 @@ namespace Sudoku.Android.Views.Custom
 		public int Column { get; private set; }
 		private float Pixels { get; set; }
 		public int Row { get; private set; }
+		public int SelectedNumber { get; set; }
 		public int Size { get; private set; }
 
 		public SudokuPuzzle Sudoku
@@ -73,6 +74,7 @@ namespace Sudoku.Android.Views.Custom
 		{
 			//TypedArray attributes = context.Theme.ObtainStyledAttributes(attributeSet, Resource.Styleable.Sudoku)
 
+			this._Sudoku = null;
 			this.LockObject = new Object();
 
 			this._Changed = null;
@@ -80,8 +82,8 @@ namespace Sudoku.Android.Views.Custom
 			this.Column = SudokuView.DefaultColumn;
 			this.Pixels = SudokuView.DefaultPixels;
 			this.Row = SudokuView.DefaultRow;
+			this.SelectedNumber = 0;
 			this.Size = SudokuView.DefaultSize;
-			this._Sudoku = null;
 
 			this.CellText = new Paint();
 			this.IncorrectCellText = new Paint();
@@ -132,8 +134,27 @@ namespace Sudoku.Android.Views.Custom
 
 		private void FillCells(Canvas canvas)
 		{
-			if (this.Column < 0 || this.Row < 0 || this.Sudoku is null)
+			if (this.Sudoku is null)
 			{
+				return;
+			}
+
+			if (this.Column < 0 || this.Row < 0)
+			{
+				if (this.SelectedNumber > 0) //Highlights selected if no cell selected but number pressed
+				{
+					for (int i = 0; i < this.Sudoku.Size; i ++)
+					{
+						for (int j = 0; j < this.Sudoku.Size; j ++)
+						{
+							if (this.Sudoku[i, j] == this.SelectedNumber)
+							{
+								this.FillCell(canvas, i, j, this.MatchingFill);
+							}
+						}
+					}
+				}
+
 				return;
 			}
 
