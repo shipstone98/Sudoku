@@ -26,12 +26,13 @@ namespace Sudoku.UI
 		private const int InteractiveCommand = 4;
 		private const int PrintCommand = 2;
 		private const int SolveCommand = 3;
+		private const int EnumerateCommand = 5;
 
 		private const String IOErrorMessage = "ERROR: couldn't opening the I/O streams";
 		private const String FileOutputErrorMessage = "ERROR: couldn't write to file";
 		private const String FileFormatIncorrectErrorMessage = "ERROR: file format not in correct order";
 		private const String FileNotFoundErrorMessage = "ERROR: file not found or couldn't be opened";
-		private const String UsageMessage = "Usage: sudoku command [options]\n\nCommmands\n\t- COMPARE: Compare two puzzles, must specify both filenames with -f and -o\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t- SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
+		private const String UsageMessage = "Usage: sudoku command [options]\n\nCommmands\n\t- COMPARE: Compare two puzzles, must specify both filenames with -f and -o\n\t- ENUMERATE: Checks if a puzzle is solvable, and whether it has multiple valid solutions, must specify filename with -f.\n\t- GENERATE: Generate a new sudoku puzzle, must specify size with -s and difficulty with -d. Size must be positive square integer and difficulty must be easy, medium or hard. Can optionally specify an output filename with -o\n\t- PRINT: Print an existing sudoku puzzle to the screen, must specify filename with -f\n\t- SOLVE: Solves an existing sudoku puzzle, must specify filename with -f. Can optionally specify an output filename with -o\n\nAll options are NOT case sensitive; however, some operating systems may treat entered filenames as case sensitive (Windows doesn't but Mac OS and Linux generally do)";
 
 		private static int Compare(String file1, String file2)
 		{
@@ -70,6 +71,71 @@ namespace Sudoku.UI
 			Console.WriteLine(b);
 			Console.WriteLine();
 			Console.WriteLine(a == b ? "The two puzzles are equal." : "The two puzzles are NOT equal.");
+			return 0;
+		}
+
+		private static int Enumerate(String filename)
+		{
+			String text;
+
+			if (!File.Exists(filename))
+			{
+				Console.WriteLine(Program.FileNotFoundErrorMessage);
+				return Program.FileNotFoundError;
+			}
+
+			try
+			{
+				text = File.ReadAllText(filename);
+			}
+
+			catch
+			{
+				Console.WriteLine(Program.FileFormatIncorrectErrorMessage);
+				return Program.FileFormatIncorrectError;
+			}
+
+			SudokuPuzzle sudoku;
+
+			try
+			{
+				sudoku = SudokuPuzzle.Parse(text);
+			}
+
+			catch (FormatException)
+			{
+				Console.WriteLine(Program.FileFormatIncorrectErrorMessage);
+				return Program.FileFormatIncorrectError;
+			}
+
+			bool solvable = SudokuSolver.CheckSolvable(sudoku, out bool multipleSolutions);
+
+			if (solvable)
+			{
+				Console.WriteLine("The specified puzzle is solvable.");
+
+				if (multipleSolutions)
+				{
+					Console.WriteLine("The specified puzzle has multiple possible solutions.");
+				}
+
+				else
+				{
+					Console.WriteLine("The specified puzzle has a single valid solution.");
+					Stopwatch stopwatch = new Stopwatch();
+					stopwatch.Start();
+					SudokuSolver.RecursiveSolve(sudoku);
+					stopwatch.Stop();
+					Console.WriteLine(sudoku);
+					Console.WriteLine($"Puzzle solved recursively in {stopwatch.ElapsedMilliseconds}ms");
+				}
+			}
+
+			else
+			{
+				Console.WriteLine("The specified puzzle is NOT solvable.");
+			}
+
 			return 0;
 		}
 		
@@ -142,6 +208,8 @@ namespace Sudoku.UI
 			{
 				case Program.CompareCommand:
 					return Program.Compare(filename, outfile);
+				case Program.EnumerateCommand:
+					return Program.Enumerate(filename);
 				case Program.GenerateCommand:
 					return Program.Generate(size, difficulty, outfile);
 				case Program.InteractiveCommand:
@@ -199,30 +267,30 @@ namespace Sudoku.UI
 					case "compare":
 						command = Program.CompareCommand;
 						break;
-
+					case "e":
+					case "enum":
+					case "enumerate":
+						command = Program.EnumerateCommand;
+						break;
 					case "g":
 					case "gen":
 					case "generate":
 						command = Program.GenerateCommand;
 						break;
-
 					case "i":
 					case "int":
 					case "inter":
 					case "interactive":
 						command = Program.InteractiveCommand;
 						break;
-
 					case "p":
 					case "print":
 						command = Program.PrintCommand;
 						break;
-
 					case "s":
 					case "solve":
 						command = Program.SolveCommand;
 						break;
-
 					default:
 						return false;
 				}
@@ -327,6 +395,14 @@ namespace Sudoku.UI
 			{
 				case Program.CompareCommand:
 					if (String.IsNullOrWhiteSpace(filename) || String.IsNullOrWhiteSpace(outfile))
+					{
+						return false;
+					}
+
+					break;
+
+				case Program.EnumerateCommand:
+					if (filename is null)
 					{
 						return false;
 					}
