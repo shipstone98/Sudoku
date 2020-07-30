@@ -139,17 +139,6 @@ namespace Sudoku.Android.Views.Custom
 
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
-				for (int j = 0; j < this.Sudoku.Size; j++)
-				{
-					if (this.Sudoku[i, j] != 0 && this.Sudoku[i, j] == this.Sudoku[this.Row, this.Column])
-					{
-						this.FillCell(canvas, i, j, this.MatchingFill);
-					}
-				}
-			}
-
-			for (int i = 0; i < this.Sudoku.Size; i ++)
-			{
 				this.FillCell(canvas, this.Row, i, this.NeighbourFill);
 				this.FillCell(canvas, i, this.Column, this.NeighbourFill);
 			}
@@ -164,6 +153,17 @@ namespace Sudoku.Android.Views.Custom
 				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 				{
 					this.FillCell(canvas, currentRow, column + j, this.NeighbourFill);
+				}
+			}
+
+			for (int i = 0; i < this.Sudoku.Size; i++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j++)
+				{
+					if (this.Sudoku[i, j] != 0 && this.Sudoku[i, j] == this.Sudoku[this.Row, this.Column])
+					{
+						this.FillCell(canvas, i, j, this.MatchingFill);
+					}
 				}
 			}
 
