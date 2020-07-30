@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Android.OS;
@@ -15,7 +16,13 @@ namespace Sudoku.Android.Views
 {
 	public class SudokuFragment : Fragment
 	{
+		private ControlEventHandler ControlFragmentChanged { get; set; }
+		private SudokuViewEventHandler SudokuViewChanged { get; set; }
 		private SudokuViewModel ViewModel { get; set; }
+		private EventHandler ViewModelCompleted { get; set; }
+		private EventHandler ViewModelSudokuChanged { get; set; }
+		private ControlEventHandler ViewModelStateChangedControlFragmentUpdate { get; set; }
+		private ControlEventHandler ViewModelStateChangedSudokuViewUpdate { get; set; }
 
 		private static String FormatTime(double ms)
 		{
@@ -40,11 +47,13 @@ namespace Sudoku.Android.Views
 			return $"{h}h {m}m {s}s {ms}ms";
 		}
 
-		public override void OnActivityCreated(Bundle savedInstanceState)
+		/*public override void OnActivityCreated(Bundle savedInstanceState)
 		{
-			base.OnActivityCreated(savedInstanceState);
+			base.OnActivityCreated(savedInstanceState);*/
+		private void Start()
+		{
 			this.ViewModel = (SudokuViewModel) new ViewModelProvider(this).Get(Java.Lang.Class.FromType(typeof (SudokuViewModel)));
-			ActionType action = (ActionType) this.Activity.Intent.Extras.GetInt("action", 1);
+			ActionType action = this.ViewModel.Action = (ActionType) this.Activity.Intent.Extras.GetInt("action", 1);
 
 			switch (action)
 			{
@@ -62,23 +71,34 @@ namespace Sudoku.Android.Views
 
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
 			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
-			controlFragment.Changed += new ControlEventHandler((sender, e) => this.ViewModel.State = e);
-			sudokuView.Changed += new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
-			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => controlFragment.State = e);
 
-			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) =>
+
+
+			this.ControlFragmentChanged = new ControlEventHandler((sender, e) => this.ViewModel.State = e);
+			this.SudokuViewChanged = new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
+			this.ViewModelStateChangedControlFragmentUpdate = new ControlEventHandler((sender, e) => controlFragment.State = e);
+			this.ViewModelCompleted = new EventHandler(this.OnCompletion);
+
+			this.ViewModelStateChangedSudokuViewUpdate = new ControlEventHandler((sender, e) =>
 			{
 				sudokuView.SelectedNumber = e.Number;
 				sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
 			});
 
-			this.ViewModel.Completed += new EventHandler(this.OnCompletion);
+			this.ViewModelSudokuChanged = new EventHandler((sender, e) =>
+			{
+				sudokuView.Sudoku = this.ViewModel.Sudoku;
+				sudokuView.Update();
+			});
 
-			this.ViewModel.SudokuChanged += new EventHandler((sender, e) =>
-				{
-					sudokuView.Sudoku = this.ViewModel.Sudoku;
-					sudokuView.Update();
-				});
+
+
+			controlFragment.Changed += this.ControlFragmentChanged;
+			sudokuView.Changed += this.SudokuViewChanged;
+			this.ViewModel.StateChanged += this.ViewModelStateChangedControlFragmentUpdate;
+			this.ViewModel.StateChanged += this.ViewModelStateChangedSudokuViewUpdate;
+			this.ViewModel.Completed += this.ViewModelCompleted;
+			this.ViewModel.SudokuChanged += this.ViewModelSudokuChanged;
 
 			sudokuView.Sudoku = this.ViewModel.Sudoku;
 			sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
@@ -112,6 +132,20 @@ namespace Sudoku.Android.Views
 			base.OnDestroy();
 		}
 
+		//public override void OnDestroyView()
+		private void Stop()
+		{
+			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
+			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
+			controlFragment.Changed -= this.ControlFragmentChanged;
+			sudokuView.Changed -= this.SudokuViewChanged;
+			this.ViewModel.StateChanged -= this.ViewModelStateChangedControlFragmentUpdate;
+			this.ViewModel.StateChanged -= this.ViewModelStateChangedSudokuViewUpdate;
+			this.ViewModel.Completed -= this.ViewModelCompleted;
+			this.ViewModel.SudokuChanged -= this.ViewModelSudokuChanged;
+			base.OnDestroyView();
+		}
+
 		public override void OnPause()
 		{
 			this.ViewModel.Pause();
@@ -127,12 +161,14 @@ namespace Sudoku.Android.Views
 		public override void OnStart()
 		{
 			base.OnStart();
+			this.Start();
 			this.ViewModel.StartAsync(this.Context.FilesDir);
 		}
 
 		public override void OnStop()
 		{
 			this.ViewModel.StopAsync(this.Context.FilesDir);
+			this.Stop();
 			base.OnStop();
 		}
 	}

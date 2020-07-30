@@ -383,8 +383,16 @@ namespace Sudoku.Android.ViewModels
 				do
 				{
 					n = await fis.ReadAsync(array, 0, BUFFER_SIZE);
+
+					if (n < BUFFER_SIZE)
+					{
+						String s = Encoding.Default.GetString(array).Substring(0, n);
+						sb.Append(s);
+						break;
+					}
+
 					sb.Append(Encoding.Default.GetString(array));
-				} while (n == BUFFER_SIZE);
+				} while (true);
 
 				String[] lines = sb.ToString().Replace("\r", String.Empty).ToLower().Split('\n');
 

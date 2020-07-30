@@ -65,7 +65,7 @@ namespace Sudoku.Android.Views.Custom
 			{
 				lock (this.LockObject)
 				{
-					this.Changed -= value;
+					this._Changed -= value;
 				}
 			}
 		}
