@@ -622,7 +622,115 @@ namespace Sudoku
 
 		private bool NakedPair(int row, int column, int[] possible)
 		{
-			return this.NakedPairColumn(row, column, possible);
+			return this.NakedPairRow(row, column, possible) || this.NakedPairColumn(row, column, possible) || this.NakedPairBlock(row, column, possible);
+		}
+
+		private bool NakedPairBlock(int row, int column, int[] possible)
+		{
+			int firstRow = -1, firstColumn = -1;
+			int[] currentPossible = null;
+			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
+
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+			{
+				int currentRow = startRow + i;
+
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
+				{
+					int currentColumn = startColumn + j;
+
+					if (this.Sudoku[currentRow, currentColumn] != 0)
+					{
+						continue;
+					}
+
+					currentPossible = i == currentRow && j == currentColumn ? possible : this.Sudoku.GetPossible(currentRow, currentColumn);
+
+					if (currentPossible.Length == 2)
+					{
+						firstRow = currentRow;
+						firstColumn = currentColumn;
+						goto foundFirst;
+					}
+				}
+			}
+
+		foundFirst:
+			if (firstRow == -1 || firstColumn == -1 || firstRow == startRow + this.Sudoku.BlockSize - 1 && firstColumn == startColumn + this.Sudoku.BlockSize - 1)
+			{
+				return false;
+			}
+
+			int secondRow = -1, secondColumn = -1;
+
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+			{
+				int currentRow = startRow + i;
+
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
+				{
+					int currentColumn = startColumn + j;
+
+					if (this.Sudoku[currentRow, currentColumn] != 0 || currentRow <= firstRow && currentColumn <= firstColumn)
+					{
+						continue;
+					}
+
+					bool allMatch = true;
+
+					foreach (int number in currentRow == row && currentColumn == column ? possible : this.Sudoku.GetPossible(currentRow, currentColumn))
+					{
+						if (!currentPossible.Contains(number))
+						{
+							allMatch = false;
+							break;
+						}
+					}
+
+					if (allMatch)
+					{
+						secondRow = currentRow;
+						secondColumn = currentColumn;
+						goto foundSecond;
+					}
+				}
+			}
+
+		foundSecond:
+			if (secondRow == -1 || secondColumn == -1)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+			{
+				int currentRow = startRow + i;
+
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
+				{
+					int currentColumn = startColumn + j;
+
+					if (currentRow == firstRow && currentColumn == firstColumn || currentRow == secondRow && currentColumn == secondColumn)
+					{
+						continue;
+					}
+
+					foreach (int number in currentPossible)
+					{
+						this.Sudoku.RemovePossible(currentRow, currentColumn, number);
+					}
+				}
+			}
+
+			SudokuMove move = new SudokuMove(new int[] { firstRow, secondRow }, new int[] { firstColumn, secondColumn }, currentPossible, SudokuPattern.NakedPair, currentPossible);
+
+			if (this.Moves.Contains(move))
+			{
+				return false;
+			}
+
+			this.Moves.Add(move);
+			return true;
 		}
 
 		private bool NakedPairColumn(int row, int column, int[] possible)
@@ -674,6 +782,7 @@ namespace Sudoku
 				if (allMatch)
 				{
 					matchingRow = i;
+					break;
 				}
 			}
 
@@ -696,6 +805,87 @@ namespace Sudoku
 			}
 
 			SudokuMove move = new SudokuMove(new int[] { currentRow, matchingRow }, new int[] { column }, currentPossible, SudokuPattern.NakedPair, currentPossible);
+
+			if (this.Moves.Contains(move))
+			{
+				return false;
+			}
+
+			this.Moves.Add(move);
+			return true;
+		}
+
+		private bool NakedPairRow(int row, int column, int[] possible)
+		{
+			int currentColumn = -1;
+			int[] currentPossible = null;
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				if (this.Sudoku[row, i] != 0)
+				{
+					continue;
+				}
+
+				currentPossible = i == column ? possible : this.Sudoku.GetPossible(row, i);
+
+				if (currentPossible.Length == 2)
+				{
+					currentColumn = i;
+					break;
+				}
+			}
+
+			if (currentColumn == -1 || currentColumn == this.Sudoku.Size - 1)
+			{
+				return false;
+			}
+
+			int matchingColumn = -1;
+
+			for (int i = currentColumn + 1; i < this.Sudoku.Size; i ++)
+			{
+				if (this.Sudoku[row, i] != 0)
+				{
+					continue;
+				}
+
+				bool allMatch = true;
+
+				foreach (int number in i == column ? possible : this.Sudoku.GetPossible(row, i))
+				{
+					if (!currentPossible.Contains(number))
+					{
+						allMatch = false;
+						break;
+					}
+				}
+
+				if (allMatch)
+				{
+					matchingColumn = i;
+				}
+			}
+
+			if (matchingColumn == -1)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				if (i == currentColumn || i == matchingColumn)
+				{
+					continue;
+				}
+
+				foreach (int number in currentPossible)
+				{
+					this.Sudoku.RemovePossible(row, i, number);
+				}
+			}
+
+			SudokuMove move = new SudokuMove(new int[] { row }, new int[] { currentColumn, matchingColumn }, currentPossible, SudokuPattern.NakedPair, currentPossible);
 
 			if (this.Moves.Contains(move))
 			{
