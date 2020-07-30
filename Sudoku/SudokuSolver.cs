@@ -536,7 +536,69 @@ namespace Sudoku
 
 		private bool SolveNakedPair(int row, int column, int[] possible)
 		{
-			return this.SolveNakedPairRow(row, column, possible);
+			return this.SolveNakedPairRow(row, column, possible) || this.SolveNakedPairColumn(row, column, possible);
+		}
+
+		private bool SolveNakedPairColumn(int row, int column, int[] possible)
+		{
+			FrequencyTable<int> table = new FrequencyTable<int>();
+			Dictionary<int, List<int>> indices = new Dictionary<int, List<int>>();
+
+			for (int i = 0; i < this.Sudoku.Size; i++)
+			{
+				if (this.Sudoku[i, column] != 0)
+				{
+					continue;
+				}
+
+				foreach (int number in i == row ? possible : this.Sudoku.GetPossible(i, column))
+				{
+					table.Add(number);
+
+					if (!indices.ContainsKey(number))
+					{
+						indices.Add(number, new List<int>());
+					}
+
+					indices[number].Add(i);
+				}
+			}
+
+			int[] twos = table.GetAllWithFrequency(2);
+
+			if (twos.Length == 2)
+			{
+				int a = twos[0], b = twos[1];
+				List<int> aIndices = indices[a], bIndices = indices[b];
+
+				if (aIndices.Count == 2 && SudokuSolver.Compare(aIndices, bIndices))
+				{
+					for (int i = 0; i < this.Sudoku.Size; i++)
+					{
+						if (aIndices.Contains(i))
+						{
+							continue;
+						}
+
+						this.Sudoku.RemovePossible(i, column, a);
+						this.Sudoku.RemovePossible(i, column, b);
+					}
+
+					this.Moves.Add(new SudokuMove(aIndices.ToArray(), new int[] { column }, twos, SudokuPattern.NakedPair, twos));
+
+					for (int i = 0; i < 2; i++)
+					{
+						for (int j = 0; j < 2; j++)
+						{
+							this.NakedPairs.Add(new Tuple<int, int, int>(aIndices[i], row, twos[j]));
+						}
+					}
+
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private bool SolveNakedPairRow(int row, int column, int[] possible)
