@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 using AndroidX.Lifecycle;
 
@@ -10,8 +11,10 @@ namespace Sudoku.Android.ViewModels
 		private const int DefaultRow = -1;
 
 		private ControlEventArgs _State;
+		private readonly Object CompletedLockObject;
 		private readonly Object StateChangedLockObject;
 
+		private event EventHandler _Completed;
 		private event ControlEventHandler _StateChanged;
 
 		public ControlEventArgs State
@@ -21,8 +24,32 @@ namespace Sudoku.Android.ViewModels
 		}
 
 		public int Column { get; private set; }
+		public bool IsCorrect { get; private set; }
+		public bool IsRunning => this.Stopwatch.IsRunning;
+		public int MoveCount { get; private set; }
 		public int Row { get; private set; }
+		private Stopwatch Stopwatch { get; }
 		public SudokuPuzzle Sudoku { get; }
+		public double TimeOnStop { get; private set; }
+
+		public event EventHandler Completed
+		{
+			add
+			{
+				lock (this.CompletedLockObject)
+				{
+					this._Completed += value;
+				}
+			}
+
+			remove
+			{
+				lock (this.CompletedLockObject)
+				{
+					this._Completed -= value;
+				}
+			}
+		}
 
 		public event ControlEventHandler StateChanged
 		{
@@ -46,13 +73,42 @@ namespace Sudoku.Android.ViewModels
 		public SudokuViewModel()
 		{
 			this._State = ControlEventArgs.Empty;
+			this.CompletedLockObject = new Object();
 			this.StateChangedLockObject = new Object();
+			this._Completed = null;
 			this._StateChanged = null;
 			this.Column = SudokuViewModel.DefaultColumn;
+			this.IsCorrect = false;
+			this.MoveCount = 0;
 			this.Row = SudokuViewModel.DefaultRow;
+			this.Stopwatch = new Stopwatch();
 			this.Sudoku = SudokuGenerator.AddNumbers(9, SudokuDifficulty.Easy);
+			this.TimeOnStop = 0;
 			SudokuGenerator.RemoveNumbers(this.Sudoku);
 		}
+
+		private void MakeMove(int row, int column, int number)
+		{
+			this.Sudoku[row, column] = number;
+			this.MoveCount ++;
+			this.Stopwatch.Start();
+			double time = this.Stopwatch.ElapsedMilliseconds;
+
+			if (this.Sudoku.IsComplete)
+			{
+				this.IsCorrect = this.Sudoku.Check();
+				this.Stopwatch.Stop();
+				this.TimeOnStop = time;
+
+				if (!(this._Completed is null))
+				{
+					this._Completed(this, new EventArgs());
+				}
+			}
+		}
+
+		public void Pause() => this.Stopwatch.Stop();
+		public void Resume() => this.Stopwatch.Start();
 
 		public void SetRowAndColumn(int row, int column)
 		{
@@ -81,7 +137,7 @@ namespace Sudoku.Android.ViewModels
 					case ControlEvent.Clear:
 						if (!this.Sudoku.CheckReadOnly(row, column))
 						{
-							this.Sudoku[row, column] = 0;
+							this.MakeMove(row, column, 0);
 						}
 
 						break;
@@ -89,7 +145,7 @@ namespace Sudoku.Android.ViewModels
 					case ControlEvent.Number:
 						if (!this.Sudoku.CheckReadOnly(row, column))
 						{
-							this.Sudoku[row, column] = this.Sudoku[row, column] == this._State.Number ? 0 : this._State.Number;
+							this.MakeMove(row, column, this.Sudoku[row, column] == this._State.Number ? 0 : this._State.Number);
 						}
 
 						break;
@@ -122,17 +178,15 @@ namespace Sudoku.Android.ViewModels
 				switch (state.Event)
 				{
 					case ControlEvent.Clear:
-						this.Sudoku[this.Row, this.Column] = 0;
+						this.MakeMove(this.Row, this.Column, 0);
 						break;
 
 					case ControlEvent.Number:
-						this.Sudoku[this.Row, this.Column] = this.Sudoku[this.Row, this.Column] == state.Number ? 0 : state.Number;
+						this.MakeMove(this.Row, this.Column, this.Sudoku[this.Row, this.Column] == state.Number ? 0 : state.Number);
 						break;
 				}
 
 				state = ControlEventArgs.Empty;
-				this.Column = SudokuViewModel.DefaultColumn;
-				this.Row = SudokuViewModel.DefaultRow;
 			}
 
 			this._State = state;
