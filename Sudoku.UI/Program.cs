@@ -489,9 +489,6 @@ namespace Sudoku.UI
 			int count = 0;
 			const int PADDING = 16;
 			const String SEPARATOR = "\t";
-			sb.AppendLine("Solved sudoku:");
-			sb.AppendLine(sudoku.ToString());
-			sb.AppendLine();
 			sb.AppendLine(String.Join(SEPARATOR, '#', "Row(s)".PadRight(PADDING), "Column(s)".PadRight(PADDING), "Number(s)".PadRight(PADDING), "Pattern".PadRight(PADDING), "Possible".PadRight(PADDING)));
 
 			foreach (SudokuMove move in moves)
@@ -514,6 +511,9 @@ namespace Sudoku.UI
 				sb.AppendLine($"Total time for solving is {time + newTime} ms");
 			}*/
 
+			sb.AppendLine();
+			sb.AppendLine("Solved sudoku:");
+			sb.AppendLine(sudoku.ToString());
 			String output = sb.ToString();
 
 			if (outfile is null)
