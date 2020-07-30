@@ -45,7 +45,7 @@ namespace Sudoku.Android.Views.Custom
 			set
 			{
 				this._Sudoku = value;
-				this.Size = this._Sudoku.Size;
+				this.Size = value is null ? SudokuView.DefaultSize : value.Size;
 				this.Invalidate();
 				this.RequestLayout();
 			}

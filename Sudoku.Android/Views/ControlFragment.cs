@@ -71,7 +71,7 @@ namespace Sudoku.Android.Views
 		public ControlEventArgs State
 		{
 			get => this._State;
-			set => this.Update(value);
+			set => this.Update(value, true);
 		}
 
 		public event ControlEventHandler Changed
@@ -161,14 +161,18 @@ namespace Sudoku.Android.Views
 			}
 		}
 
-		private void Update(ControlEventArgs state)
+		private void Update(ControlEventArgs state, bool update = false)
 		{
+			if (update)
+			{
+				this._State = state;
+			}
+
 			if (!this.ActivityCreated)
 			{
 				return;
 			}
 
-			this._State = state;
 			ColorStateList gray = ColorStateList.ValueOf(Color.Gray);
 
 			for (int i = 0; i < ControlFragment.Size; i ++)
@@ -179,7 +183,7 @@ namespace Sudoku.Android.Views
 			this.CheckButton.BackgroundTintList = this.ClearButton.BackgroundTintList = this.NotesButton.BackgroundTintList = gray;
 			Button selectedButton = null;
 
-			switch (state.Event)
+			switch (this._State.Event)
 			{
 				case ControlEvent.Check:
 					selectedButton = this.CheckButton;
@@ -191,7 +195,7 @@ namespace Sudoku.Android.Views
 					selectedButton = this.NotesButton;
 					break;
 				case ControlEvent.Number:
-					selectedButton = this.NumberButtons[state.Number - 1];
+					selectedButton = this.NumberButtons[this._State.Number - 1];
 					break;
 			}
 

@@ -73,7 +73,7 @@
     <Compile Include="ViewModels\SudokuViewEventHandler.cs" />
     <Compile Include="ViewModels\SudokuViewModel.cs" />
     <Compile Include="Views\ControlFragment.cs" />
-    <Compile Include="Views\Custom\DifficultyFragment.cs" />
+    <Compile Include="Views\DifficultyFragment.cs" />
     <Compile Include="Views\Custom\SudokuView.cs" />
     <Compile Include="Views\DifficultyActivity.cs" />
     <Compile Include="Views\MainActivity.cs" />

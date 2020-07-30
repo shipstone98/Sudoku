@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Android.OS;
 using Android.Views;
@@ -43,10 +44,24 @@ namespace Sudoku.Android.Views
 		{
 			base.OnActivityCreated(savedInstanceState);
 			this.ViewModel = (SudokuViewModel) new ViewModelProvider(this).Get(Java.Lang.Class.FromType(typeof (SudokuViewModel)));
+			ActionType action = (ActionType) this.Activity.Intent.Extras.GetInt("action", 1);
+
+			switch (action)
+			{
+				case ActionType.Continue:
+					this.ViewModel.OpenAsync(this.Context.FilesDir, SudokuDifficulty.None);
+					break;
+				case ActionType.Generate:
+				case ActionType.New:
+					SudokuDifficulty difficulty = (SudokuDifficulty) this.Activity.Intent.Extras.GetInt("difficulty", 1);
+					this.ViewModel.OpenAsync(this.Context.FilesDir, difficulty);
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
 			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
-			sudokuView.Sudoku = this.ViewModel.Sudoku;
-			controlFragment.State = this.ViewModel.State;
 			controlFragment.Changed += new ControlEventHandler((sender, e) => this.ViewModel.State = e);
 			sudokuView.Changed += new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
 			this.ViewModel.StateChanged += new ControlEventHandler((sender, e) => controlFragment.State = e);
@@ -58,6 +73,17 @@ namespace Sudoku.Android.Views
 			});
 
 			this.ViewModel.Completed += new EventHandler(this.OnCompletion);
+
+			this.ViewModel.SudokuChanged += new EventHandler((sender, e) =>
+				{
+					sudokuView.Sudoku = this.ViewModel.Sudoku;
+					sudokuView.Update();
+				});
+
+			sudokuView.Sudoku = this.ViewModel.Sudoku;
+			sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
+			sudokuView.SelectedNumber = this.ViewModel.State.Number;
+			controlFragment.State = this.ViewModel.State;
 		}
 
 		private void OnCompletion(Object sender, EventArgs e)
@@ -80,6 +106,12 @@ namespace Sudoku.Android.Views
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) => inflater.Inflate(Resource.Layout.fragment_sudoku, container, false);
 
+		public override void OnDestroy()
+		{
+			this.ViewModel.SaveAsync(this.Context.FilesDir);
+			base.OnDestroy();
+		}
+
 		public override void OnPause()
 		{
 			this.ViewModel.Pause();
@@ -90,6 +122,18 @@ namespace Sudoku.Android.Views
 		{
 			base.OnResume();
 			this.ViewModel.Resume();
+		}
+
+		public override void OnStart()
+		{
+			base.OnStart();
+			this.ViewModel.StartAsync(this.Context.FilesDir);
+		}
+
+		public override void OnStop()
+		{
+			this.ViewModel.StopAsync(this.Context.FilesDir);
+			base.OnStop();
 		}
 	}
 }
