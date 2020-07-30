@@ -8,7 +8,16 @@
 	<string name="solve_button_text">Solve Sudoku</string>
 	<string name="about_button_text">About Sudoku</string>
 
+	<string name="go_button_text">Go</string>
+	<string name="difficulty_text">Enter your chosen difficulty and then press Go</string>
+
 	<string name="check_button_text">Check</string>
 	<string name="clear_button_text">Clear</string>
 	<string name="notes_button_text">Notes</string>
+
+	<string-array name="difficulty_names">
+		<item>Easy</item>
+		<item>Medium</item>
+		<item>Hard</item>
+	</string-array>
 </resources>

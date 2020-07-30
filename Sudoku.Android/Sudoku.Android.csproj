@@ -65,6 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ViewModels\ActionType.cs" />
     <Compile Include="ViewModels\ControlEvent.cs" />
     <Compile Include="ViewModels\ControlEventArgs.cs" />
     <Compile Include="ViewModels\ControlEventHandler.cs" />
@@ -72,7 +73,9 @@
     <Compile Include="ViewModels\SudokuViewEventHandler.cs" />
     <Compile Include="ViewModels\SudokuViewModel.cs" />
     <Compile Include="Views\ControlFragment.cs" />
+    <Compile Include="Views\Custom\DifficultyFragment.cs" />
     <Compile Include="Views\Custom\SudokuView.cs" />
+    <Compile Include="Views\DifficultyActivity.cs" />
     <Compile Include="Views\MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -153,6 +156,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_control.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_difficulty.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_difficulty.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
