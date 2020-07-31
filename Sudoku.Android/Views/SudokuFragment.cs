@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Android.Icu.Text;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -17,6 +18,7 @@ namespace Sudoku.Android.Views
 	public class SudokuFragment : Fragment
 	{
 		private ControlEventHandler ControlFragmentChanged { get; set; }
+		private EventHandler SingleButtonFragmentClicked { get; set; }
 		private SudokuViewEventHandler SudokuViewChanged { get; set; }
 		private SudokuViewModel ViewModel { get; set; }
 		private EventHandler ViewModelCompleted { get; set; }
@@ -65,18 +67,16 @@ namespace Sudoku.Android.Views
 					SudokuDifficulty difficulty = (SudokuDifficulty) this.Activity.Intent.Extras.GetInt("difficulty", 1);
 					this.ViewModel.OpenAsync(this.Context.FilesDir, difficulty);
 					break;
+				case ActionType.Play:
+					break;
 				default:
 					throw new NotSupportedException();
 			}
 
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
-			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
-
-
-
-			this.ControlFragmentChanged = new ControlEventHandler((sender, e) => this.ViewModel.State = e);
+			ControlFragment controlFragment;
+			SingleButtonFragment singleButtonFragment;
 			this.SudokuViewChanged = new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
-			this.ViewModelStateChangedControlFragmentUpdate = new ControlEventHandler((sender, e) => controlFragment.State = e);
 			this.ViewModelCompleted = new EventHandler(this.OnCompletion);
 
 			this.ViewModelStateChangedSudokuViewUpdate = new ControlEventHandler((sender, e) =>
@@ -91,9 +91,6 @@ namespace Sudoku.Android.Views
 				sudokuView.Update();
 			});
 
-
-
-			controlFragment.Changed += this.ControlFragmentChanged;
 			sudokuView.Changed += this.SudokuViewChanged;
 			this.ViewModel.StateChanged += this.ViewModelStateChangedControlFragmentUpdate;
 			this.ViewModel.StateChanged += this.ViewModelStateChangedSudokuViewUpdate;
@@ -103,7 +100,30 @@ namespace Sudoku.Android.Views
 			sudokuView.Sudoku = this.ViewModel.Sudoku;
 			sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
 			sudokuView.SelectedNumber = this.ViewModel.State.Number;
-			controlFragment.State = this.ViewModel.State;
+			FragmentTransaction ft = this.Activity.SupportFragmentManager.BeginTransaction(); ;
+
+			switch (action)
+			{
+				case ActionType.Continue:
+				case ActionType.New:
+				case ActionType.Play:
+					//controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
+					controlFragment = new ControlFragment();
+					this.ControlFragmentChanged = new ControlEventHandler((sender, e) => this.ViewModel.State = e);
+					this.ViewModelStateChangedControlFragmentUpdate = new ControlEventHandler((sender, e) => controlFragment.State = e);
+					controlFragment.Changed += this.ControlFragmentChanged;
+					controlFragment.State = this.ViewModel.State;
+					ft.Add(Resource.Id.fragment_frame_layout, controlFragment, "control_fragment");
+					ft.Commit();
+					break;
+				case ActionType.Generate:
+					singleButtonFragment = new SingleButtonFragment(this.Resources.GetString(Resource.String.add_button_text));
+					this.SingleButtonFragmentClicked = new EventHandler(this.OnSingleButtonFragmentClick);
+					singleButtonFragment.Click += this.SingleButtonFragmentClicked;
+					ft.Add(Resource.Id.fragment_frame_layout, singleButtonFragment, "button_fragment");
+					ft.Commit();
+					break;
+			}
 		}
 
 		private void OnCompletion(Object sender, EventArgs e)
@@ -136,14 +156,28 @@ namespace Sudoku.Android.Views
 		private void Stop()
 		{
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
-			ControlFragment controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
-			controlFragment.Changed -= this.ControlFragmentChanged;
+			ControlFragment controlFragment;
+			SingleButtonFragment singleButtonFragment;
+
+			switch (this.ViewModel.Action)
+			{
+				case ActionType.Continue:
+				case ActionType.New:
+				case ActionType.Play:
+					controlFragment = this.FragmentManager.FindFragmentByTag("control_fragment") as ControlFragment; /// this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
+					controlFragment.Changed -= this.ControlFragmentChanged;
+					break;
+				case ActionType.Generate:
+					singleButtonFragment = this.FragmentManager.FindFragmentByTag("button_fragment") as SingleButtonFragment;
+					singleButtonFragment.Click -= this.SingleButtonFragmentClicked;
+					break;
+			}
+
 			sudokuView.Changed -= this.SudokuViewChanged;
 			this.ViewModel.StateChanged -= this.ViewModelStateChangedControlFragmentUpdate;
 			this.ViewModel.StateChanged -= this.ViewModelStateChangedSudokuViewUpdate;
 			this.ViewModel.Completed -= this.ViewModelCompleted;
 			this.ViewModel.SudokuChanged -= this.ViewModelSudokuChanged;
-			base.OnDestroyView();
 		}
 
 		public override void OnPause()
@@ -170,6 +204,41 @@ namespace Sudoku.Android.Views
 			this.ViewModel.StopAsync(this.Context.FilesDir);
 			this.Stop();
 			base.OnStop();
+		}
+
+		private void OnSingleButtonFragmentClick(Object sender, EventArgs e)
+		{
+			SingleButtonFragment singleButtonFragment = sender as SingleButtonFragment;
+			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
+			String addText = this.Resources.GetString(Resource.String.add_button_text);
+			String removeText = this.Resources.GetString(Resource.String.remove_button_text);
+			String playText = this.Resources.GetString(Resource.String.play_button_text);
+
+			if (singleButtonFragment.Text == addText)
+			{
+				SudokuGenerator.AddNumbers(this.ViewModel.Sudoku);
+				sudokuView.Update();
+				singleButtonFragment.Text = removeText;
+			}
+
+			else if (singleButtonFragment.Text == removeText)
+			{
+				SudokuGenerator.RemoveNumbers(this.ViewModel.Sudoku);
+				sudokuView.Update();
+				singleButtonFragment.Text = playText;
+			}
+
+			else if (singleButtonFragment.Text == playText)
+			{
+				this.Stop();
+				FragmentTransaction ft = this.FragmentManager.BeginTransaction();
+				ft.Remove(singleButtonFragment);
+				ft.Commit();
+				this.Activity.Intent.PutExtra("action", (int) ActionType.Play);
+				this.Activity.Intent.Extras.PutInt("action", (int) ActionType.Play);
+				ActionType action = (ActionType) this.Activity.Intent.Extras.GetInt("action", (int) ActionType.None);
+				this.Start();
+			}
 		}
 	}
 }

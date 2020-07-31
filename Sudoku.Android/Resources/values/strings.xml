@@ -14,6 +14,10 @@
 	<string name="check_button_text">Check</string>
 	<string name="clear_button_text">Clear</string>
 	<string name="notes_button_text">Notes</string>
+	
+	<string name="add_button_text">Add Numbers</string>
+	<string name="remove_button_text">Remove Numbers</string>
+	<string name="play_button_text">Play</string>
 
 	<string-array name="difficulty_names">
 		<item>Easy</item>

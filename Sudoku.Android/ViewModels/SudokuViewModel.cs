@@ -215,6 +215,12 @@ namespace Sudoku.Android.ViewModels
 				}
 			}
 
+			else if (this.Action == ActionType.Generate)
+			{
+				this.Sudoku = new SudokuPuzzle(9, SudokuDifficulty.None);
+				this._SudokuChanged(this, EventArgs.Empty);
+			}
+
 			else
 			{
 				this.Sudoku = SudokuGenerator.Generate(9, difficulty);
