@@ -267,7 +267,7 @@ namespace Sudoku
 		private bool SolvePass(int row, int column)
 		{
 			int[] possible = this.Sudoku.GetPossible(row, column);
-			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.PointingCandidate(row, column, possible) || this.ClaimingCandidate(row, column, possible) || this.NakedPair(row, column, possible);
+			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.PointingCandidate(row, column, possible) || this.ClaimingCandidate(row, column, possible) || this.NakedPair(row, column, possible) || this.NakedTriple(row, column, possible);
 		}
 
 		#region Patterns
@@ -376,6 +376,7 @@ namespace Sudoku
 
 				if (confinedToRow && !confinedToColumn)
 				{
+					int count = 0;
 					//Delete all numbers in that row outside the block
 					for (int i = 0; i < this.Sudoku.Size; i ++)
 					{
@@ -385,28 +386,36 @@ namespace Sudoku
 							continue;
 						}
 
-						this.Sudoku.RemovePossible(row, i, number);
-					}
-
-					List<int> thisColumns = new List<int>();
-
-					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
-					{
-						int currentColumn = startColumn + i;
-
-						if (this.Sudoku.ContainsPossible(row, currentColumn, number))
+						if (this.Sudoku.RemovePossible(row, i, number))
 						{
-							thisColumns.Add(currentColumn);
+							count ++;
 						}
 					}
 
-					//Add all non empty cells with that number in that row in that block to the move made
-					this.Moves.Add(new SudokuMove(new int[] { row }, thisColumns.ToArray(), new int[] { number }, SudokuPattern.PointingCandidate, possible));
-					return true;
+					if (count > 0)
+					{
+						List<int> thisColumns = new List<int>();
+
+						for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+						{
+							int currentColumn = startColumn + i;
+
+							if (this.Sudoku.ContainsPossible(row, currentColumn, number))
+							{
+								thisColumns.Add(currentColumn);
+							}
+						}
+
+						//Add all non empty cells with that number in that row in that block to the move made
+						this.Moves.Add(new SudokuMove(new int[] { row }, thisColumns.ToArray(), new int[] { number }, SudokuPattern.PointingCandidate, possible));
+						return true;
+					}
 				}
 
 				if (confinedToColumn && !confinedToRow)
 				{
+					int count = 0;
+
 					//Delete all numbers in that row outside the block
 					for (int i = 0; i < this.Sudoku.Size; i ++)
 					{
@@ -416,24 +425,30 @@ namespace Sudoku
 							continue;
 						}
 
-						this.Sudoku.RemovePossible(i, column, number);
-					}
-
-					List<int> thisRows = new List<int>();
-
-					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
-					{
-						int currentRow = startRow + i;
-
-						if (this.Sudoku.ContainsPossible(currentRow, column, number))
+						if (this.Sudoku.RemovePossible(i, column, number))
 						{
-							thisRows.Add(currentRow);
+							count ++;
 						}
 					}
 
-					//Add all non empty cells with that number in that row in that block to the move made
-					this.Moves.Add(new SudokuMove(thisRows.ToArray(), new int[] { column }, new int[] { number }, SudokuPattern.PointingCandidate, possible));
-					return true;
+					if (count > 0)
+					{
+						List<int> thisRows = new List<int>();
+
+						for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+						{
+							int currentRow = startRow + i;
+
+							if (this.Sudoku.ContainsPossible(currentRow, column, number))
+							{
+								thisRows.Add(currentRow);
+							}
+						}
+
+						//Add all non empty cells with that number in that row in that block to the move made
+						this.Moves.Add(new SudokuMove(thisRows.ToArray(), new int[] { column }, new int[] { number }, SudokuPattern.PointingCandidate, possible));
+						return true;
+					}
 				}
 			}
 
@@ -517,7 +532,7 @@ namespace Sudoku
 
 				if (!outside)
 				{
-					List<int> rows = new List<int>();
+					int count = 0;
 
 					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 					{
@@ -530,22 +545,30 @@ namespace Sudoku
 
 						for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 						{
-							this.Sudoku.RemovePossible(startRow + j, currentColumn, number);
+							if (this.Sudoku.RemovePossible(startRow + j, currentColumn, number))
+							{
+								count ++;
+							}
 						}
 					}
 
-					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+					if (count > 0)
 					{
-						int currentRow = startRow + i;
+						List<int> rows = new List<int>();
 
-						if (this.Sudoku.ContainsPossible(currentRow, column, number))
+						for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 						{
-							rows.Add(currentRow);
-						}
-					}
+							int currentRow = startRow + i;
 
-					this.Moves.Add(new SudokuMove(rows.ToArray(), new int[] { column }, new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
-					return true;
+							if (this.Sudoku.ContainsPossible(currentRow, column, number))
+							{
+								rows.Add(currentRow);
+							}
+						}
+
+						this.Moves.Add(new SudokuMove(rows.ToArray(), new int[] { column }, new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
+						return true;
+					}
 				}
 			}
 
@@ -585,7 +608,7 @@ namespace Sudoku
 
 				if (!outside)
 				{
-					List<int> columns = new List<int>();
+					int count = 0;
 
 					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 					{
@@ -598,32 +621,37 @@ namespace Sudoku
 
 						for (int j = 0; j < this.Sudoku.BlockSize; j ++)
 						{
-							this.Sudoku.RemovePossible(currentRow, startColumn + j, number);
+							if (this.Sudoku.RemovePossible(currentRow, startColumn + j, number))
+							{
+								count ++;
+							}
 						}
 					}
 
-					for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+					if (count > 0)
 					{
-						int currentColumn = startColumn + i;
+						List<int> columns = new List<int>();
 
-						if (this.Sudoku.ContainsPossible(row, currentColumn, number))
+						for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 						{
-							columns.Add(currentColumn);
-						}
-					}
+							int currentColumn = startColumn + i;
 
-					this.Moves.Add(new SudokuMove(new int[] { row }, columns.ToArray(), new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
-					return true;
+							if (this.Sudoku.ContainsPossible(row, currentColumn, number))
+							{
+								columns.Add(currentColumn);
+							}
+						}
+
+						this.Moves.Add(new SudokuMove(new int[] { row }, columns.ToArray(), new int[] { number }, SudokuPattern.ClaimingCandidate, possible));
+						return true;
+					}
 				}
 			}
 
 			return false;
 		}
 
-		private bool NakedPair(int row, int column, int[] possible)
-		{
-			return this.NakedPairRow(row, column, possible) || this.NakedPairColumn(row, column, possible) || this.NakedPairBlock(row, column, possible);
-		}
+		private bool NakedPair(int row, int column, int[] possible) => this.NakedPairRow(row, column, possible) || this.NakedPairColumn(row, column, possible) || this.NakedPairBlock(row, column, possible);
 
 		private bool NakedPairBlock(int row, int column, int[] possible)
 		{
@@ -702,7 +730,7 @@ namespace Sudoku
 				return false;
 			}
 
-			Console.WriteLine(this.Sudoku);
+			int count = 0;
 
 			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 			{
@@ -719,9 +747,17 @@ namespace Sudoku
 
 					foreach (int number in currentPossible)
 					{
-						this.Sudoku.RemovePossible(currentRow, currentColumn, number);
+						if (this.Sudoku.RemovePossible(currentRow, currentColumn, number))
+						{
+							count ++;
+						}
 					}
 				}
+			}
+
+			if (count == 0)
+			{
+				return false;
 			}
 
 			SudokuMove move = new SudokuMove(new int[] { firstRow, secondRow }, new int[] { firstColumn, secondColumn }, currentPossible, SudokuPattern.NakedPair, currentPossible);
@@ -793,7 +829,7 @@ namespace Sudoku
 				return false;
 			}
 
-			Console.WriteLine(this.Sudoku);
+			int count = 0;
 
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
@@ -804,8 +840,16 @@ namespace Sudoku
 
 				foreach (int number in currentPossible)
 				{
-					this.Sudoku.RemovePossible(i, column, number);
+					if (this.Sudoku.RemovePossible(i, column, number))
+					{
+						count ++;
+					}
 				}
+			}
+
+			if (count == 0)
+			{
+				return false;
 			}
 
 			SudokuMove move = new SudokuMove(new int[] { currentRow, matchingRow }, new int[] { column }, currentPossible, SudokuPattern.NakedPair, currentPossible);
@@ -876,7 +920,7 @@ namespace Sudoku
 				return false;
 			}
 
-			Console.WriteLine(this.Sudoku);
+			int count = 0;
 
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
@@ -887,8 +931,16 @@ namespace Sudoku
 
 				foreach (int number in currentPossible)
 				{
-					this.Sudoku.RemovePossible(row, i, number);
+					if (this.Sudoku.RemovePossible(row, i, number))
+					{
+						count ++;
+					}
 				}
+			}
+
+			if (count == 0)
+			{
+				return false;
 			}
 
 			SudokuMove move = new SudokuMove(new int[] { row }, new int[] { currentColumn, matchingColumn }, currentPossible, SudokuPattern.NakedPair, currentPossible);
@@ -900,6 +952,133 @@ namespace Sudoku
 
 			this.Moves.Add(move);
 			return true;
+		}
+
+		private bool NakedTriple(int row, int column, int[] possible) => this.NakedTripleBlock(row, column);
+
+		private bool NakedTripleBlock(int row, int column)
+		{
+			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
+
+			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
+			{
+				int currentRow = startRow + i;
+
+				for (int j = 0; j < this.Sudoku.BlockSize; j ++)
+				{
+					int currentColumn = startColumn + j;
+
+					if (this.Sudoku[currentRow, currentColumn] != 0)
+					{
+						continue;
+					}
+
+					int[] possible = this.Sudoku.GetPossible(currentRow, currentColumn);
+
+					if (possible.Length != 3)
+					{
+						continue;
+					}
+
+					List<Tuple<int, int>> matches = new List<Tuple<int, int>>();
+					matches.Add(new Tuple<int, int>(currentRow, currentColumn));
+
+					for (int x = 0; x < this.Sudoku.BlockSize; x ++)
+					{
+						int nextRow = startRow + x;
+
+						for (int y = 0; y < this.Sudoku.BlockSize; y ++)
+						{
+							int nextColumn = startColumn + y;
+
+							if (i == x && j == y || this.Sudoku[nextRow, nextColumn] != 0)
+							{
+								continue;
+							}
+
+							int[] nextPossible = this.Sudoku.GetPossible(nextRow, nextColumn);
+
+							if (nextPossible.Length > 3)
+							{
+								continue;
+							}
+
+							bool allMatch = true;
+
+							foreach (int number in nextPossible)
+							{
+								if (!possible.Contains(number))
+								{
+									allMatch = false;
+									break;
+								}
+							}
+
+							if (allMatch)
+							{
+								matches.Add(new Tuple<int, int>(nextRow, nextColumn));
+							}
+						}
+					}
+
+					if (matches.Count != 3)
+					{
+						continue;
+					}
+
+					Tuple<int, int>[] matchesArray = matches.ToArray();
+					List<int> rows = new List<int>();
+					List<int> columns = new List<int>();
+
+					foreach (Tuple<int, int> match in matchesArray)
+					{
+						rows.Add(match.Item1);
+						columns.Add(match.Item2);
+					}
+
+					int count = 0;
+
+					for (int x = 0; x < this.Sudoku.BlockSize; x ++)
+					{
+						int nextRow = startRow + x;
+
+						for (int y = 0; y < this.Sudoku.BlockSize; y ++)
+						{
+							int nextColumn = startColumn + y;
+
+							if (matchesArray.Contains(new Tuple<int, int>(nextRow, nextColumn)))
+							{
+								continue;
+							}
+
+							foreach (int number in possible)
+							{
+								if (this.Sudoku.RemovePossible(nextRow, nextColumn, number))
+								{
+									count ++;
+								}
+							}
+						}
+					}
+
+					if (count == 0)
+					{
+						return false;
+					}
+
+					SudokuMove move = new SudokuMove(rows.ToArray(), columns.ToArray(), possible, SudokuPattern.NakedTriple, possible);
+
+					if (this.Moves.Contains(move))
+					{
+						return false;
+					}
+
+					this.Moves.Add(move);
+					return true;
+				}
+			}
+
+			return false;
 		}
 		#endregion
 	}

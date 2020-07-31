@@ -65,6 +65,8 @@ namespace Sudoku
 						return "Naked Pair";
                     case SudokuPattern.NakedSingle:
                         return "Naked Single";
+					case SudokuPattern.NakedTriple:
+						return "Naked Triple";
                     case SudokuPattern.PointingCandidate:
                         return "Pointing Candidate";
                     default:
