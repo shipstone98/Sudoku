@@ -116,8 +116,14 @@ namespace Sudoku.Android.Views
 					ft.Add(Resource.Id.fragment_frame_layout, controlFragment, "control_fragment");
 					ft.Commit();
 					break;
+
 				case ActionType.Generate:
-					singleButtonFragment = new SingleButtonFragment(this.Resources.GetString(Resource.String.add_button_text));
+					if (this.ViewModel.ButtonText is null)
+					{
+						this.ViewModel.ButtonText = this.Resources.GetString(Resource.String.add_button_text);
+					}
+
+					singleButtonFragment = new SingleButtonFragment(this.ViewModel.ButtonText);
 					this.SingleButtonFragmentClicked = new EventHandler(this.OnSingleButtonFragmentClick);
 					singleButtonFragment.Click += this.SingleButtonFragmentClicked;
 					ft.Add(Resource.Id.fragment_frame_layout, singleButtonFragment, "button_fragment");
@@ -208,7 +214,7 @@ namespace Sudoku.Android.Views
 
 		private void OnSingleButtonFragmentClick(Object sender, EventArgs e)
 		{
-			SingleButtonFragment singleButtonFragment = sender as SingleButtonFragment;
+			SingleButtonFragment singleButtonFragment = this.FragmentManager.FindFragmentByTag("button_fragment") as SingleButtonFragment;
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
 			String addText = this.Resources.GetString(Resource.String.add_button_text);
 			String removeText = this.Resources.GetString(Resource.String.remove_button_text);
@@ -218,14 +224,14 @@ namespace Sudoku.Android.Views
 			{
 				SudokuGenerator.AddNumbers(this.ViewModel.Sudoku);
 				sudokuView.Update();
-				singleButtonFragment.Text = removeText;
+				this.ViewModel.ButtonText = singleButtonFragment.Text = removeText;
 			}
 
 			else if (singleButtonFragment.Text == removeText)
 			{
 				SudokuGenerator.RemoveNumbers(this.ViewModel.Sudoku);
 				sudokuView.Update();
-				singleButtonFragment.Text = playText;
+				this.ViewModel.ButtonText = singleButtonFragment.Text = playText;
 			}
 
 			else if (singleButtonFragment.Text == playText)
@@ -237,6 +243,7 @@ namespace Sudoku.Android.Views
 				this.Activity.Intent.PutExtra("action", (int) ActionType.Play);
 				this.Activity.Intent.Extras.PutInt("action", (int) ActionType.Play);
 				ActionType action = (ActionType) this.Activity.Intent.Extras.GetInt("action", (int) ActionType.None);
+				this.ViewModel.ButtonText = null;
 				this.Start();
 			}
 		}
