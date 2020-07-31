@@ -687,7 +687,13 @@ namespace Sudoku
 		}
 
 		internal void RemoveAllPossible(int row, int column, int number) => this.RemovePossible(row, column, number, true, true, true);
-		internal bool RemovePossible(int row, int column, int number) => this.Cells[row, column].RemovePossible(number);
+
+		internal bool RemovePossible(int row, int column, int number)
+		{
+			bool removed = this.Cells[row, column].RemovePossible(number);
+			return this.Cells[row, column].Number == 0 ? removed : false;
+		}
+
 		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);
 		
 		internal void ResetPossible()
