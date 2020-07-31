@@ -80,6 +80,7 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\MenuFragment.cs" />
+    <Compile Include="Views\SingleButtonFragment.cs" />
     <Compile Include="Views\SudokuActivity.cs" />
     <Compile Include="Views\SudokuFragment.cs" />
   </ItemGroup>
@@ -166,6 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\fragment_difficulty.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_single_button.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

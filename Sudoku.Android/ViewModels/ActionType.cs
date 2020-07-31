@@ -7,6 +7,7 @@
 		Continue,
 		Generate,
 		Solve,
-		About
+		About,
+		Play
 	}
 }
