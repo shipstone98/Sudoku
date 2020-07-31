@@ -644,7 +644,7 @@ namespace Sudoku
 						continue;
 					}
 
-					currentPossible = i == currentRow && j == currentColumn ? possible : this.Sudoku.GetPossible(currentRow, currentColumn);
+					currentPossible = row == currentRow && column == currentColumn ? possible : this.Sudoku.GetPossible(currentRow, currentColumn);
 
 					if (currentPossible.Length == 2)
 					{
@@ -701,6 +701,8 @@ namespace Sudoku
 			{
 				return false;
 			}
+
+			Console.WriteLine(this.Sudoku);
 
 			for (int i = 0; i < this.Sudoku.BlockSize; i ++)
 			{
@@ -791,6 +793,8 @@ namespace Sudoku
 				return false;
 			}
 
+			Console.WriteLine(this.Sudoku);
+
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
 				if (i == currentRow || i == matchingRow)
@@ -871,6 +875,8 @@ namespace Sudoku
 			{
 				return false;
 			}
+
+			Console.WriteLine(this.Sudoku);
 
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
