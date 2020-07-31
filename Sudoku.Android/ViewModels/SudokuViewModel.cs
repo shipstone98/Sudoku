@@ -30,6 +30,7 @@ namespace Sudoku.Android.ViewModels
 		}
 
 		public ActionType Action { get; set; }
+		public String ButtonText { get; set; }
 		public int Column { get; private set; }
 		public bool IsCorrect { get; private set; }
 		public bool IsRunning => this.Stopwatch.IsRunning;
@@ -107,6 +108,7 @@ namespace Sudoku.Android.ViewModels
 			this._StateChanged = null;
 			this._SudokuChanged = null;
 			this.Action = ActionType.None;
+			this.ButtonText = null;
 			this.Column = SudokuViewModel.DefaultColumn;
 			this.IsCorrect = false;
 			this.MoveCount = 0;
