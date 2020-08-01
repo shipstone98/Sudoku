@@ -2,6 +2,8 @@
     <string name="app_name">Sudoku</string>
     <string name="action_settings">Settings</string>
 
+	<string name="about_text">A C# application for generating and solving sudoku puzzles, targeting Xamarin on Android. This constitutes part of my Honours Stage Project for the MEng Computer Science course at the University of Hull.</string>
+
 	<string name="new_button_text">New Game</string>
 	<string name="continue_button_text">Continue Game</string>
 	<string name="generate_button_text">Generate Sudoku</string>

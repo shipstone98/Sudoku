@@ -72,6 +72,7 @@
     <Compile Include="ViewModels\SudokuViewEventArgs.cs" />
     <Compile Include="ViewModels\SudokuViewEventHandler.cs" />
     <Compile Include="ViewModels\SudokuViewModel.cs" />
+    <Compile Include="Views\AboutActivity.cs" />
     <Compile Include="Views\ControlFragment.cs" />
     <Compile Include="Views\DifficultyFragment.cs" />
     <Compile Include="Views\Custom\SudokuView.cs" />
@@ -186,6 +187,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\attrs.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_about.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
