@@ -35,6 +35,9 @@ namespace Sudoku.Android.Views
 
 			switch (this.Action)
 			{
+				case ActionType.About:
+					intent = new Intent(this.Activity.ApplicationContext, Java.Lang.Class.FromType(typeof (AboutActivity)));
+					break;
 				case ActionType.Continue:
 					try
 					{
@@ -87,6 +90,8 @@ namespace Sudoku.Android.Views
 			newButton.SetOnClickListener(new MenuFragmentOnClickListener(ActionType.New, this.Activity));
 			Button continueButton = this.View.FindViewById<Button>(Resource.Id.continue_button);
 			continueButton.SetOnClickListener(new MenuFragmentOnClickListener(ActionType.Continue, this.Activity));
+			Button aboutButton = this.View.FindViewById<Button>(Resource.Id.about_button);
+			aboutButton.SetOnClickListener(new MenuFragmentOnClickListener(ActionType.About, this.Activity));
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) => inflater.Inflate(Resource.Layout.fragment_menu, container, false);
