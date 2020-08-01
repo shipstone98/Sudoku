@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+	<declare-styleable name="SudokuView">
+		<attr name="size" format="integer" />
+		<attr name="text_size" format="float" />
+		<attr name="neighbour_cell_color" format="string" />
+		<attr name="matching_cell_color" format="string" />
+		<attr name="selected_cell_color" format="string" />
+		<attr name="disable_matching_cell_fill" format="boolean" />
+		<attr name="inner_border_thickness" format="float" />
+		<attr name="outer_border_thickness" format="float" />
+		<attr name="cell_text_color" format="string" />
+		<attr name="readonly_cell_text_color" format="string" />
+		<attr name="incorrect_cell_text_color" format="string" />
+		<attr name="border_color" format="string" />
+	</declare-styleable>
+</resources>
