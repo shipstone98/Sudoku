@@ -1,10 +1,12 @@
 ﻿using System;
 
 using Android.Content;
+using Android.Content.Res;
 using Android.Graphics;
 using Android.Views;
 using Android.Util;
 using Sudoku.Android.ViewModels;
+using System.Text.RegularExpressions;
 
 namespace Sudoku.Android.Views.Custom
 {
@@ -33,6 +35,7 @@ namespace Sudoku.Android.Views.Custom
 		private Paint SelectedFill { get; }
 
 		public int Column { get; private set; }
+		public bool DisableMatchingCellFill { get; set; }
 		private float Pixels { get; set; }
 		public int Row { get; private set; }
 		public int SelectedNumber { get; set; }
@@ -72,18 +75,20 @@ namespace Sudoku.Android.Views.Custom
 
 		public SudokuView(Context context, IAttributeSet attributeSet) : base(context, attributeSet)
 		{
-			//TypedArray attributes = context.Theme.ObtainStyledAttributes(attributeSet, Resource.Styleable.Sudoku)
+			TypedArray attributes = context.Theme.ObtainStyledAttributes(attributeSet, Resource.Styleable.SudokuView, 0, 0);
+			this.Size = attributes.GetInteger(Resource.Styleable.SudokuView_size, SudokuView.DefaultSize);
+			this.Size = SudokuPuzzle.VerifySize(this.Size) ? this.Size : SudokuView.DefaultSize;
+			this.Row = SudokuView.DefaultRow;
+			this.Column = SudokuView.DefaultColumn;
+			this.DisableMatchingCellFill = attributes.GetBoolean(Resource.Styleable.SudokuView_disable_matching_cell_fill, false);
 
 			this._Sudoku = null;
 			this.LockObject = new Object();
 
 			this._Changed = null;
 
-			this.Column = SudokuView.DefaultColumn;
 			this.Pixels = SudokuView.DefaultPixels;
-			this.Row = SudokuView.DefaultRow;
 			this.SelectedNumber = 0;
-			this.Size = SudokuView.DefaultSize;
 
 			this.CellText = new Paint();
 			this.IncorrectCellText = new Paint();
@@ -94,26 +99,28 @@ namespace Sudoku.Android.Views.Custom
 			this.ReadOnlyCellText = new Paint();
 			this.SelectedFill = new Paint();
 
-			this.CellText.Color = Color.Black;
-			this.CellText.TextSize = SudokuView.DefaultTextSize;
+			float textSize = attributes.GetFloat(Resource.Styleable.SudokuView_text_size, SudokuView.DefaultTextSize);
+			Color borderColor = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_border_color), Color.Black);
+			this.CellText.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_cell_text_color), Color.Black);
+			this.CellText.TextSize = textSize;
 			this.CellText.SetStyle(Paint.Style.FillAndStroke);
-			this.IncorrectCellText.Color = Color.Red;
-			this.IncorrectCellText.TextSize = SudokuView.DefaultTextSize;
+			this.IncorrectCellText.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_incorrect_cell_text_color), Color.Red);
+			this.IncorrectCellText.TextSize = textSize;
 			this.IncorrectCellText.SetStyle(Paint.Style.FillAndStroke);
-			this.InnerBorder.Color = Color.Black;
-			this.InnerBorder.StrokeWidth = SudokuView.DefaultStrokeWidth;
+			this.InnerBorder.Color = borderColor;
+			this.InnerBorder.StrokeWidth = attributes.GetFloat(Resource.Styleable.SudokuView_inner_border_thickness, SudokuView.DefaultStrokeWidth);
 			this.InnerBorder.SetStyle(Paint.Style.Stroke);
-			this.MatchingFill.Color = Color.Rgb(220, 230, 140);
+			this.MatchingFill.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_matching_cell_color), Color.Rgb(220, 230, 140));
 			this.MatchingFill.SetStyle(Paint.Style.FillAndStroke);
-			this.NeighbourFill.Color = Color.Rgb(220, 240, 255);
+			this.NeighbourFill.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_neighbour_cell_color), Color.Rgb(220, 240, 255));
 			this.NeighbourFill.SetStyle(Paint.Style.FillAndStroke);
-			this.OuterBorder.Color = Color.Black;
-			this.OuterBorder.StrokeWidth = SudokuView.DefaultStrokeWidth * SudokuView.OuterBorderRatio;
+			this.OuterBorder.Color = borderColor;
+			this.OuterBorder.StrokeWidth = attributes.GetFloat(Resource.Styleable.SudokuView_inner_border_thickness, SudokuView.DefaultStrokeWidth * SudokuView.OuterBorderRatio);
 			this.OuterBorder.SetStyle(Paint.Style.Stroke);
-			this.ReadOnlyCellText.Color = Color.DarkBlue;
-			this.ReadOnlyCellText.TextSize = SudokuView.DefaultTextSize;
+			this.ReadOnlyCellText.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_readonly_cell_text_color), Color.Blue);
+			this.ReadOnlyCellText.TextSize = textSize;
 			this.ReadOnlyCellText.SetStyle(Paint.Style.FillAndStroke);
-			this.SelectedFill.Color = Color.Rgb(220, 220, 255);
+			this.SelectedFill.Color = SudokuView.ParseColor(attributes.GetString(Resource.Styleable.SudokuView_selected_cell_color), Color.Rgb(220, 220, 255));
 			this.SelectedFill.SetStyle(Paint.Style.FillAndStroke);
 		}
 
@@ -177,13 +184,16 @@ namespace Sudoku.Android.Views.Custom
 				}
 			}
 
-			for (int i = 0; i < this.Sudoku.Size; i++)
+			if (!this.DisableMatchingCellFill)
 			{
-				for (int j = 0; j < this.Sudoku.Size; j++)
+				for (int i = 0; i < this.Sudoku.Size; i++)
 				{
-					if (this.Sudoku[i, j] != 0 && this.Sudoku[i, j] == this.Sudoku[this.Row, this.Column])
+					for (int j = 0; j < this.Sudoku.Size; j++)
 					{
-						this.FillCell(canvas, i, j, this.MatchingFill);
+						if (this.Sudoku[i, j] != 0 && this.Sudoku[i, j] == this.Sudoku[this.Row, this.Column])
+						{
+							this.FillCell(canvas, i, j, this.MatchingFill);
+						}
 					}
 				}
 			}
@@ -232,6 +242,47 @@ namespace Sudoku.Android.Views.Custom
 			}
 
 			return false;
+		}
+
+		private static Color ParseColor(String text, Color defaultColor)
+		{
+			if (String.IsNullOrWhiteSpace(text))
+			{
+				return defaultColor;
+			}
+
+			try
+			{
+				return (Color) Enum.Parse(typeof (Color), text, true);
+			}
+
+			catch
+			{
+				text = Regex.Replace(text, @"\s+", "");
+				String[] split = text.Split(',');
+
+				if (split.Length == 3)
+				{
+					sbyte[] rgb = new sbyte[3];
+
+					for (int i = 0; i < 3; i ++)
+					{
+						try
+						{
+							rgb[i] = SByte.Parse(split[0]);
+						}
+
+						catch
+						{
+							return defaultColor;
+						}
+					}
+
+					return Color.Rgb(rgb[0], rgb[1], rgb[2]);
+				}
+			}
+
+			return defaultColor;
 		}
 
 		public void SetRowAndColumn(int row, int column)
