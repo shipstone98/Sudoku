@@ -87,5 +87,15 @@ namespace Sudoku.Test
 			this.Cell.AddPossible(SudokuPuzzle.MaximumSupportedSize);
 			Assert.IsTrue(SudokuCellTest.Equal(possible, this.Cell.Possible));
 		}
+
+		[TestMethod]
+		public void TestClone()
+		{
+			SudokuCell clone = (SudokuCell) this.Cell.Clone();
+			Assert.AreEqual(this.Cell.Number, clone.Number);
+			Assert.AreEqual(this.Cell.Solution, clone.Solution);
+			Assert.AreEqual(this.Cell.IsReadOnly, clone.IsReadOnly);
+			Assert.IsTrue(SudokuCellTest.Equal(this.Cell.Possible, clone.Possible));
+		}
 	}
 }
