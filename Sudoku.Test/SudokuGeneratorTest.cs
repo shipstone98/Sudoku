@@ -10,6 +10,16 @@ namespace Sudoku.Test
 		public void TestAddNumbers()
 		{
 			SudokuPuzzle sudoku = SudokuGenerator.AddNumbers(SudokuPuzzleTest.Size, SudokuPuzzleTest.Difficulty);
+			Assert.ThrowsException<ArgumentNullException>(() => SudokuGenerator.AddNumbers(null));
+			Assert.ThrowsException<ArgumentException>(() => SudokuGenerator.AddNumbers(SudokuPuzzle.MaximumSupportedSize, SudokuDifficulty.None));
+
+			if (SudokuPuzzle.MaximumSupportedSize > 1)
+			{
+				Assert.ThrowsException<ArgumentException>(() => SudokuGenerator.AddNumbers(2, SudokuDifficulty.Easy));
+			}
+
+			Assert.ThrowsException<ArgumentOutOfRangeException>(() => SudokuGenerator.AddNumbers(SudokuPuzzle.MaximumSupportedSize + 1, SudokuDifficulty.Easy));
+			Assert.ThrowsException<ArgumentOutOfRangeException>(() => SudokuGenerator.AddNumbers(-1, SudokuDifficulty.Easy));
 
 			for (int i = 0; i < sudoku.Size; i ++)
 			{
@@ -26,6 +36,7 @@ namespace Sudoku.Test
 		[TestMethod]
 		public void TestRemoveNumbers()
 		{
+			Assert.ThrowsException<ArgumentNullException>(() => SudokuGenerator.RemoveNumbers(null));
 			SudokuPuzzle sudoku = SudokuGenerator.AddNumbers(SudokuPuzzleTest.Size, SudokuPuzzleTest.Difficulty);
 			Console.WriteLine(sudoku);
 			SudokuPuzzle original = (SudokuPuzzle) sudoku.Clone();
