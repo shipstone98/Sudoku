@@ -23,7 +23,7 @@ namespace Sudoku.Android.Views.Custom
 		private SudokuPuzzle _Sudoku;
 		private readonly Object LockObject;
 
-		private event SudokuViewEventHandler _Changed;
+		private event EventHandler<SudokuViewEventArgs> _Changed;
 
 		private Paint CellText { get; }
 		private Paint IncorrectCellText { get; }
@@ -54,7 +54,7 @@ namespace Sudoku.Android.Views.Custom
 			}
 		}
 
-		public event SudokuViewEventHandler Changed
+		public event EventHandler<SudokuViewEventArgs> Changed
 		{
 			add
 			{

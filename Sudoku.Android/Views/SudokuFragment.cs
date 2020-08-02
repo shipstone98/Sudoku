@@ -17,14 +17,14 @@ namespace Sudoku.Android.Views
 {
 	public class SudokuFragment : Fragment
 	{
-		private ControlEventHandler ControlFragmentChanged { get; set; }
+		private EventHandler<ControlEventArgs> ControlFragmentChanged { get; set; }
 		private EventHandler SingleButtonFragmentClicked { get; set; }
-		private SudokuViewEventHandler SudokuViewChanged { get; set; }
+		private EventHandler<SudokuViewEventArgs> SudokuViewChanged { get; set; }
 		private SudokuViewModel ViewModel { get; set; }
 		private EventHandler ViewModelCompleted { get; set; }
 		private EventHandler ViewModelSudokuChanged { get; set; }
-		private ControlEventHandler ViewModelStateChangedControlFragmentUpdate { get; set; }
-		private ControlEventHandler ViewModelStateChangedSudokuViewUpdate { get; set; }
+		private EventHandler<ControlEventArgs> ViewModelStateChangedControlFragmentUpdate { get; set; }
+		private EventHandler<ControlEventArgs> ViewModelStateChangedSudokuViewUpdate { get; set; }
 
 		private static String FormatTime(double ms)
 		{
@@ -76,10 +76,10 @@ namespace Sudoku.Android.Views
 			SudokuView sudokuView = this.View.FindViewById<SudokuView>(Resource.Id.sudoku_view);
 			ControlFragment controlFragment;
 			SingleButtonFragment singleButtonFragment;
-			this.SudokuViewChanged = new SudokuViewEventHandler((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
+			this.SudokuViewChanged = new EventHandler<SudokuViewEventArgs>((sender, e) => this.ViewModel.SetRowAndColumn(e.Row, e.Column));
 			this.ViewModelCompleted = new EventHandler(this.OnCompletion);
 
-			this.ViewModelStateChangedSudokuViewUpdate = new ControlEventHandler((sender, e) =>
+			this.ViewModelStateChangedSudokuViewUpdate = new EventHandler<ControlEventArgs>((sender, e) =>
 			{
 				sudokuView.SelectedNumber = e.Number;
 				sudokuView.SetRowAndColumn(this.ViewModel.Row, this.ViewModel.Column);
@@ -109,8 +109,8 @@ namespace Sudoku.Android.Views
 				case ActionType.Play:
 					//controlFragment = this.ChildFragmentManager.FindFragmentById(Resource.Id.control_fragment) as ControlFragment;
 					controlFragment = new ControlFragment();
-					this.ControlFragmentChanged = new ControlEventHandler((sender, e) => this.ViewModel.State = e);
-					this.ViewModelStateChangedControlFragmentUpdate = new ControlEventHandler((sender, e) => controlFragment.State = e);
+					this.ControlFragmentChanged = new EventHandler<ControlEventArgs>((sender, e) => this.ViewModel.State = e);
+					this.ViewModelStateChangedControlFragmentUpdate = new EventHandler<ControlEventArgs>((sender, e) => controlFragment.State = e);
 					controlFragment.Changed += this.ControlFragmentChanged;
 					controlFragment.State = this.ViewModel.State;
 					ft.Add(Resource.Id.fragment_frame_layout, controlFragment, "control_fragment");

@@ -201,7 +201,7 @@ namespace Sudoku.Test
 		public void TestChanged()
 		{
 			bool changed = false;
-			this.Sudoku.Changed += new SudokuChangedEventHandler((sender, e) => changed = true);
+			this.Sudoku.Changed += new EventHandler<SudokuEventArgs>((sender, e) => changed = true);
 			const int ROW = 0, COLUMN = 0;
 			int value = this.Sudoku[ROW, COLUMN], newValue;
 

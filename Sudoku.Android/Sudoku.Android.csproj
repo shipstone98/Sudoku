@@ -68,9 +68,7 @@
     <Compile Include="ViewModels\ActionType.cs" />
     <Compile Include="ViewModels\ControlEvent.cs" />
     <Compile Include="ViewModels\ControlEventArgs.cs" />
-    <Compile Include="ViewModels\ControlEventHandler.cs" />
     <Compile Include="ViewModels\SudokuViewEventArgs.cs" />
-    <Compile Include="ViewModels\SudokuViewEventHandler.cs" />
     <Compile Include="ViewModels\SudokuViewModel.cs" />
     <Compile Include="Views\AboutActivity.cs" />
     <Compile Include="Views\ControlFragment.cs" />

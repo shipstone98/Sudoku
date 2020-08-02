@@ -20,7 +20,7 @@ namespace Sudoku.Android.ViewModels
 		private readonly Object SudokuChangedLockObject;
 
 		private event EventHandler _Completed;
-		private event ControlEventHandler _StateChanged;
+		private event EventHandler<ControlEventArgs> _StateChanged;
 		private event EventHandler _SudokuChanged;
 
 		public ControlEventArgs State
@@ -60,7 +60,7 @@ namespace Sudoku.Android.ViewModels
 			}
 		}
 
-		public event ControlEventHandler StateChanged
+		public event EventHandler<ControlEventArgs> StateChanged
 		{
 			add
 			{

@@ -60,7 +60,7 @@ namespace Sudoku.Android.Views
 		internal ControlEventArgs _State;
 		private readonly Object LockObject;
 
-		private event ControlEventHandler _Changed;
+		private event EventHandler<ControlEventArgs> _Changed;
 
 		private bool ActivityCreated { get; set; }
 		private Button[] NumberButtons { get; }
@@ -74,7 +74,7 @@ namespace Sudoku.Android.Views
 			set => this.Update(value, true);
 		}
 
-		public event ControlEventHandler Changed
+		public event EventHandler<ControlEventArgs> Changed
 		{
 			add
 			{

@@ -22,7 +22,7 @@ namespace Sudoku
 
 		private readonly Object LockObject;
 
-		private event SudokuChangedEventHandler _Changed;
+		private event EventHandler<SudokuEventArgs> _Changed;
 
 		/// <summary>
 		/// Gets the number of elements in each row or column of a block, or sub-grid, contained in the <see cref="SudokuPuzzle"/>. This is the positive square root of the <see cref="Size"/> property.
@@ -114,7 +114,7 @@ namespace Sudoku
 		/// <summary>
 		/// Occurs when the number in a cell in the <see cref="SudokuPuzzle"/> is changed.
 		/// </summary>
-		public event SudokuChangedEventHandler Changed
+		public event EventHandler<SudokuEventArgs> Changed
 		{
 			add
 			{
