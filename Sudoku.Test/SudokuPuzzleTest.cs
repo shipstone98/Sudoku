@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Sudoku.Test
 {
 	[TestClass]
-	public class SudokuTest
+	public class SudokuPuzzleTest
 	{
 		public const SudokuDifficulty DefaultDifficulty = SudokuDifficulty.Easy;
 		public const int DefaultSize = 9;
@@ -21,18 +21,18 @@ namespace Sudoku.Test
 		private Random Random { get; }
 		private SudokuPuzzle Sudoku { get; set; }
 
-		static SudokuTest()
+		static SudokuPuzzleTest()
 		{
 			try
 			{
 				if (File.Exists("vars.txt"))
 				{
-					SudokuTest.ParseFile("vars.txt");
+					SudokuPuzzleTest.ParseFile("vars.txt");
 				}
 
 				else if (File.Exists("Variables.txt"))
 				{
-					SudokuTest.ParseFile("Variables.txt");
+					SudokuPuzzleTest.ParseFile("Variables.txt");
 				}
 
 				else
@@ -43,19 +43,19 @@ namespace Sudoku.Test
 
 			catch
 			{
-				SudokuTest.Difficulty = SudokuTest.DefaultDifficulty;
-				SudokuTest.Size = SudokuTest.DefaultSize;
+				SudokuPuzzleTest.Difficulty = SudokuPuzzleTest.DefaultDifficulty;
+				SudokuPuzzleTest.Size = SudokuPuzzleTest.DefaultSize;
 			}
 
-			Assert.AreNotEqual(SudokuTest.Difficulty, SudokuDifficulty.None, "Difficulty must not be None");
-			Assert.IsTrue(SudokuPuzzle.VerifySize(SudokuTest.Size), "Size must be a positive, square integer");
+			Assert.AreNotEqual(SudokuPuzzleTest.Difficulty, SudokuDifficulty.None, "Difficulty must not be None");
+			Assert.IsTrue(SudokuPuzzle.VerifySize(SudokuPuzzleTest.Size), "Size must be a positive, square integer");
 		}
 
-		public SudokuTest()
+		public SudokuPuzzleTest()
 		{
-			this.Possible = new int[SudokuTest.Size];
+			this.Possible = new int[SudokuPuzzleTest.Size];
 
-			for (int i = 0; i < SudokuTest.Size; i++)
+			for (int i = 0; i < SudokuPuzzleTest.Size; i++)
 			{
 				this.Possible[i] = i + 1;
 			}
@@ -65,7 +65,7 @@ namespace Sudoku.Test
 		}
 
 		[TestInitialize]
-		public void TestInitialize() => this.Sudoku = new SudokuPuzzle(SudokuTest.Size, SudokuTest.Difficulty);
+		public void TestInitialize() => this.Sudoku = new SudokuPuzzle(SudokuPuzzleTest.Size, SudokuPuzzleTest.Difficulty);
 
 		private static bool ArraysEqual<T>(T[] a, T[] b)
 		{
@@ -94,12 +94,12 @@ namespace Sudoku.Test
 				String formattedLine = line.ToLower();
 				formattedLine = Regex.Replace(formattedLine, @"\s+", "");
 
-				if (formattedLine.Count(c => c == SudokuTest.SeparatorChar) != 1)
+				if (formattedLine.Count(c => c == SudokuPuzzleTest.SeparatorChar) != 1)
 				{
 					continue;
 				}
 
-				int index = formattedLine.IndexOf(SudokuTest.SeparatorChar);
+				int index = formattedLine.IndexOf(SudokuPuzzleTest.SeparatorChar);
 				String key = formattedLine.Substring(0, index);
 				String value = formattedLine.Substring(index + 1);
 
@@ -110,7 +110,7 @@ namespace Sudoku.Test
 					case "difficulty":
 						try
 						{
-							SudokuTest.Difficulty = (SudokuDifficulty) Enum.Parse(typeof (SudokuDifficulty), value, true);
+							SudokuPuzzleTest.Difficulty = (SudokuDifficulty) Enum.Parse(typeof (SudokuDifficulty), value, true);
 						}
 
 						catch
@@ -118,7 +118,7 @@ namespace Sudoku.Test
 							try
 							{
 								uint parsedValue = UInt32.Parse(value);
-								SudokuTest.Difficulty = (SudokuDifficulty) parsedValue;
+								SudokuPuzzleTest.Difficulty = (SudokuDifficulty) parsedValue;
 							}
 
 							catch
@@ -133,7 +133,7 @@ namespace Sudoku.Test
 					case "size":
 						try
 						{
-							SudokuTest.Size = Int32.Parse(value);
+							SudokuPuzzleTest.Size = Int32.Parse(value);
 							break;
 						}
 
@@ -148,7 +148,7 @@ namespace Sudoku.Test
 			}
 		}
 
-		private int Generate(bool includeUpperLimit = false) => includeUpperLimit ? this.Random.Next(SudokuTest.Size + 1) : this.Random.Next(SudokuTest.Size);
+		private int Generate(bool includeUpperLimit = false) => includeUpperLimit ? this.Random.Next(SudokuPuzzleTest.Size + 1) : this.Random.Next(SudokuPuzzleTest.Size);
 
 		private void TestSetNumberFromZeroToNumber(out int row, out int column, out int number)
 		{
@@ -161,9 +161,9 @@ namespace Sudoku.Test
 			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
 			this.Sudoku[row, column] = number;
 
-			for (int i = 0; i < SudokuTest.Size; i ++)
+			for (int i = 0; i < SudokuPuzzleTest.Size; i ++)
 			{
-				for (int j = 0; j < SudokuTest.Size; j ++)
+				for (int j = 0; j < SudokuPuzzleTest.Size; j ++)
 				{
 					this.Sudoku.GetStartRowColumn(i, j, out int currentStartRow, out int currentStartColumn);
 
@@ -172,7 +172,7 @@ namespace Sudoku.Test
 						//Check against affectedPossible
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -185,7 +185,7 @@ namespace Sudoku.Test
 					{
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -226,13 +226,13 @@ namespace Sudoku.Test
 			this.TestSetNumberFromZeroToNumber(out int row, out int column, out int number);
 			this.Sudoku[row, column] = 0;
 
-			for (int i = 0; i < SudokuTest.Size; i ++)
+			for (int i = 0; i < SudokuPuzzleTest.Size; i ++)
 			{
-				for (int j = 0; j < SudokuTest.Size; j ++)
+				for (int j = 0; j < SudokuPuzzleTest.Size; j ++)
 				{
 					if (this.Sudoku[i, j] == 0)
 					{
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
 					}
 
 					else
@@ -260,9 +260,9 @@ namespace Sudoku.Test
 			this.Sudoku.GetStartRowColumn(row, column, out int startRow, out int startColumn);
 			this.Sudoku[row, column] = number;
 
-			for (int i = 0; i < SudokuTest.Size; i ++)
+			for (int i = 0; i < SudokuPuzzleTest.Size; i ++)
 			{
-				for (int j = 0; j < SudokuTest.Size; j ++)
+				for (int j = 0; j < SudokuPuzzleTest.Size; j ++)
 				{
 					this.Sudoku.GetStartRowColumn(i, j, out int currentStartRow, out int currentStartColumn);
 
@@ -271,7 +271,7 @@ namespace Sudoku.Test
 						//Check against affectedPossible
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -282,7 +282,7 @@ namespace Sudoku.Test
 
 					else if (this.Sudoku[i, j] == 0)
 					{
-						Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
 					}
 
 					else
@@ -297,14 +297,14 @@ namespace Sudoku.Test
 		public void TestConstructor()
 		{
 			Assert.IsNotNull(this.Sudoku);
-			Assert.AreEqual(this.Sudoku.Size, SudokuTest.Size);
-			Assert.AreEqual(this.Sudoku.Difficulty, SudokuTest.Difficulty);
+			Assert.AreEqual(this.Sudoku.Size, SudokuPuzzleTest.Size);
+			Assert.AreEqual(this.Sudoku.Difficulty, SudokuPuzzleTest.Difficulty);
 
-			for (int i = 0; i < SudokuTest.Size; i ++)
+			for (int i = 0; i < SudokuPuzzleTest.Size; i ++)
 			{
-				for (int j = 0; j < SudokuTest.Size; j ++)
+				for (int j = 0; j < SudokuPuzzleTest.Size; j ++)
 				{
-					Assert.IsTrue(SudokuTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+					Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
 				}
 			}
 		}
