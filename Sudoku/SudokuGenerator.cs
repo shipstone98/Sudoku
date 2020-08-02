@@ -19,7 +19,7 @@ namespace Sudoku
 		{
 			if (sudoku is null)
 			{
-				throw new NotImplementedException(nameof (sudoku));
+				throw new ArgumentNullException(nameof (sudoku));
 			}
 
 			sudoku.DisablePossible = true;
