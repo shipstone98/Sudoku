@@ -11,7 +11,7 @@ namespace Sudoku.Test
 	{
 		private SudokuCell Cell;
 
-		private static bool Equal<T>(IEnumerable<T> a, IEnumerable<T> b)
+		internal static bool Equal<T>(IEnumerable<T> a, IEnumerable<T> b)
 		{
 			if (a is null)
 			{
