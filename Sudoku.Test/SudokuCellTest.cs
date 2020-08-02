@@ -97,5 +97,32 @@ namespace Sudoku.Test
 			Assert.AreEqual(this.Cell.IsReadOnly, clone.IsReadOnly);
 			Assert.IsTrue(SudokuCellTest.Equal(this.Cell.Possible, clone.Possible));
 		}
+
+		[TestMethod]
+		public void TestEquals()
+		{
+			SudokuCell cell = (SudokuCell) this.Cell.Clone();
+			Assert.IsTrue(cell.Equals(this.Cell));
+			Assert.IsTrue(cell == this.Cell);
+			Assert.IsFalse(cell != this.Cell);
+			Assert.AreEqual(cell, this.Cell);
+			Assert.IsFalse(this.Cell.Equals(new Object()));
+			Assert.IsFalse(this.Cell.Equals(null));
+			cell.Number = SudokuPuzzle.MaximumSupportedSize;
+			this.Cell.Number = 0;
+			Assert.IsFalse(this.Cell.Equals(cell));
+		}
+
+		[TestMethod]
+		public void TestGetHashCode()
+		{
+			SudokuCell cell = (SudokuCell) this.Cell.Clone();
+			Assert.AreEqual(cell.GetHashCode(), this.Cell.GetHashCode());
+			cell.Number = SudokuPuzzle.MaximumSupportedSize;
+			this.Cell.Number = 0;
+			Assert.AreNotEqual(cell.GetHashCode(), this.Cell.GetHashCode());
+			this.Cell.Number = cell.Number;
+			Assert.AreEqual(cell.GetHashCode(), this.Cell.GetHashCode());
+		}
 	}
 }
