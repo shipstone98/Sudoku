@@ -175,7 +175,7 @@ namespace Sudoku
 				}
 			}
 
-			SudokuGenerator.ShuffleNumbers(possible);
+			SudokuSolver.ShuffleNumbers(possible);
 
 			while (possible.Count > 0)
 			{
@@ -214,6 +214,17 @@ namespace Sudoku
 			}
 
 			return SudokuSolver.RecursiveSolve(sudoku, nextRow, nextColumn, ref count, findMultiple);
+		}
+
+		private static void ShuffleNumbers<T>(List<T> array)
+		{
+			for (int i = 0; i < array.Count - 1; i++)
+			{
+				int j = SudokuGenerator.Random.Next(i, array.Count);
+				T temp = array[j];
+				array[j] = array[i];
+				array[i] = temp;
+			}
 		}
 
 		/// <summary>

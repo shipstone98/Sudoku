@@ -74,7 +74,7 @@ namespace Sudoku
 		{
 			if (sudoku is null)
 			{
-				throw new NotImplementedException(nameof (sudoku));
+				throw new ArgumentNullException(nameof (sudoku));
 			}
 
 			sudoku.ClearReadOnlyProperties();
@@ -111,17 +111,6 @@ namespace Sudoku
 			} while (attempts -- > 0);
 
 			sudoku.SetReadOnlyProperties();
-		}
-
-		internal static void ShuffleNumbers<T>(List<T> array)
-		{
-			for (int i = 0; i < array.Count - 1; i++)
-			{
-				int j = SudokuGenerator.Random.Next(i, array.Count);
-				T temp = array[j];
-				array[j] = array[i];
-				array[i] = temp;
-			}
 		}
 	}
 }
