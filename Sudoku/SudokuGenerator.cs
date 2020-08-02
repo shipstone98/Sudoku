@@ -8,7 +8,7 @@ namespace Sudoku
 	/// </summary>
 	public static class SudokuGenerator
 	{
-		private static readonly Random Random = new Random();
+		internal static readonly Random Random = new Random();
 
 		/// <summary>
 		/// Fills an existing <see cref="SudokuPuzzle"/> with numbers.
