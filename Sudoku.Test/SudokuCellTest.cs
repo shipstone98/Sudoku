@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,6 +10,44 @@ namespace Sudoku.Test
 	public class SudokuCellTest
 	{
 		private SudokuCell Cell;
+
+		private static bool Equal<T>(IEnumerable<T> a, IEnumerable<T> b)
+		{
+			if (a is null)
+			{
+				return b is null;
+			}
+
+			if (b is null)
+			{
+				return false;
+			}
+
+			int aLength = a.Count(), bLength = b.Count();
+
+			if (aLength != bLength)
+			{
+				return false;
+			}
+
+			foreach (T item in a)
+			{
+				if (!b.Contains(item))
+				{
+					return false;
+				}
+			}
+
+			foreach (T item in b)
+			{
+				if (!a.Contains(item))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 		[TestInitialize]
 		public void Initialize()
@@ -25,6 +65,27 @@ namespace Sudoku.Test
 			Assert.IsFalse(this.Cell.IsCorrect);
 			this.Cell.Number = this.Cell.Solution;
 			Assert.IsTrue(this.Cell.IsCorrect);
+		}
+
+		[TestMethod]
+		public void TestAddPossible()
+		{
+			int[] possible = new int[SudokuPuzzle.MaximumSupportedSize];
+
+			for (int i = 0; i < SudokuPuzzle.MaximumSupportedSize; i ++)
+			{
+				int number = i + 1;
+				possible[i] = number;
+				this.Cell.AddPossible(number);
+			}
+
+			Assert.IsTrue(SudokuCellTest.Equal(possible, this.Cell.Possible));
+			this.Cell.AddPossible(SudokuPuzzle.MaximumSupportedSize);
+			Assert.IsTrue(SudokuCellTest.Equal(possible, this.Cell.Possible));
+			this.Cell.RemovePossible(SudokuPuzzle.MaximumSupportedSize);
+			Assert.IsFalse(SudokuCellTest.Equal(possible, this.Cell.Possible));
+			this.Cell.AddPossible(SudokuPuzzle.MaximumSupportedSize);
+			Assert.IsTrue(SudokuCellTest.Equal(possible, this.Cell.Possible));
 		}
 	}
 }
