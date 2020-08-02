@@ -203,7 +203,7 @@ namespace Sudoku
         /// <param name="number">The number used in the <see cref="SudokuMove"/>.</param>
         /// <param name="pattern">The pattern used in the <see cref="SudokuMove"/>.</param>
         /// <param name="possible">An array containing the numbers that were possible instantly before the <see cref="SudokuMove"/> move was made.</param>
-        /// <exception cref="ArgumentException">The length of <c><paramref name="possible"/></c> is equal to 0, or any of its items are less than 0 - or - <c><paramref name="pattern"/></c> is equal to <see cref="SudokuPattern.None"/> - or - <c><paramref name="possible"/></c> does not contain <c><paramref name="number"/></c>.</exception>
+        /// <exception cref="ArgumentException">The length of <c><paramref name="possible"/></c> is equal to 0, or any of its items are less than 0 - or - <c><paramref name="pattern"/></c> is equal to <see cref="SudokuPattern.None"/>.</exception>
         /// <exception cref="ArgumentNullException"><c><paramref name="possible"/></c> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c>, <c><paramref name="column"/></c> or <c><paramref name="number"/></c> is less than 0.</exception>
         public SudokuMove(int row, int column, int number, SudokuPattern pattern, int[] possible)
@@ -226,21 +226,6 @@ namespace Sudoku
             if (pattern == SudokuPattern.None)
 			{
                 throw new ArgumentException(nameof (pattern));
-			}
-
-            if (possible is null)
-			{
-                throw new ArgumentNullException(nameof (possible));
-			}
-
-            if (possible.Length == 0)
-			{
-                throw new ArgumentException(nameof (possible));
-			}
-
-            if (!possible.Contains(number))
-			{
-                throw new ArgumentException(nameof (number));
 			}
 
             this._Columns = new int[] { column };
