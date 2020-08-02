@@ -113,6 +113,7 @@ namespace Sudoku.Android.Views
 					this.ViewModelStateChangedControlFragmentUpdate = new EventHandler<ControlEventArgs>((sender, e) => controlFragment.State = e);
 					controlFragment.Changed += this.ControlFragmentChanged;
 					controlFragment.State = this.ViewModel.State;
+					this.ViewModel.StateChanged += this.ViewModelStateChangedControlFragmentUpdate;
 					ft.Add(Resource.Id.fragment_frame_layout, controlFragment, "control_fragment");
 					ft.Commit();
 					break;
