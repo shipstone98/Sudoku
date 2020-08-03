@@ -67,24 +67,6 @@ namespace Sudoku.Test
 		[TestInitialize]
 		public void TestInitialize() => this.Sudoku = new SudokuPuzzle(SudokuPuzzleTest.Size, SudokuPuzzleTest.Difficulty);
 
-		private static bool ArraysEqual<T>(T[] a, T[] b)
-		{
-			if (a.Length != b.Length)
-			{
-				return false;
-			}
-
-			for (int i = 0; i < a.Length; i ++)
-			{
-				if (!(b.Contains(a[i]) && a.Contains(b[i])))
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		private static void ParseFile(String name)
 		{
 			String[] lines = File.ReadAllLines(name);
@@ -172,7 +154,7 @@ namespace Sudoku.Test
 						//Check against affectedPossible
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuCellTest.Equal(affectedPossible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -185,7 +167,7 @@ namespace Sudoku.Test
 					{
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuCellTest.Equal(this.Possible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -232,7 +214,7 @@ namespace Sudoku.Test
 				{
 					if (this.Sudoku[i, j] == 0)
 					{
-						Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						Assert.IsTrue(SudokuCellTest.Equal(this.Possible, this.Sudoku.GetPossible(i, j)));
 					}
 
 					else
@@ -271,7 +253,7 @@ namespace Sudoku.Test
 						//Check against affectedPossible
 						if (this.Sudoku[i, j] == 0)
 						{
-							Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(affectedPossible, this.Sudoku.GetPossible(i, j)));
+							Assert.IsTrue(SudokuCellTest.Equal(affectedPossible, this.Sudoku.GetPossible(i, j)));
 						}
 
 						else
@@ -282,7 +264,7 @@ namespace Sudoku.Test
 
 					else if (this.Sudoku[i, j] == 0)
 					{
-						Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+						Assert.IsTrue(SudokuCellTest.Equal(this.Possible, this.Sudoku.GetPossible(i, j)));
 					}
 
 					else
@@ -304,10 +286,78 @@ namespace Sudoku.Test
 			{
 				for (int j = 0; j < SudokuPuzzleTest.Size; j ++)
 				{
-					Assert.IsTrue(SudokuPuzzleTest.ArraysEqual<int>(this.Possible, this.Sudoku.GetPossible(i, j)));
+					Assert.IsTrue(SudokuCellTest.Equal(this.Possible, this.Sudoku.GetPossible(i, j)));
 				}
 			}
 		}
+
+		[TestMethod]
+		public void TestProperties()
+		{
+			int blockSize = (int) Math.Sqrt(this.Sudoku.Size);
+			Assert.AreEqual(blockSize, this.Sudoku.BlockSize);
+		}
+
+		[TestMethod]
+		public void TestColumns()
+		{
+			SudokuSolver.RecursiveSolve(this.Sudoku);
+			int row = 0, column = 0;
+
+			foreach (IEnumerable<int> item in this.Sudoku.Columns)
+			{
+				foreach (int number in item)
+				{
+					if (column == this.Sudoku.Size)
+					{
+						Assert.Fail();
+					}
+
+					Assert.AreEqual(this.Sudoku[row, column], number);
+					row++;
+
+					if (row == this.Sudoku.Size)
+					{
+						row = 0;
+						column ++;
+					}
+				}
+			}
+
+			Assert.AreEqual(row, 0);
+			Assert.AreEqual(column, this.Sudoku.Size);
+		}
+
+		private void TestEnumerator(IEnumerable<IEnumerable<int>> enumerator)
+		{
+			int row = 0, column = 0;
+
+			foreach (IEnumerable<int> item in enumerator)
+			{
+				foreach (int number in item)
+				{
+					if (row == this.Sudoku.Size)
+					{
+						Assert.Fail();
+					}
+
+					Assert.AreEqual(this.Sudoku[row, column], number);
+					column ++;
+
+					if (column == this.Sudoku.Size)
+					{
+						column = 0;
+						row ++;
+					}
+				}
+			}
+
+			Assert.AreEqual(row, this.Sudoku.Size);
+			Assert.AreEqual(column, 0);
+		}
+
+		[TestMethod]
+		public void TestGetEnumerator() => this.TestEnumerator(this.Sudoku);
 
 		[TestMethod]
 		public void TestOperators()
@@ -317,7 +367,6 @@ namespace Sudoku.Test
 			Assert.AreEqual(this.Sudoku, clone);
 			Assert.IsTrue(this.Sudoku.Equals(clone));
 			Assert.IsTrue(this.Sudoku == clone);
-			//int row = this.Generate(), column = this.Generate();
 			int row = 0, column = 0;
 			clone[row, column] = 0;
 			Assert.AreNotEqual(this.Sudoku, clone);
@@ -325,5 +374,8 @@ namespace Sudoku.Test
 			Assert.IsFalse(this.Sudoku == clone);
 			Assert.IsTrue(this.Sudoku != clone);
 		}
+
+		[TestMethod]
+		public void TestRows() => this.TestEnumerator(this.Sudoku.Rows);
 	}
 }
