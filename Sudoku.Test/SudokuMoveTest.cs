@@ -67,5 +67,33 @@ namespace Sudoku.Test
 			Assert.IsTrue(SudokuCellTest.Equal(array, move.Possible));
 			Assert.IsTrue(SudokuCellTest.Equal(array, move.Rows));
 		}
+
+		[TestMethod]
+		public void TestEquals()
+		{
+			SudokuMove move = this.Move;
+			Assert.IsTrue(this.Move.Equals(move));
+			Assert.IsTrue(this.Move == move);
+			Assert.IsFalse(this.Move != move);
+			Assert.AreEqual(this.Move, move);
+			Assert.IsFalse(this.Move.Equals(new Object()));
+			Assert.IsFalse(this.Move.Equals(null));
+			move = null;
+			Assert.IsFalse(this.Move == null);
+			Assert.IsFalse(null == this.Move);
+			Assert.IsTrue(move == null);
+			move = new SudokuMove(1, 1, 1, SudokuPattern.HiddenSingle, new int[] { 1 });
+			Assert.IsFalse(this.Move == move);
+		}
+
+		[TestMethod]
+		public void TestGetHashCode()
+		{
+			SudokuMove move = this.Move;
+			int hashCode = this.Move.GetHashCode();
+			Assert.AreEqual(move.GetHashCode(), hashCode);
+			move = new SudokuMove(1, 1, 1, SudokuPattern.HiddenSingle, new int[] { 1 });
+			Assert.AreNotEqual(move.GetHashCode(), hashCode);
+		}
 	}
 }
