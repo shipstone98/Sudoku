@@ -111,6 +111,10 @@ namespace Sudoku.Test
 			cell.Number = SudokuPuzzle.MaximumSupportedSize;
 			this.Cell.Number = 0;
 			Assert.IsFalse(this.Cell.Equals(cell));
+			cell = null;
+			Assert.IsFalse(this.Cell == cell);
+			Assert.IsFalse(null == this.Cell);
+			Assert.IsTrue(cell == null);
 		}
 
 		[TestMethod]
