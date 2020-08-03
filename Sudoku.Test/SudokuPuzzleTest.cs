@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -586,5 +587,47 @@ namespace Sudoku.Test
 
 		[TestMethod]
 		public void TestRows() => this.TestEnumerator(this.Sudoku.Rows);
+
+		[TestMethod]
+		public void TestParse()
+		{
+			Assert.ThrowsException<ArgumentNullException>(() => SudokuPuzzle.Parse(null));
+			Assert.ThrowsException<FormatException>(() => SudokuPuzzle.Parse(String.Empty));
+			int[,] array = new int[SudokuPuzzle.MaximumSupportedSize, SudokuPuzzle.MaximumSupportedSize];
+			Random random = new Random();
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < SudokuPuzzle.MaximumSupportedSize; i ++)
+			{
+				for (int j = 0; j < SudokuPuzzle.MaximumSupportedSize; j ++)
+				{
+					sb.Append(array[i, j] = random.Next(SudokuPuzzle.MaximumSupportedSize) + 1);
+				}
+			}
+
+			SudokuPuzzle puzzle;
+
+			try
+			{
+				puzzle = SudokuPuzzle.Parse(sb.ToString());
+			}
+
+			catch (Exception ex)
+			{
+				Assert.Fail($"Threw exception: {ex}");
+				return;
+			}
+
+			Assert.AreEqual(puzzle.Size, SudokuPuzzle.MaximumSupportedSize);
+			Assert.AreEqual(puzzle.Difficulty, SudokuDifficulty.None);
+
+			for (int i = 0; i < SudokuPuzzle.MaximumSupportedSize; i ++)
+			{
+				for (int j = 0; j < SudokuPuzzle.MaximumSupportedSize; j ++)
+				{
+					Assert.AreEqual(puzzle[i, j], array[i, j]);
+				}
+			}
+		}
 	}
 }
