@@ -7,8 +7,11 @@ namespace Sudoku.Test
 	[TestClass]
 	public class SudokuSolverTest
 	{
-		[TestMethod]
-		public void TestRecursiveSolve()
+		private SudokuPuzzle Sudoku;
+		private SudokuPuzzle Solution;
+
+		[TestInitialize]
+		public void Initialize()
 		{
 			const String SUDOKU_FILENAME = "Sudoku.txt";
 			String sudokuText;
@@ -38,11 +41,9 @@ namespace Sudoku.Test
 				return;
 			}
 
-			SudokuPuzzle sudoku;
-
 			try
 			{
-				sudoku = SudokuPuzzle.Parse(sudokuText);
+				this.Sudoku = SudokuPuzzle.Parse(sudokuText);
 			}
 
 			catch (FormatException)
@@ -51,11 +52,9 @@ namespace Sudoku.Test
 				return;
 			}
 
-			SudokuPuzzle solution;
-
 			try
 			{
-				solution = SudokuPuzzle.Parse(solutionText);
+				this.Solution = SudokuPuzzle.Parse(solutionText);
 			}
 
 			catch (FormatException)
@@ -64,8 +63,21 @@ namespace Sudoku.Test
 				return;
 			}
 
-			SudokuSolver.RecursiveSolve(sudoku);
-			Assert.AreEqual(sudoku, solution);
+		}
+
+		[TestMethod]
+		public void TestRecursiveSolve()
+		{
+			SudokuSolver.RecursiveSolve(this.Sudoku);
+			Assert.AreEqual(this.Sudoku, this.Solution);
+		}
+
+		[TestMethod]
+		public void TestSolve()
+		{
+			SudokuSolver solver = new SudokuSolver(this.Sudoku);
+			solver.Solve();
+			Assert.AreEqual(this.Sudoku, this.Solution);
 		}
 	}
 }
