@@ -509,6 +509,9 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestGetEnumerator() => this.TestEnumerator(this.Sudoku);
+
+		[TestMethod]
 		public void TestGetHashCode()
 		{
 			SudokuDifficulty newDifficulty = SudokuPuzzleTest.Difficulty == SudokuDifficulty.None ? SudokuDifficulty.Easy : SudokuDifficulty.None;
@@ -532,7 +535,35 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
-		public void TestGetEnumerator() => this.TestEnumerator(this.Sudoku);
+		public void TestGetIncorrect()
+		{
+			SudokuGenerator.AddNumbers(this.Sudoku);
+			Random random = new Random();
+
+			for (int i = 0; i < SudokuPuzzle.MaximumSupportedSize * 2; i ++)
+			{
+				int row = random.Next(this.Sudoku.Size), column = random.Next(this.Sudoku.Size);
+				int number;
+
+				do
+				{
+					number = random.Next(0, this.Sudoku.Size + 1);
+				} while (this.Sudoku[row, column] == number);
+			}
+
+			IEnumerable<Tuple<int, int>> incorrect = this.Sudoku.GetIncorrect();
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j ++)
+				{
+					if (!this.Sudoku.IsCorrect(i, j))
+					{
+						Assert.IsTrue(incorrect.Contains(new Tuple<int, int>(i, j)));
+					}
+				}
+			}
+		}
 
 		[TestMethod]
 		public void TestOperators()

@@ -533,6 +533,21 @@ namespace Sudoku
 			startColumn = column - column % this.BlockSize;
 		}
 
+		/// <summary>
+		/// Determines whether the number in the <see cref="SudokuPuzzle"/> cell at the specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> matches its solution.
+		/// </summary>
+		/// <param name="row">The zero-based row index.</param>
+		/// <param name="column">The zero-based column index.</param>
+		/// <returns><c>true</c> if the number at the specified <c><paramref name="row"/></c> and <c><paramref name="column"/></c> matches its solution; otherwise, <c>false</c>.</returns>
+		/// <exception cref="ArgumentException"><c><paramref name="row"/></c> is greater than or equal to the <see cref="Size"/> property - or - <c><paramref name="column"/></c> is greater than or equal to the <see cref="Size"/> property.</exception>
+		/// <exception cref="ArgumentOutOfRangeException"><c><paramref name="row"/></c> is less than 0 - or - <c><paramref name="column"/></c> is less than 0.</exception>
+		public bool IsCorrect(int row, int column)
+		{
+			this.CheckArgument(row, nameof (row));
+			this.CheckArgument(column, nameof (column));
+			return this.Cells[row, column].IsCorrect;
+		}
+
 		private void ModifyPossible(int row, int column, int number, bool modifyRow, bool modifyColumn, bool modifyBlock, bool remove)
 		{
 			if (remove)
