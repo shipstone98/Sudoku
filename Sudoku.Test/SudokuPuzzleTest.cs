@@ -345,6 +345,31 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestCheck()
+		{
+			SudokuGenerator.AddNumbers(this.Sudoku);
+			Assert.IsTrue(this.Sudoku.Check());
+			SudokuGenerator.RemoveNumbers(this.Sudoku);
+			Assert.IsFalse(this.Sudoku.Check());
+			SudokuSolver.RecursiveSolve(this.Sudoku);
+			Assert.IsTrue(this.Sudoku.Check());
+			Random random = new Random();
+			int row, column;
+
+			do
+			{
+				row = random.Next(this.Sudoku.Size);
+				column = random.Next(this.Sudoku.Size);
+			} while (this.Sudoku.CheckReadOnly(row, column));
+
+			int number = this.Sudoku[row, column];
+			this.Sudoku[row, column] = 0;
+			Assert.IsFalse(this.Sudoku.Check());
+			this.Sudoku[row, column] = number;
+			Assert.IsTrue(this.Sudoku.Check());
+		}
+
+		[TestMethod]
 		public void TestColumns()
 		{
 			SudokuSolver.RecursiveSolve(this.Sudoku);
