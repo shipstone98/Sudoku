@@ -292,10 +292,26 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestEvents()
+		{
+			bool eventSignal = false;
+			this.Sudoku.Changed += new EventHandler<SudokuEventArgs>((sender, e) => eventSignal = true);
+			SudokuSolver.RecursiveSolve(this.Sudoku);
+			Assert.IsTrue(eventSignal);
+		}
+
+		[TestMethod]
 		public void TestProperties()
 		{
 			int blockSize = (int) Math.Sqrt(this.Sudoku.Size);
 			Assert.AreEqual(blockSize, this.Sudoku.BlockSize);
+			Assert.IsFalse(this.Sudoku.IsComplete);
+			SudokuSolver.RecursiveSolve(this.Sudoku);
+			Assert.IsTrue(this.Sudoku.IsComplete);
+			Random random = new Random();
+			int row = random.Next(SudokuPuzzle.MaximumSupportedSize), column = random.Next(SudokuPuzzle.MaximumSupportedSize);
+			this.Sudoku[row, column] = 0;
+			Assert.IsFalse(this.Sudoku.IsComplete);
 		}
 
 		[TestMethod]
