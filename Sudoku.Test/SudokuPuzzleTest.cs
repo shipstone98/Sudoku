@@ -370,6 +370,22 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestClone()
+		{
+			SudokuPuzzle clone = (SudokuPuzzle) this.Sudoku.Clone();
+			Assert.AreEqual(this.Sudoku.Size, clone.Size);
+			Assert.AreEqual(this.Sudoku.Difficulty, clone.Difficulty);
+			
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j ++)
+				{
+					Assert.AreEqual(this.Sudoku[i, j], clone[i, j]);
+				}
+			}
+		}
+
+		[TestMethod]
 		public void TestColumns()
 		{
 			SudokuSolver.RecursiveSolve(this.Sudoku);
