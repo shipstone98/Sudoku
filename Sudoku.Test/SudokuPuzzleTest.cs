@@ -482,6 +482,56 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestEquals()
+		{
+			SudokuDifficulty newDifficulty = SudokuPuzzleTest.Difficulty == SudokuDifficulty.None ? SudokuDifficulty.Easy : SudokuDifficulty.None;
+			SudokuPuzzle puzzle = new SudokuPuzzle(this.Sudoku.Size, newDifficulty);
+			SudokuGenerator.AddNumbers(puzzle);
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j ++)
+				{
+					this.Sudoku[i, j] = puzzle[i, j];
+				}
+			}
+
+			Assert.AreEqual(this.Sudoku, puzzle);
+			Assert.IsTrue(this.Sudoku.Equals(puzzle));
+			Assert.IsTrue(this.Sudoku == puzzle);
+			Assert.IsFalse(this.Sudoku != puzzle);
+			Assert.IsFalse(this.Sudoku == null);
+			Assert.IsFalse(null == this.Sudoku);
+			SudokuPuzzle nullPuzzle = null;
+			Assert.IsTrue(null == nullPuzzle);
+			this.Sudoku[0, 0] = 0;
+			Assert.AreNotEqual(this.Sudoku, puzzle);
+		}
+
+		[TestMethod]
+		public void TestGetHashCode()
+		{
+			SudokuDifficulty newDifficulty = SudokuPuzzleTest.Difficulty == SudokuDifficulty.None ? SudokuDifficulty.Easy : SudokuDifficulty.None;
+			SudokuPuzzle puzzle = new SudokuPuzzle(this.Sudoku.Size, newDifficulty);
+			SudokuGenerator.AddNumbers(puzzle);
+
+			for (int i = 0; i < this.Sudoku.Size; i++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j++)
+				{
+					this.Sudoku[i, j] = puzzle[i, j];
+				}
+			}
+
+			int hashCode = puzzle.GetHashCode();
+			Assert.AreEqual(this.Sudoku, puzzle);
+			Assert.AreEqual(this.Sudoku.GetHashCode(), hashCode);
+			this.Sudoku[0, 0] = 0;
+			Assert.AreNotEqual(this.Sudoku, puzzle);
+			Assert.AreNotEqual(this.Sudoku.GetHashCode(), hashCode);
+		}
+
+		[TestMethod]
 		public void TestGetEnumerator() => this.TestEnumerator(this.Sudoku);
 
 		[TestMethod]
