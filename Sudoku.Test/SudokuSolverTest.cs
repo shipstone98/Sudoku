@@ -66,6 +66,30 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
+		public void TestCheckSolvable()
+		{
+			Assert.IsTrue(SudokuSolver.CheckSolvable(this.Sudoku, out bool multipleSolutions));
+			Assert.IsFalse(multipleSolutions);
+			SudokuPuzzle unsolvablePuzzle = new SudokuPuzzle(SudokuPuzzle.MaximumSupportedSize, SudokuDifficulty.None);
+			Random random = new Random();
+			int upperBound = unsolvablePuzzle.Size - 1;
+
+			for (int i = 0; i < upperBound; i ++)
+			{
+				for (int j = 0; j < upperBound; j ++)
+				{
+					unsolvablePuzzle[i, j] = random.Next(unsolvablePuzzle.Size) + 1;
+				}
+			}
+
+			unsolvablePuzzle[upperBound, 0] = unsolvablePuzzle[upperBound, 1] = 7;
+			Assert.IsFalse(SudokuSolver.CheckSolvable(unsolvablePuzzle, out multipleSolutions));
+			Assert.IsFalse(multipleSolutions);
+			Assert.IsTrue(SudokuSolver.CheckSolvable(new SudokuPuzzle(SudokuPuzzle.MaximumSupportedSize, SudokuDifficulty.None), out multipleSolutions));
+			Assert.IsTrue(multipleSolutions);
+		}
+
+		[TestMethod]
 		public void TestRecursiveSolve()
 		{
 			SudokuSolver.RecursiveSolve(this.Sudoku);
