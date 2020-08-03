@@ -454,12 +454,21 @@ namespace Sudoku
 		{
 			const int RANDOM = 78459;
 			int hash = RANDOM * this.Size.GetHashCode();
+			int previousHash = hash;
 
 			for (int i = 0; i < this.Size; i ++)
 			{
 				for (int j = 0; j < this.Size; j ++)
 				{
-					hash *= this.Cells[i, j].GetHashCode();
+					try
+					{
+						hash = checked (hash * this.Cells[i, j].GetHashCode());
+					}
+
+					catch (OverflowException)
+					{
+						hash = 1;
+					}
 				}
 			}
 
