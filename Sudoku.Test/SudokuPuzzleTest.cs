@@ -416,7 +416,7 @@ namespace Sudoku.Test
 		}
 
 		[TestMethod]
-		public void TestContainsPossible()
+		public void TestPossible()
 		{
 			for (int i = 0; i < this.Sudoku.Size; i ++)
 			{
@@ -424,6 +424,8 @@ namespace Sudoku.Test
 				{
 					if (this.Sudoku[i, j] != 0)
 					{
+						Assert.IsNull(this.Sudoku.GetPossible(i, j));
+
 						for (int k = 0; k < this.Sudoku.Size; k++)
 						{
 							Assert.IsFalse(this.Sudoku.ContainsPossible(i, j, k + 1));
@@ -432,19 +434,20 @@ namespace Sudoku.Test
 
 					else
 					{
-						bool containsAny = false;
 						Assert.IsFalse(this.Sudoku.ContainsPossible(i, j, 0));
+						int count = 0;
 
 						for (int k = 0; k < this.Sudoku.Size; k ++)
 						{
-							if (this.Sudoku.ContainsPossible(i, j, k))
+							if (this.Sudoku.ContainsPossible(i, j, k + 1))
 							{
-								containsAny = true;
-								break;
+								count ++;
 							}
 						}
 
-						if (!containsAny)
+						Assert.AreEqual(this.Sudoku.GetPossible(i, j).Length, count);
+
+						if (count == 0)
 						{
 							Assert.Fail($"An empty cell has no possible values at row: {i + 1}, column: {j + 1}");
 						}
