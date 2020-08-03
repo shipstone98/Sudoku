@@ -415,6 +415,44 @@ namespace Sudoku.Test
 			Assert.AreEqual(column, this.Sudoku.Size);
 		}
 
+		[TestMethod]
+		public void TestContainsPossible()
+		{
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j ++)
+				{
+					if (this.Sudoku[i, j] != 0)
+					{
+						for (int k = 0; k < this.Sudoku.Size; k++)
+						{
+							Assert.IsFalse(this.Sudoku.ContainsPossible(i, j, k + 1));
+						}
+					}
+
+					else
+					{
+						bool containsAny = false;
+						Assert.IsFalse(this.Sudoku.ContainsPossible(i, j, 0));
+
+						for (int k = 0; k < this.Sudoku.Size; k ++)
+						{
+							if (this.Sudoku.ContainsPossible(i, j, k))
+							{
+								containsAny = true;
+								break;
+							}
+						}
+
+						if (!containsAny)
+						{
+							Assert.Fail($"An empty cell has no possible values at row: {i + 1}, column: {j + 1}");
+						}
+					}
+				}
+			}
+		}
+
 		private void TestEnumerator(IEnumerable<IEnumerable<int>> enumerator)
 		{
 			int row = 0, column = 0;
