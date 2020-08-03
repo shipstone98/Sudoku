@@ -454,7 +454,6 @@ namespace Sudoku
 		{
 			const int RANDOM = 78459;
 			int hash = RANDOM * this.Size.GetHashCode();
-			int previousHash = hash;
 
 			for (int i = 0; i < this.Size; i ++)
 			{
@@ -715,7 +714,7 @@ namespace Sudoku
 		internal bool RemovePossible(int row, int column, int number)
 		{
 			bool removed = this.Cells[row, column].RemovePossible(number);
-			return this.Cells[row, column].Number == 0 ? removed : false;
+			return this.Cells[row, column].Number == 0 && removed;
 		}
 
 		internal void RemovePossible(int row, int column, int number, bool removeRow, bool removeColumn, bool removeBlock) => this.ModifyPossible(row, column, number, removeRow, removeColumn, removeBlock, true);

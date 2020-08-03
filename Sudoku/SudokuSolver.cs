@@ -278,7 +278,7 @@ namespace Sudoku
 		private bool SolvePass(int row, int column)
 		{
 			int[] possible = this.Sudoku.GetPossible(row, column);
-			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.PointingCandidate(row, column, possible) || this.ClaimingCandidate(row, column, possible) || this.NakedPair(row, column, possible) || this.NakedTriple(row, column, possible);
+			return this.SolveNakedSingle(row, column, possible) || this.SolveHiddenSingle(row, column, possible) || this.PointingCandidate(row, column, possible) || this.ClaimingCandidate(row, column, possible) || this.NakedPair(row, column, possible) || this.NakedTriple(row, column);
 		}
 
 		#region Patterns
@@ -965,7 +965,7 @@ namespace Sudoku
 			return true;
 		}
 
-		private bool NakedTriple(int row, int column, int[] possible) => this.NakedTripleBlock(row, column);
+		private bool NakedTriple(int row, int column) => this.NakedTripleBlock(row, column);
 
 		private bool NakedTripleBlock(int row, int column)
 		{
@@ -991,8 +991,10 @@ namespace Sudoku
 						continue;
 					}
 
-					List<Tuple<int, int>> matches = new List<Tuple<int, int>>();
-					matches.Add(new Tuple<int, int>(currentRow, currentColumn));
+					List<Tuple<int, int>> matches = new List<Tuple<int, int>>
+					{
+						new Tuple<int, int>(currentRow, currentColumn)
+					};
 
 					for (int x = 0; x < this.Sudoku.BlockSize; x ++)
 					{
