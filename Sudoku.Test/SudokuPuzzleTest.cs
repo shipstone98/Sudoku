@@ -312,6 +312,36 @@ namespace Sudoku.Test
 			int row = random.Next(SudokuPuzzle.MaximumSupportedSize), column = random.Next(SudokuPuzzle.MaximumSupportedSize);
 			this.Sudoku[row, column] = 0;
 			Assert.IsFalse(this.Sudoku.IsComplete);
+			Assert.ThrowsException<ArgumentOutOfRangeException>(() => this.Sudoku[-1, -1]);
+			Assert.ThrowsException<ArgumentException>(() => this.Sudoku[SudokuPuzzle.MaximumSupportedSize, SudokuPuzzle.MaximumSupportedSize]);
+			Assert.ThrowsException<ArgumentOutOfRangeException>(() => this.Sudoku[0, 0] = -1);
+			Assert.ThrowsException<ArgumentException>(() => this.Sudoku[0, 0] = SudokuPuzzle.MaximumSupportedSize + 1);
+			SudokuGenerator.RemoveNumbers(this.Sudoku);
+			const int NUMBER = 0;
+
+			for (int i = 0; i < this.Sudoku.Size; i ++)
+			{
+				for (int j = 0; j < this.Sudoku.Size; j ++)
+				{
+					if (this.Sudoku.CheckReadOnly(i, j))
+					{
+						Assert.ThrowsException<SudokuCellReadOnlyException>(() => this.Sudoku[i, j] = NUMBER);
+					}
+
+					else
+					{
+						try
+						{
+							this.Sudoku[i, j] = NUMBER;
+						}
+
+						catch (Exception ex)
+						{
+							Assert.Fail($"Threw exception: {ex}");
+						}
+					}
+				}
+			}
 		}
 
 		[TestMethod]
