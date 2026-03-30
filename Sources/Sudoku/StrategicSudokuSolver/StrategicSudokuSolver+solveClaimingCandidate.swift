@@ -1,5 +1,5 @@
 //
-//  ClaimingCandidateStrategySolver.swift
+//  StrategicSudokuSolver+solveClaimingCandidate.swift
 //  Sudoku
 //
 //  Created by Christopher Shipstone on 30/03/2026.
@@ -7,14 +7,8 @@
 
 import Utilities
 
-internal struct ClaimingCandidateStrategySolver : StrategySolver {
-    private let solver: StrategicSudokuSolver
-    
-    init(for solver: StrategicSudokuSolver) {
-        self.solver = solver
-    }
-    
-    internal func solve<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
+internal extension StrategicSudokuSolver {
+    func solveClaimingCandidate<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
         self.solveRow(using: &generator) ?? self.solveColumn(using: &generator)
     }
     
@@ -24,7 +18,7 @@ internal struct ClaimingCandidateStrategySolver : StrategySolver {
                 var blockRows: Set<Int> = []
                 
                 for row in 0..<9 {
-                    if let candidates = self.solver.candidates[row * 9 + column],
+                    if let candidates = self.candidates[row * 9 + column],
                        candidates.contains(candidate) {
                         blockRows.insert(row - row % 3)
                     }
@@ -47,7 +41,7 @@ internal struct ClaimingCandidateStrategySolver : StrategySolver {
                     for rowOffset in 0..<3 {
                         let index = (blockRow + rowOffset) * 9 + currentColumn
                         
-                        if let candidates = self.solver.candidates[index],
+                        if let candidates = self.candidates[index],
                            candidates.contains(candidate) {
                             indices.insert(index)
                         }
@@ -77,7 +71,7 @@ internal struct ClaimingCandidateStrategySolver : StrategySolver {
                 var blockColumns: Set<Int> = []
                 
                 for column in 0..<9 {
-                    if let candidates = self.solver.candidates[row * 9 + column],
+                    if let candidates = self.candidates[row * 9 + column],
                        candidates.contains(candidate) {
                         blockColumns.insert(column - column % 3)
                     }
@@ -100,7 +94,7 @@ internal struct ClaimingCandidateStrategySolver : StrategySolver {
                     for columnOffset in 0..<3 {
                         let index = currentRow * 9 + blockColumn + columnOffset
                         
-                        if let candidates = self.solver.candidates[index],
+                        if let candidates = self.candidates[index],
                            candidates.contains(candidate) {
                             indices.insert(index)
                         }

@@ -1,5 +1,5 @@
 //
-//  NakedSingleStrategySolver.swift
+//  StrategicSudokuSolver+solveNakedSingle.swift
 //  Sudoku
 //
 //  Created by Christopher Shipstone on 30/03/2026.
@@ -7,16 +7,10 @@
 
 import Utilities
 
-internal struct NakedSingleStrategySolver : StrategySolver {
-    private let solver: StrategicSudokuSolver
-    
-    internal init(for solver: StrategicSudokuSolver) {
-        self.solver = solver
-    }
-    
-    internal func solve<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
+internal extension StrategicSudokuSolver {
+    func solveNakedSingle<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
         for index in getIndices(using: &generator) {
-            guard let candidates = self.solver.candidates[index],
+            guard let candidates = self.candidates[index],
                   let candidate = candidates.single else {
                 continue
             }

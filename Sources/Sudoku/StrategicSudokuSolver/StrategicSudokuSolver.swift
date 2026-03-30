@@ -33,8 +33,16 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
     }
     
     @discardableResult
-    public func solve<T>(using generator: inout T) -> Bool where T : RandomNumberGenerator {
-        false
+    public mutating func solve<T>(using generator: inout T) -> Bool where T : RandomNumberGenerator {
+        var isSolved: Bool
+        
+        repeat {
+            isSolved = SudokuSolverStrategy.allCases.contains {
+                self.solve(for: $0, using: &generator) != nil
+            }
+        } while isSolved
+        
+        return self.sudoku.array.allSatisfy { $0 > 0 }
     }
     
     @discardableResult
@@ -42,22 +50,22 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
         for strategy: SudokuSolverStrategy,
         using generator: inout T
     ) -> SudokuSolverMove? where T : RandomNumberGenerator {
-        let solver: any StrategySolver
+        let move: SudokuSolverMove?
         
         switch strategy {
         case .fullHouse:
-            solver = FullHouseStrategySolver(for: self)
+            move = self.solveFullHouse(using: &generator)
         case .nakedSingle:
-            solver = NakedSingleStrategySolver(for: self)
+            move = self.solveNakedSingle(using: &generator)
         case .hiddenSingle:
-            solver = HiddenSingleStrategySolver(for: self)
+            move = self.solveHiddenSingle(using: &generator)
         case .pointingCandidate:
-            solver = PointingCandidateStrategySolver(for: self)
+            move = self.solvePointingCandidate(using: &generator)
         case .claimingCandidate:
-            solver = ClaimingCandidateStrategySolver(for: self)
+            move = self.solveClaimingCandidate(using: &generator)
         }
         
-        guard let move = solver.solve(using: &generator) else {
+        guard let move else {
             return nil
         }
         

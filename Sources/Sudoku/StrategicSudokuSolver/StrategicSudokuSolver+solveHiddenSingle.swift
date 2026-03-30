@@ -1,5 +1,5 @@
 //
-//  HiddenSingleStrategySolver.swift
+//  StrategicSudokuSolver+solveHiddenSingle.swift
 //  Sudoku
 //
 //  Created by Christopher Shipstone on 30/03/2026.
@@ -7,14 +7,8 @@
 
 import Utilities
 
-internal struct HiddenSingleStrategySolver : StrategySolver {
-    private let solver: StrategicSudokuSolver
-    
-    internal init(for solver: StrategicSudokuSolver) {
-        self.solver = solver
-    }
-    
-    internal func solve<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
+internal extension StrategicSudokuSolver {
+    func solveHiddenSingle<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
         self.solveRow(using: &generator) ?? self.solveColumn(using: &generator) ?? self.solveBlock(using: &generator)
     }
     
@@ -30,7 +24,7 @@ internal struct HiddenSingleStrategySolver : StrategySolver {
                         for columnOffset in 0..<3 {
                             let index = row * 9 + blockColumn + columnOffset
                             
-                            if let candidates = self.solver.candidates[index],
+                            if let candidates = self.candidates[index],
                                candidates.contains(candidate) {
                                 indices.insert(index)
                             }
@@ -61,7 +55,7 @@ internal struct HiddenSingleStrategySolver : StrategySolver {
                 var rows: Set<Int> = []
                 
                 for row in 0..<9 {
-                    if let candidates = self.solver.candidates[row * 9 + column],
+                    if let candidates = self.candidates[row * 9 + column],
                        candidates.contains(candidate) {
                         rows.insert(row)
                     }
@@ -90,7 +84,7 @@ internal struct HiddenSingleStrategySolver : StrategySolver {
                 var columns: Set<Int> = []
                 
                 for column in 0..<9 {
-                    if let candidates = self.solver.candidates[row * 9 + column],
+                    if let candidates = self.candidates[row * 9 + column],
                        candidates.contains(candidate) {
                         columns.insert(column)
                     }

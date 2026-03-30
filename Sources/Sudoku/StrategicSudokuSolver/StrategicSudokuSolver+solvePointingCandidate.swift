@@ -1,18 +1,12 @@
 //
-//  PointingCandidateStrategySolver.swift
+//  StrategicSudokuSolver+solvePointingCandidate.swift
 //  Sudoku
 //
 //  Created by Christopher Shipstone on 30/03/2026.
 //
 
-internal struct PointingCandidateStrategySolver : StrategySolver {
-    private let solver: StrategicSudokuSolver
-    
-    internal init(for solver: StrategicSudokuSolver) {
-        self.solver = solver
-    }
-    
-    internal func solve<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
+internal extension StrategicSudokuSolver {
+    func solvePointingCandidate<T>(using generator: inout T) -> SudokuSolverMove? where T : RandomNumberGenerator {
         for blockRow in getBlockIndices(using: &generator) {
             for blockColumn in getBlockIndices(using: &generator) {
                 for candidate in getCandidates(using: &generator) {
@@ -25,7 +19,7 @@ internal struct PointingCandidateStrategySolver : StrategySolver {
                         for columnOffset in 0..<3 {
                             let column = blockColumn + columnOffset
                             
-                            if let candidates = self.solver.candidates[row * 9 + column],
+                            if let candidates = self.candidates[row * 9 + column],
                                candidates.contains(candidate) {
                                 rows.insert(row)
                                 columns.insert(column)
@@ -43,7 +37,7 @@ internal struct PointingCandidateStrategySolver : StrategySolver {
                             
                             let index = row * 9 + column
                             
-                            if let candidates = self.solver.candidates[index],
+                            if let candidates = self.candidates[index],
                                candidates.contains(candidate) {
                                 indices.insert(index)
                             }
@@ -56,7 +50,7 @@ internal struct PointingCandidateStrategySolver : StrategySolver {
                             
                             let index = row * 9 + column
                             
-                            if let candidates = self.solver.candidates[index],
+                            if let candidates = self.candidates[index],
                                candidates.contains(candidate) {
                                 indices.insert(index)
                             }
