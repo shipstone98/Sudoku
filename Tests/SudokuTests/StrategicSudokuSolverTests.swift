@@ -157,3 +157,87 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_nakedSingle() {
     #expect(location.row == 5)
     #expect(result!.strategy == .nakedSingle)
 }
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_block() {
+    // Arrange
+    let string = "002193000000007000700040019803000600005000230007000504370080006000600000000534100"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenSingle, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == 3)
+    #expect(location.column == 3)
+    #expect(location.removedCandidates.isEmpty)
+    #expect(location.row == 5)
+    #expect(result!.strategy == .hiddenSingle)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_column() {
+    // Arrange
+    let string = "000100200210300900860700000000270083082934760730006000008003017075000040001007000"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenSingle, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == 6)
+    #expect(location.column == 2)
+    #expect(location.removedCandidates.isEmpty)
+    #expect(location.row == 3)
+    #expect(result!.strategy == .hiddenSingle)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_row() {
+    // Arrange
+    let string = "028007000016083070000020851137290000000730000000046307290070000000860140000300700"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenSingle, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == 6)
+    #expect(location.column == 3)
+    #expect(location.removedCandidates.isEmpty)
+    #expect(location.row == 2)
+    #expect(result!.strategy == .hiddenSingle)
+}

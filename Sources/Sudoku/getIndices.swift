@@ -10,6 +10,10 @@ internal func getBlockIndices<T>(using generator: inout T) -> [Int] where T : Ra
         .shuffled(using: &generator)
 }
 
+internal func getCandidates<T>(using generator: inout T) -> [Int] where T : RandomNumberGenerator {
+    (1...9).shuffled(using: &generator)
+}
+
 internal func getIndices<T>(using generator: inout T) -> [Int] where T : RandomNumberGenerator {
     (0..<81).shuffled(using: &generator)
 }
