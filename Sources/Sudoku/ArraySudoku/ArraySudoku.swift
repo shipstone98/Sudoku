@@ -10,7 +10,11 @@ public struct ArraySudoku : Codable, Hashable, Sendable, SudokuProtocol {
     internal var array: [Int]
     
     public subscript(row: Int, column: Int) -> Int {
-        self.array[row * 9 + column]
+        get {
+            self.array[row * 9 + column]
+        } set {
+            self.array[row * 9 + column] = newValue
+        }
     }
     
     public init() {

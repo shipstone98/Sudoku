@@ -11,6 +11,27 @@ import Testing
 import Sudoku
 
 @Test
+fileprivate func testArraySudoku_subscript() {
+    // Arrange
+    let cells = randomArray()
+    var sudoku = ArraySudoku()
+    
+    // Act
+    for row in 0..<9 {
+        for column in 0..<9 {
+            sudoku[row, column] = cells[row * 9 + column]
+        }
+    }
+    
+    // Assert
+    for row in 0..<9 {
+        for column in 0..<9 {
+            #expect(sudoku[row, column] == cells[row * 9 + column])
+        }
+    }
+}
+
+@Test
 fileprivate func testArraySudoku_initializer() {
     // Act
     let result = ArraySudoku()
