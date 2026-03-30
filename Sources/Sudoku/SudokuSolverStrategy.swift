@@ -7,4 +7,5 @@
 
 public enum SudokuSolverStrategy : BitwiseCopyable, CaseIterable, Codable, Comparable, Hashable, Sendable {
     case fullHouse
+    case nakedSingle
 }

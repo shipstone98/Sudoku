@@ -129,3 +129,31 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_fullHouse_row() {
     #expect(location.row == 4)
     #expect(result!.strategy == .fullHouse)
 }
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_nakedSingle() {
+    // Arrange
+    let string = "412736589000000106568010370000850210100000008087090000030070865800000000000908401"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .nakedSingle, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == 6)
+    #expect(location.column == 6)
+    #expect(location.removedCandidates.isEmpty)
+    #expect(location.row == 5)
+    #expect(result!.strategy == .nakedSingle)
+}

@@ -17,7 +17,13 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
         
         for row in 0..<9 {
             for column in 0..<9 {
-                candidates[row * 9 + column] = sudoku.candidates(row, column)
+                let index = row * 9 + column
+                
+                guard sudoku.array[index] == 0 else {
+                    continue
+                }
+                
+                candidates[index] = sudoku.candidates(row, column)
             }
         }
         
@@ -41,6 +47,8 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
         switch strategy {
         case .fullHouse:
             solver = FullHouseStrategySolver(for: self)
+        case .nakedSingle:
+            solver = NakedSingleStrategySolver(for: self)
         }
         
         guard let move = solver.solve(using: &generator) else {
