@@ -51,6 +51,8 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
             solver = NakedSingleStrategySolver(for: self)
         case .hiddenSingle:
             solver = HiddenSingleStrategySolver(for: self)
+        case .pointingCandidate:
+            solver = PointingCandidateStrategySolver(for: self)
         }
         
         guard let move = solver.solve(using: &generator) else {

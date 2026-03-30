@@ -15,12 +15,27 @@ public struct SudokuSolverMove : Codable, Hashable, Sendable {
         self.strategy = strategy
     }
     
+    internal init(
+        for strategy: SudokuSolverStrategy?,
+        at locations: [Location]
+    ) {
+        self.locations = .init(locations)
+        self.strategy = strategy
+    }
+    
     @frozen
     public struct Location : Codable, Hashable, Sendable {
         public let addedValue: Int?
         public let column: Int
         public let removedCandidates: Set<Int>
         public let row: Int
+        
+        internal init(_ row: Int, _ column: Int, _ removedCandidates: Set<Int>) {
+            self.addedValue = nil
+            self.column = column
+            self.removedCandidates = removedCandidates
+            self.row = row
+        }
         
         internal init(_ row: Int, _ column: Int, addedValue: Int) {
             self.addedValue = addedValue
