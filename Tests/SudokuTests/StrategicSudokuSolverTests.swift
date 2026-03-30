@@ -72,6 +72,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_fullHouse_block() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 8)
     #expect(result!.strategy == .fullHouse)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "800739006370465000040182009000600040054300610060500000400853070000271064100946002",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -100,6 +106,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_fullHouse_column() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 7)
     #expect(result!.strategy == .fullHouse)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "200060000083090000700821900006073000090682040000450100008935004000010290000040008",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -128,6 +140,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_fullHouse_row() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 4)
     #expect(result!.strategy == .fullHouse)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "207000000080090000030600800008164900692785314001320500009001020000040090000000408",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -156,6 +174,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_nakedSingle() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 5)
     #expect(result!.strategy == .nakedSingle)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "412736589000000106568010370000850210100000008087090600030070865800000000000908401",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -184,6 +208,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_block() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 5)
     #expect(result!.strategy == .hiddenSingle)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "002193000000007000700040019803000600005000230007300504370080006000600000000534100",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -212,6 +242,12 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_column() 
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 3)
     #expect(result!.strategy == .hiddenSingle)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "000100200210300900860700000006270083082934760730006000008003017075000040001007000",
+        solver.sudoku
+    )
 }
 
 @Test
@@ -240,4 +276,100 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenSingle_row() {
     #expect(location.removedCandidates.isEmpty)
     #expect(location.row == 2)
     #expect(result!.strategy == .hiddenSingle)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "028007000016083070000620851137290000000730000000046307290070000000860140000300700",
+        solver.sudoku
+    )
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_pointingCandidate_column() {
+    // Arrange
+    let string = "300000000480090000002070000000030069003160002600042083090080007736050098000000005"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .pointingCandidate, using: &generator)
+    
+    // Assert
+    let count = 6
+    let column = 6
+    let removedCandidate = 1
+    let rows = [0, 1, 2, 6, 7, 8]
+    #expect(result!.locations.count == count)
+    var index = 0
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    for location in locations {
+        #expect(location.addedValue == nil)
+        #expect(location.column == column)
+        #expect(location.removedCandidates == [removedCandidate])
+        #expect(location.row == rows[index])
+        index += 1
+    }
+    
+    #expect(result!.strategy == .pointingCandidate)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_pointingCandidate_row() {
+    // Arrange
+    let string = "340006070080000930002030060000010000097364850000002000000000000000608090000923785"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .pointingCandidate, using: &generator)
+    
+    // Assert
+    let count = 6
+    let row = 6
+    let removedCandidate = 1
+    let columns = [0, 1, 2, 6, 7, 8]
+    #expect(result!.locations.count == count)
+    var index = 0
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    for location in locations {
+        #expect(location.addedValue == nil)
+        #expect(location.column == columns[index])
+        #expect(location.removedCandidates == [removedCandidate])
+        #expect(location.row == row)
+        index += 1
+    }
+    
+    #expect(result!.strategy == .pointingCandidate)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
 }
