@@ -10,6 +10,15 @@ import Testing
 @testable
 import Sudoku
 
+internal func expectEmpty<S>(_ actual: S) where S : SudokuProtocol {
+    for row in 0..<9 {
+        for column in 0..<9 {
+            #expect(actual[row, column] == 0)
+        }
+    }
+}
+
+
 internal func expectEqual<E, A>(_ expected: E, _ actual: A) where E : SudokuProtocol, A : SudokuProtocol {
     for row in 0..<9 {
         for column in 0..<9 {
