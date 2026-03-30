@@ -63,6 +63,8 @@ public struct StrategicSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
             move = self.solvePointingCandidate(using: &generator)
         case .claimingCandidate:
             move = self.solveClaimingCandidate(using: &generator)
+        case .nakedPair:
+            move = self.solveNakedPair(using: &generator)
         }
         
         guard let move else {

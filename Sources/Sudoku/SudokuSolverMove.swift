@@ -15,10 +15,7 @@ public struct SudokuSolverMove : Codable, Hashable, Sendable {
         self.strategy = strategy
     }
     
-    internal init(
-        for strategy: SudokuSolverStrategy?,
-        at locations: [Location]
-    ) {
+    internal init<S>(for strategy: SudokuSolverStrategy?, at locations: S) where S : Sequence, S.Element == Location {
         self.locations = .init(locations)
         self.strategy = strategy
     }

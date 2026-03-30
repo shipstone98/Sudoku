@@ -11,4 +11,5 @@ public enum SudokuSolverStrategy : BitwiseCopyable, CaseIterable, Codable, Compa
     case hiddenSingle
     case pointingCandidate
     case claimingCandidate
+    case nakedPair
 }

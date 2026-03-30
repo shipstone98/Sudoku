@@ -463,3 +463,108 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_claimingCandidate_row(
     #expect(solver.moves.count == 1)
     expectEqual(string, solver.sudoku)
 }
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_nakedPair_block() {
+    // Arrange
+    let string = "000004000000002000000356000310007246760000305000000000000001000000000000000000000"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .nakedPair, using: &generator)
+    
+    // Assert
+    let count = 6
+    let removedCandidates: Set<Int> = [8, 9]
+    let indices = [30, 39, 40, 48, 49, 50]
+    #expect(result!.locations.count == count)
+    var index = 0
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    for location in locations {
+        let currentIndex = indices[index]
+        #expect(location.addedValue == nil)
+        #expect(location.column == currentIndex % 9)
+        #expect(location.removedCandidates == removedCandidates)
+        #expect(location.row == currentIndex / 9)
+        index += 1
+    }
+    
+    #expect(result!.strategy == .nakedPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_nakedPair_column() {
+    // Arrange
+    let string = "794638215020491000080275400812746500436859100957312684000963000308520961069180300"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .nakedPair, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == nil)
+    #expect(location.column == 7)
+    #expect(location.removedCandidates == [3])
+    #expect(location.row == 1)
+    #expect(result!.strategy == .nakedPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_nakedPair_row() {
+    // Arrange
+    let string = "700849030928135006400267089642783951397451628815692300204516093100008060500004010"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .nakedPair, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == nil)
+    #expect(location.column == 1)
+    #expect(location.removedCandidates == [3])
+    #expect(location.row == 7)
+    #expect(result!.strategy == .nakedPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
