@@ -26,6 +26,8 @@ public extension StrategicSudokuSolver {
             move = self.solveClaimingCandidate(using: &generator)
         case .nakedPair:
             move = self.solveNakedPair(using: &generator)
+        case .hiddenPair:
+            move = self.solveHiddenPair(using: &generator)
         }
         
         guard let move else {

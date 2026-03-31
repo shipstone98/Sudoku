@@ -568,3 +568,123 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_nakedPair_row() {
     #expect(solver.moves.count == 1)
     expectEqual(string, solver.sudoku)
 }
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenPair_block() {
+    // Arrange
+    let string = "000060000000042736006730040094000068000096407607050923100000085060080271005010090"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenPair, using: &generator)
+    
+    // Assert
+    #expect(result!.locations.count == 2)
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    #expect(locations.first!.addedValue == nil)
+    #expect(locations.first!.column == 0)
+    #expect(locations.first!.removedCandidates.sorted() == [2, 3, 5, 8, 9])
+    #expect(locations.first!.row == 0)
+    #expect(locations.last!.addedValue == nil)
+    #expect(locations.last!.column == 1)
+    #expect(locations.last!.removedCandidates.sorted() == [1, 2, 3, 5, 8])
+    #expect(locations.last!.row == 0)
+    #expect(result!.strategy == .hiddenPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenPair_column() {
+    // Arrange
+    let string = "000006100000090060006407005007000000643095081020060000070049020034602879060873514"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenPair, using: &generator)
+    
+    // Assert
+    #expect(result!.locations.count == 2)
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    #expect(locations.first!.addedValue == nil)
+    #expect(locations.first!.column == 0)
+    #expect(locations.first!.removedCandidates.sorted() == [2, 3, 5, 8, 9])
+    #expect(locations.first!.row == 0)
+    #expect(locations.last!.addedValue == nil)
+    #expect(locations.last!.column == 0)
+    #expect(locations.last!.removedCandidates.sorted() == [1, 2, 3, 5, 8])
+    #expect(locations.last!.row == 1)
+    #expect(result!.strategy == .hiddenPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_hiddenPair_row() {
+    // Arrange
+    let string = "000060000000042736006730040094000068000096407607050923100000085060080271005010094"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .hiddenPair, using: &generator)
+    
+    // Assert
+    #expect(result!.locations.count == 2)
+    
+    let locations = result!.locations.sorted {
+        a, b in
+        a.row * 9 + a.column < b.row * 9 + b.column
+    }
+    
+    #expect(locations.first!.addedValue == nil)
+    #expect(locations.first!.column == 0)
+    #expect(locations.first!.removedCandidates.sorted() == [2, 3, 5, 8, 9])
+    #expect(locations.first!.row == 0)
+    #expect(locations.last!.addedValue == nil)
+    #expect(locations.last!.column == 1)
+    #expect(locations.last!.removedCandidates.sorted() == [1, 2, 3, 5, 8])
+    #expect(locations.last!.row == 0)
+    #expect(result!.strategy == .hiddenPair)
+    #expect(solver.moves.count == 1)
+    expectEqual(string, solver.sudoku)
+}
