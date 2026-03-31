@@ -32,6 +32,8 @@ public extension StrategicSudokuSolver {
             move = self.solveXWing(using: &generator)
         case .bugPlus1:
             move = self.solveBUGPlus1()
+        case .xYWing:
+            move = self.solveXYWing(using: &generator)
         }
         
         guard let move else {
