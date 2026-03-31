@@ -28,6 +28,8 @@ public extension StrategicSudokuSolver {
             move = self.solveNakedPair(using: &generator)
         case .hiddenPair:
             move = self.solveHiddenPair(using: &generator)
+        case .xWing:
+            move = self.solveXWing(using: &generator)
         }
         
         guard let move else {
