@@ -10,6 +10,11 @@ public struct RecursiveSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
     public private(set) var moves: [SudokuSolverMove]
     public private(set) var sudoku: ArraySudoku
     
+    internal init() {
+        self.moves = []
+        self.sudoku = .init()
+    }
+    
     public init<S>(_ sudoku: S) where S : SudokuProtocol {
         self.moves = []
         self.sudoku = .init(sudoku)
