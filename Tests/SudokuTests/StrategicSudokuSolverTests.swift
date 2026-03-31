@@ -791,7 +791,6 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_bugPlus1() {
     
     var solver = StrategicSudokuSolver(sudoku)
     var generator = MockRandomNumberGenerator()
-    generator.nextClosure = { 1 }
     
     // Act
     let result = solver.solve(for: .bugPlus1, using: &generator)
