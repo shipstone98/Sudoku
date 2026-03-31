@@ -45,6 +45,22 @@ fileprivate func testArraySudoku_initializer() {
 }
 
 @Test
+fileprivate func testArraySudoku_initializer_randomNumberGenerator() {
+    // Arrange
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = ArraySudoku(using: &generator)
+    
+    // Assert
+    expectEqual(
+        "123456789456789123789123456214365897365897214897214365531642978642978531978531642",
+        result
+    )
+}
+
+@Test
 fileprivate func testArraySudoku_initializer_sudoku() {
     // Arrange
     let array = randomArray()

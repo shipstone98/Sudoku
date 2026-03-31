@@ -5,6 +5,14 @@
 //  Created by Christopher Shipstone on 30/03/2026.
 //
 
+public extension ArraySudoku {
+    init<T>(using generator: inout T) where T : RandomNumberGenerator {
+        var solver = RecursiveSudokuSolver()
+        solver.solve(using: &generator)
+        self = solver.sudoku
+    }
+}
+
 internal extension ArraySudoku {
     func candidates(_ row: Int, _ column: Int) -> Set<Int> {
         let peers = ArraySudoku.peers(row, column)
