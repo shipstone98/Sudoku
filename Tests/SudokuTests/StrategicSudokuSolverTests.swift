@@ -776,3 +776,37 @@ fileprivate func testStrategicSudokuSolver_solve_solvable_xWing_row() {
     #expect(solver.moves.count == 1)
     expectEqual(string, solver.sudoku)
 }
+
+@Test
+fileprivate func testStrategicSudokuSolver_solve_solvable_bugPlus1() {
+    // Arrange
+    let string = "140780009280450107370610008953871002724965813861324975618237594597148326432596781"
+    var sudoku = MockSudoku()
+    
+    sudoku.subscriptClosure = {
+        row, column in
+        let index = string.index(string.startIndex, offsetBy: row * 9 + column)
+        return string[index].wholeNumberValue!
+    }
+    
+    var solver = StrategicSudokuSolver(sudoku)
+    var generator = MockRandomNumberGenerator()
+    generator.nextClosure = { 1 }
+    
+    // Act
+    let result = solver.solve(for: .bugPlus1, using: &generator)
+    
+    // Assert
+    let location = result!.locations.single!
+    #expect(location.addedValue == 6)
+    #expect(location.column == 7)
+    #expect(location.removedCandidates.isEmpty)
+    #expect(location.row == 0)
+    #expect(result!.strategy == .bugPlus1)
+    #expect(solver.moves.count == 1)
+    
+    expectEqual(
+        "140780069280450107370610008953871002724965813861324975618237594597148326432596781",
+        solver.sudoku
+    )
+}
