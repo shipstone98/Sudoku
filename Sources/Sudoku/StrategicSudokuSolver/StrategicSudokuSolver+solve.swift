@@ -44,7 +44,7 @@ public extension StrategicSudokuSolver {
             let index = location.row * 9 + location.column
             
             if let addedValue = location.addedValue {
-                for index in ArraySudoku.peers(location.row, location.column) {
+                for index in getPeers(location.row, location.column) {
                     if var candidates = self.candidates[index] {
                         candidates.remove(addedValue)
                         self.candidates[index] = candidates
