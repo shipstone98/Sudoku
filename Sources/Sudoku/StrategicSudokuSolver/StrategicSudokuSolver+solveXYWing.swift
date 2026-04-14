@@ -12,7 +12,7 @@ internal extension StrategicSudokuSolver {
         index: Int,
         candidate: Int
     )] {
-        ArraySudoku.peers(index / 9, index % 9)
+        getPeers(index / 9, index % 9)
             .compactMap {
                 currentIndex -> (index: Int, candidate: Int)? in
                 guard currentIndex != index,
@@ -56,7 +56,7 @@ internal extension StrategicSudokuSolver {
                         
                         let row = currentIndex / 9
                         let column = currentIndex % 9
-                        let indices = ArraySudoku.peers(row, column)
+                        let indices = getPeers(row, column)
                         
                         guard indices.contains(pincer1Index),
                               indices.contains(pincer2Index),
