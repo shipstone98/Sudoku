@@ -11,6 +11,8 @@ public protocol SudokuSolver where Sudoku : SudokuProtocol {
     var moves: [SudokuSolverMove] { get }
     var sudoku: Sudoku { get }
     
+    init<S>(_ sudoku: S) where S : SudokuProtocol
+    
     @discardableResult
     mutating func solve<T>(using generator: inout T) -> Bool where T : RandomNumberGenerator
 }
