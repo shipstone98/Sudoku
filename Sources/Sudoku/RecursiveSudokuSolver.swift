@@ -29,10 +29,12 @@ public struct RecursiveSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
     private mutating func solve<T>(
         using generator: inout T,
         _ indices: [Int],
-        at index: Int
+        at indicesIndex: Int
     ) -> Bool where T : RandomNumberGenerator {
+        let index = indices[indicesIndex]
+        
         guard self.sudoku.array[index] == 0 else {
-            return self.solveNext(using: &generator, indices, at: index)
+            return self.solveNext(using: &generator, indices, at: indicesIndex)
         }
         
         let row = index / 9
@@ -54,7 +56,7 @@ public struct RecursiveSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
             let move = SudokuSolverMove(for: nil, at: location)
             self.moves.append(move)
             
-            if self.solveNext(using: &generator, indices, at: index) {
+            if self.solveNext(using: &generator, indices, at: indicesIndex) {
                 return true
             }
             
@@ -68,14 +70,14 @@ public struct RecursiveSudokuSolver : Codable, Hashable, Sendable, SudokuSolver 
     private mutating func solveNext<T>(
         using generator: inout T,
         _ indices: [Int],
-        at index: Int
+        at indicesIndex: Int
     ) -> Bool where T : RandomNumberGenerator {
-        let index = index + 1
+        let indicesIndex = indicesIndex + 1
         
-        guard index < indices.count else {
+        guard indicesIndex < indices.count else {
             return true
         }
         
-        return self.solve(using: &generator, indices, at: index)
+        return self.solve(using: &generator, indices, at: indicesIndex)
     }
 }
