@@ -5,13 +5,18 @@ import PackageDescription
 let package = Package(
     name: "Sudoku",
     products: [.library(name: "Sudoku", targets: ["Sudoku"])],
-    dependencies: [.package(name: "Utilities", path: "../utilities")],
+    dependencies: [
+        .package(
+            url: "https://github.com/shipstone98/Utilities.git",
+            from: "1.0.0"
+        )
+    ],
     targets: [
         .target(
             name: "Sudoku",
-            dependencies: [.product(name: "Utilities", package: "Utilities")]
+            dependencies: ["Utilities"]
         ),
-        .testTarget(name: "SudokuTests", dependencies: ["Sudoku"])
+        .testTarget(name: "SudokuTests", dependencies: ["Sudoku", "Utilities"])
     ],
     swiftLanguageModes: [.v6]
 )
